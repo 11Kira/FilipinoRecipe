@@ -37,7 +37,6 @@ class RecipeViewModel @Inject constructor(
         }
     }
 
-
     fun deleteRecipeById(recipeId: String) {
         viewModelScope.launch(CoroutineExceptionHandler { _, error ->
             runBlocking { mutableRecipeState.emit(RecipeState.ShowError(error)) }
