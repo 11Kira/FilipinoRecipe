@@ -15,9 +15,9 @@ import javax.inject.Inject
 class RecipeViewModel @Inject constructor(
     private val recipeUseCase: RecipeUseCase
 ) : ViewModel() {
+
     private val mutableRecipeState: MutableSharedFlow<RecipeState> = MutableSharedFlow()
     val recipeState = mutableRecipeState.asSharedFlow()
-
 
     fun getRecipeById(recipeId: String) {
         viewModelScope.launch(CoroutineExceptionHandler { _, error ->
@@ -27,6 +27,16 @@ class RecipeViewModel @Inject constructor(
             mutableRecipeState.emit(RecipeState.SetRecipeDetails(invoke))
         }
     }
+
+    fun updateRecipeById(recipeId: String) {
+        viewModelScope.launch(CoroutineExceptionHandler { _, error ->
+            runBlocking { mutableRecipeState.emit(RecipeState.ShowError(error)) }
+        }) {
+            //val invoke = recipeUseCase.updateRecipeById(recipeId, )
+            //mutableRecipeState.emit(RecipeState.SetRecipeDetails(invoke))
+        }
+    }
+
 
     fun deleteRecipeById(recipeId: String) {
         viewModelScope.launch(CoroutineExceptionHandler { _, error ->

@@ -15,6 +15,7 @@ import javax.inject.Inject
 class RecipeListViewModel @Inject constructor(
     private val recipeUseCase: RecipeUseCase
 ): ViewModel() {
+
     private val mutableRecipeListState: MutableSharedFlow<RecipeListState> = MutableSharedFlow()
     val recipeListState = mutableRecipeListState.asSharedFlow()
 
