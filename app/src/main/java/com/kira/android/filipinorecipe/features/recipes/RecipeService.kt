@@ -29,7 +29,7 @@ interface RecipeService {
     ): Recipe
 
     @DELETE("recipes/{id}")
-    suspend fun deleteRecipe(
+    suspend fun deleteRecipeById(
         @Path("id") id: String
     )
 }

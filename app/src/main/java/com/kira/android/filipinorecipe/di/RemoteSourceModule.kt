@@ -1,5 +1,6 @@
 package com.kira.android.filipinorecipe.di
 
+import com.kira.android.filipinorecipe.features.recipes.RecipeRemoteSource
 import com.kira.android.filipinorecipe.features.recipes.RecipeService
 import dagger.Module
 import dagger.Provides
