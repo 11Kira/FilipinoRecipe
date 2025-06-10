@@ -14,7 +14,7 @@ class RecipeUseCase @Inject constructor(
         return recipeRepository.getRecipeById(recipeId = recipeId)
     }
 
-    suspend fun savRecipe(body: JsonObject): Recipe {
+    suspend fun saveRecipe(body: JsonObject): Recipe {
         return recipeRepository.saveRecipe(body)
     }
 
