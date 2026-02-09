@@ -19,7 +19,7 @@ lifecycleExtensions = "2.2.0"
 ksp-version = "2.1.21-2.0.1"
 hilt-version = "2.56.2"
 hiltNavigationCompose = "1.2.0"
-navigationCompose = "2.9.0"
+navigationCompose = "2.9.7"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
