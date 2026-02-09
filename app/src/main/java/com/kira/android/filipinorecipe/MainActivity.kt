@@ -29,8 +29,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.kira.android.filipinorecipe.navigation.BottomMenuItem
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.serialization.Serializable
@@ -76,7 +80,7 @@ fun MainScreenView() {
                 .consumeWindowInsets(contentPadding)
                 .systemBarsPadding()
         ) {
-            //NavigationGraph(navController = navController)
+            AppNavHost(navController = navController)
         }
 
     }
@@ -126,8 +130,56 @@ fun BottomNavigation(navController: NavController) {
     }
 }
 
+@Composable
+fun AppNavHost(navController: NavHostController) {
+    NavHost(
+        navController = navController,
+        startDestination = BottomMenuItem.Recipes.screenRoute
+    ) {
+        composable(BottomMenuItem.Recipes.screenRoute) {
+            RecipesScreen()
+        }
+        composable(BottomMenuItem.Favorites.screenRoute) {
+            FavoritesScreen()
+        }
+
+        composable<DetailScreenNavigation> {
+            val args = it.toRoute<DetailScreenNavigation>()
+            DetailsScreen(
+                args.id,
+            )
+        }
+    }
+}
 
 @Serializable
 data class DetailScreenNavigation(
     val id: Long
 )
+
+@Composable
+fun RecipesScreen() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Red)
+    )
+}
+
+@Composable
+fun FavoritesScreen() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Green)
+    )
+}
+
+@Composable
+fun DetailsScreen(id: Long) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Yellow)
+    )
+}
