@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "com.kira.android.filipinorecipe"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.kira.android.filipinorecipe"
