@@ -161,7 +161,7 @@ fun AppNavHost(navController: NavHostController) {
 
 @Serializable
 data class DetailScreenNavigation(
-    val id: Long
+    val id: String
 )
 
 @Composable
@@ -174,7 +174,7 @@ fun FavoritesScreen() {
 }
 
 @Composable
-fun DetailsScreen(id: Long) {
+fun DetailsScreen(id: String) {
     Box(
         modifier = Modifier
             .fillMaxSize()
