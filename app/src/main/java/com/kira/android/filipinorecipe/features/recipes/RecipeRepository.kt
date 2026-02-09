@@ -1,6 +1,7 @@
 package com.kira.android.filipinorecipe.features.recipes
 
 import com.google.gson.JsonObject
+import com.kira.android.filipinorecipe.features.recipes.model.Recipe
 import javax.inject.Inject
 
 class RecipeRepository @Inject constructor(
