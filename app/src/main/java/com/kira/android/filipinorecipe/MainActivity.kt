@@ -35,6 +35,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.kira.android.filipinorecipe.features.recipes.list.RecipeListScreen
 import com.kira.android.filipinorecipe.navigation.BottomMenuItem
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.serialization.Serializable
@@ -137,7 +138,13 @@ fun AppNavHost(navController: NavHostController) {
         startDestination = BottomMenuItem.Recipes.screenRoute
     ) {
         composable(BottomMenuItem.Recipes.screenRoute) {
-            RecipesScreen()
+            RecipeListScreen(
+                onItemClick = { id ->
+                    navController.navigate(
+                        DetailScreenNavigation(id)
+                    )
+                }
+            )
         }
         composable(BottomMenuItem.Favorites.screenRoute) {
             FavoritesScreen()
@@ -156,15 +163,6 @@ fun AppNavHost(navController: NavHostController) {
 data class DetailScreenNavigation(
     val id: Long
 )
-
-@Composable
-fun RecipesScreen() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Red)
-    )
-}
 
 @Composable
 fun FavoritesScreen() {
