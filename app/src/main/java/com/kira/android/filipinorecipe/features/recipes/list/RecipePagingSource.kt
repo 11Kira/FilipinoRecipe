@@ -12,11 +12,11 @@ class RecipePagingSource(
         return try {
             val currentPage = params.key ?: 1
             val response = remoteSource.getAllRecipes(page = currentPage)
-            val recipes = response
+            val recipes = response.data.orEmpty()
             LoadResult.Page(
                 data = recipes,
                 prevKey = if (currentPage == 1) null else currentPage - 1,
-                nextKey = if (currentPage < 5) currentPage + 1 else null
+                nextKey = if (currentPage < response.paging.total) currentPage + 1 else null
             )
         } catch (e: Exception) {
             LoadResult.Error(e)
