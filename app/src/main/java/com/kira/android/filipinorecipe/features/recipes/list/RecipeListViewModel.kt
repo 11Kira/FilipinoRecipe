@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.kira.android.filipinorecipe.features.recipes.RecipeUseCase
-import com.kira.android.filipinorecipe.features.recipes.model.Recipe
+import com.kira.android.filipinorecipe.model.Recipe
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow

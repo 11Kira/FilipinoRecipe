@@ -1,4 +1,4 @@
-package com.kira.android.filipinorecipe.features.recipes.model
+package com.kira.android.filipinorecipe.model
 
 import com.google.gson.annotations.SerializedName
 

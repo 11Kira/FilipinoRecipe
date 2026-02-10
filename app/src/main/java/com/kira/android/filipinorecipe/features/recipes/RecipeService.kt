@@ -1,7 +1,7 @@
 package com.kira.android.filipinorecipe.features.recipes
 
 import com.google.gson.JsonObject
-import com.kira.android.filipinorecipe.features.recipes.model.Recipe
+import com.kira.android.filipinorecipe.model.Recipe
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET

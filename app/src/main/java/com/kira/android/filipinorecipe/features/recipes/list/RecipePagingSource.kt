@@ -3,7 +3,7 @@ package com.kira.android.filipinorecipe.features.recipes.list
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.kira.android.filipinorecipe.features.recipes.RecipeRemoteSource
-import com.kira.android.filipinorecipe.features.recipes.model.Recipe
+import com.kira.android.filipinorecipe.model.Recipe
 
 class RecipePagingSource(
     private val remoteSource: RecipeRemoteSource

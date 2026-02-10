@@ -23,7 +23,7 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.kira.android.filipinorecipe.features.recipes.model.Recipe
+import com.kira.android.filipinorecipe.model.Recipe
 
 lateinit var viewModel: RecipeListViewModel
 
