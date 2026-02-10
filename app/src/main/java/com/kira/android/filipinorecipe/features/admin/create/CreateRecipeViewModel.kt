@@ -1,4 +1,4 @@
-package com.kira.android.filipinorecipe.features.recipes.create
+package com.kira.android.filipinorecipe.features.admin.create
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

@@ -1,12 +1,15 @@
 package com.kira.android.filipinorecipe.features.recipes
 
+import androidx.paging.PagingData
 import com.google.gson.JsonObject
+import com.kira.android.filipinorecipe.model.Recipe
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class RecipeUseCase @Inject constructor(
     private val recipeRepository: RecipeRepository
 ){
-    suspend fun getAllRecipes(): List<Recipe> {
+    suspend fun getAllRecipes(): Flow<PagingData<Recipe>> {
         return recipeRepository.getAllRecipes()
     }
 

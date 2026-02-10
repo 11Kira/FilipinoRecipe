@@ -47,6 +47,7 @@ kotlin {
 }
 
 dependencies {
+    implementation(libs.androidx.paging.compose)
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.android)
     implementation(libs.androidx.core.ktx)
@@ -70,6 +71,9 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.material3)
+    implementation(libs.coil)
+    implementation(libs.coil.compose)
+    implementation(libs.androidx.material.icons.extended)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

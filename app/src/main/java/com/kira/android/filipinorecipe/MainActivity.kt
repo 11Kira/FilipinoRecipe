@@ -3,9 +3,9 @@ package com.kira.android.filipinorecipe
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -14,11 +14,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -26,8 +30,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -35,7 +42,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.kira.android.filipinorecipe.features.recipes.list.RecipeListScreen
 import com.kira.android.filipinorecipe.navigation.BottomMenuItem
+import com.kira.android.filipinorecipe.ui.theme.Typography
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.serialization.Serializable
 
@@ -48,10 +57,32 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        //enableEdgeToEdge()
         viewModel = injectedViewModel
         setContent {
-            MainScreenView()
+            MyAppTheme {
+                val view = this.window.decorView
+                val darkTheme = isSystemInDarkTheme()
+                val statusBarColor = MaterialTheme.colorScheme.primary
+                val navBarColor = MaterialTheme.colorScheme.background
+                // Update system bars
+                SideEffect {
+                    val insetsController = WindowInsetsControllerCompat(window, view)
+                    // Status bar and nav bar color match theme
+                    window.statusBarColor = statusBarColor.toArgb()
+                    window.navigationBarColor = navBarColor.toArgb()
+
+                    // Icons: light or dark based on theme
+                    insetsController.isAppearanceLightStatusBars = !darkTheme
+                    insetsController.isAppearanceLightNavigationBars = !darkTheme
+                }
+
+                // Your app content
+                MainScreenView()
+
+            }
         }
     }
 }
@@ -96,7 +127,10 @@ fun BottomNavigation(navController: NavController) {
         BottomMenuItem.Favorites
     )
 
-    NavigationBar() {
+    NavigationBar(
+        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+        contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+    ) {
         screens.forEach { bottomMenuItem ->
             NavigationBarItem(
                 selected = (selectedItem == selectedTab.collectAsState().value),
@@ -117,17 +151,35 @@ fun BottomNavigation(navController: NavController) {
                     Icon(
                         imageVector = ImageVector.vectorResource(bottomMenuItem.icon),
                         contentDescription = bottomMenuItem.label,
-                        tint = if (selectedTab.collectAsState().value == bottomMenuItem.label) Color.White else Color.Gray
+                        //tint = if (selectedTab.collectAsState().value == bottomMenuItem.label) Color.White else Color.DarkGray
                     )
                 },
                 label = {
                     Text(
-                        text = bottomMenuItem.label
+                        text = bottomMenuItem.label,
                     )
                 }
             )
         }
     }
+}
+
+@Composable
+fun MyAppTheme(
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    content: @Composable () -> Unit
+) {
+    val colorScheme = if (darkTheme) {
+        darkColorScheme()
+    } else {
+        lightColorScheme()
+    }
+
+    MaterialTheme(
+        colorScheme = colorScheme,
+        typography = Typography,
+        content = content
+    )
 }
 
 @Composable
@@ -137,7 +189,13 @@ fun AppNavHost(navController: NavHostController) {
         startDestination = BottomMenuItem.Recipes.screenRoute
     ) {
         composable(BottomMenuItem.Recipes.screenRoute) {
-            RecipesScreen()
+            RecipeListScreen(
+                onItemClick = { id ->
+                    navController.navigate(
+                        DetailScreenNavigation(id)
+                    )
+                }
+            )
         }
         composable(BottomMenuItem.Favorites.screenRoute) {
             FavoritesScreen()
@@ -154,17 +212,8 @@ fun AppNavHost(navController: NavHostController) {
 
 @Serializable
 data class DetailScreenNavigation(
-    val id: Long
+    val id: String
 )
-
-@Composable
-fun RecipesScreen() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Red)
-    )
-}
 
 @Composable
 fun FavoritesScreen() {
@@ -176,7 +225,7 @@ fun FavoritesScreen() {
 }
 
 @Composable
-fun DetailsScreen(id: Long) {
+fun DetailsScreen(id: String) {
     Box(
         modifier = Modifier
             .fillMaxSize()

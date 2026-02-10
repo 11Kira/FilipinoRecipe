@@ -1,6 +1,6 @@
 package com.kira.android.filipinorecipe.features.recipes.list
 
-import com.kira.android.filipinorecipe.features.recipes.Recipe
+import com.kira.android.filipinorecipe.model.Recipe
 
 sealed class RecipeListState {
     data class ShowError(val error: Any) : RecipeListState()
