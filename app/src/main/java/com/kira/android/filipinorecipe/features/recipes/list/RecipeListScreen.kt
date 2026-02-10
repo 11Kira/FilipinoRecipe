@@ -154,7 +154,12 @@ fun PopulatedRecipeList(recipeList: LazyPagingItems<Recipe>, onItemClick: (Strin
                         fontSize = 15.sp,
                         color = Color.Black,
                         fontWeight = FontWeight.Medium,
-                        modifier = Modifier.padding(top = 5.dp, start = 10.dp, bottom = 2.dp),
+                        modifier = Modifier.padding(
+                            top = 5.dp,
+                            start = 10.dp,
+                            end = 10.dp,
+                            bottom = 2.dp
+                        ),
 
                         )
                     Text(
@@ -162,7 +167,7 @@ fun PopulatedRecipeList(recipeList: LazyPagingItems<Recipe>, onItemClick: (Strin
                         fontSize = 9.sp,
                         color = Color.Black,
                         fontWeight = FontWeight.Normal,
-                        modifier = Modifier.padding(start = 10.dp, bottom = 5.dp),
+                        modifier = Modifier.padding(start = 10.dp, end = 10.dp, bottom = 5.dp),
                         lineHeight = 10.sp
                     )
                     Row(
