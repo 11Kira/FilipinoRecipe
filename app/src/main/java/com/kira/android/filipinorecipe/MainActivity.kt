@@ -36,14 +36,9 @@ import androidx.compose.ui.res.vectorResource
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.toRoute
-import com.kira.android.filipinorecipe.features.recipes.details.RecipeDetailsScreen
-import com.kira.android.filipinorecipe.features.recipes.list.RecipeListScreen
+import com.kira.android.filipinorecipe.navigation.AppNavHost
 import com.kira.android.filipinorecipe.navigation.BottomMenuItem
 import com.kira.android.filipinorecipe.ui.theme.Typography
 import dagger.hilt.android.AndroidEntryPoint
@@ -181,34 +176,6 @@ fun MyAppTheme(
         typography = Typography,
         content = content
     )
-}
-
-@Composable
-fun AppNavHost(navController: NavHostController) {
-    NavHost(
-        navController = navController,
-        startDestination = BottomMenuItem.Recipes.screenRoute
-    ) {
-        composable(BottomMenuItem.Recipes.screenRoute) {
-            RecipeListScreen(
-                onItemClick = { id ->
-                    navController.navigate(
-                        DetailScreenNavigation(id)
-                    )
-                }
-            )
-        }
-        composable(BottomMenuItem.Favorites.screenRoute) {
-            FavoritesScreen()
-        }
-
-        composable<DetailScreenNavigation> {
-            val args = it.toRoute<DetailScreenNavigation>()
-            RecipeDetailsScreen(
-                args.id,
-            )
-        }
-    }
 }
 
 @Serializable
