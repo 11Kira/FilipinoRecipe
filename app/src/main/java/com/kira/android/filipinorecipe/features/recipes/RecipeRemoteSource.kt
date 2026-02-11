@@ -12,7 +12,7 @@ class RecipeRemoteSource @Inject constructor(
         withContext(Dispatchers.IO) { recipeService.getAllRecipes(page) }
 
     suspend fun getRecipeById(recipeId: String) =
-        withContext(Dispatchers.IO) { recipeService.getRecipeById(recipeId) }
+        withContext(Dispatchers.IO) { recipeService.getRecipeById(recipeId).data }
 
     suspend fun deleteRecipeById(recipeId: String) =
         withContext(Dispatchers.IO) { recipeService.deleteRecipeById(recipeId) }

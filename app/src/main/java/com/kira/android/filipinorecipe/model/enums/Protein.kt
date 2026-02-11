@@ -1,4 +1,4 @@
-package com.kira.android.filipinorecipe.features.recipes.enums
+package com.kira.android.filipinorecipe.model.enums
 
 enum class Protein {
     BEEF,

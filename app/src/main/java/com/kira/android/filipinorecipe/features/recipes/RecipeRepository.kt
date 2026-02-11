@@ -17,7 +17,7 @@ class RecipeRepository @Inject constructor(
             RecipePagingSource(remoteSource = recipeRemoteSource)
         }.flow
 
-    suspend fun getRecipeById(recipeId: String): Recipe {
+    suspend fun getRecipeById(recipeId: String): Recipe? {
         return recipeRemoteSource.getRecipeById(recipeId = recipeId)
     }
 

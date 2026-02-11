@@ -42,6 +42,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.kira.android.filipinorecipe.features.recipes.details.RecipeDetailsScreen
 import com.kira.android.filipinorecipe.features.recipes.list.RecipeListScreen
 import com.kira.android.filipinorecipe.navigation.BottomMenuItem
 import com.kira.android.filipinorecipe.ui.theme.Typography
@@ -203,7 +204,7 @@ fun AppNavHost(navController: NavHostController) {
 
         composable<DetailScreenNavigation> {
             val args = it.toRoute<DetailScreenNavigation>()
-            DetailsScreen(
+            RecipeDetailsScreen(
                 args.id,
             )
         }
@@ -221,14 +222,5 @@ fun FavoritesScreen() {
         modifier = Modifier
             .fillMaxSize()
             .background(Color.Green)
-    )
-}
-
-@Composable
-fun DetailsScreen(id: String) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Yellow)
     )
 }

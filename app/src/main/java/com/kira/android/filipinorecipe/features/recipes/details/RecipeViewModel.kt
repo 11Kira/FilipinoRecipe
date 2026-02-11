@@ -17,14 +17,17 @@ class RecipeViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val mutableRecipeState: MutableSharedFlow<RecipeState> = MutableSharedFlow()
-    val recipeState = mutableRecipeState.asSharedFlow()
+    val recipeState
+        get() = mutableRecipeState.asSharedFlow()
 
     fun getRecipeById(recipeId: String) {
         viewModelScope.launch(CoroutineExceptionHandler { _, error ->
             runBlocking { mutableRecipeState.emit(RecipeState.ShowError(error)) }
         }) {
             val invoke = recipeUseCase.getRecipeById(recipeId)
-            mutableRecipeState.emit(RecipeState.SetRecipeDetails(invoke))
+            invoke?.let { recipe ->
+                mutableRecipeState.emit(RecipeState.SetRecipeDetails(recipe))
+            }
         }
     }
 
