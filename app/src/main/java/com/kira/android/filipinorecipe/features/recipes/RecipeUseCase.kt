@@ -11,7 +11,7 @@ class RecipeUseCase @Inject constructor(
 ){
     fun getAllRecipes(): Flow<PagingData<Recipe>> = recipeRepository.getAllRecipes()
 
-    suspend fun getRecipeById(recipeId: String): Recipe? {
+    suspend fun getRecipeById(recipeId: String): Recipe {
         return recipeRepository.getRecipeById(recipeId = recipeId)
     }
 

@@ -21,7 +21,7 @@ interface RecipeService {
     @GET("recipes/{id}")
     suspend fun getRecipeById(
         @Path("id") id: String,
-    ): ApiResponse<Recipe>
+    ): Recipe
 
     @POST("recipes")
     suspend fun saveRecipe(

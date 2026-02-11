@@ -25,9 +25,7 @@ class RecipeViewModel @Inject constructor(
             runBlocking { mutableRecipeState.emit(RecipeState.ShowError(error)) }
         }) {
             val invoke = recipeUseCase.getRecipeById(recipeId)
-            invoke?.let { recipe ->
-                mutableRecipeState.emit(RecipeState.SetRecipeDetails(recipe))
-            }
+            mutableRecipeState.emit(RecipeState.SetRecipeDetails(invoke))
         }
     }
 
