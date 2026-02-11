@@ -8,9 +8,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Dining
+import androidx.compose.material.icons.filled.StackedBarChart
+import androidx.compose.material.icons.filled.WatchLater
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -18,6 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -34,7 +41,9 @@ import androidx.lifecycle.repeatOnLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.kira.android.filipinorecipe.R
+import com.kira.android.filipinorecipe.features.recipes.RoundedTextWithIcon
 import com.kira.android.filipinorecipe.model.Recipe
+import com.kira.android.filipinorecipe.model.enums.Protein
 import kotlinx.coroutines.flow.SharedFlow
 
 lateinit var viewModel: RecipeViewModel
@@ -72,6 +81,11 @@ fun MainScreen(sharedFlow: SharedFlow<RecipeState>) {
 
 @Composable
 fun PopulateRecipeDetails(recipe: Recipe) {
+    val beef = 0xFFFFB5C0
+    val pork = 0xFFFFDBBB
+    val chicken = 0xFFFFF9A3
+    val seafood = 0xFFB3EBF2
+    val vegetables = 0xFFB6F2D1
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -81,16 +95,77 @@ fun PopulateRecipeDetails(recipe: Recipe) {
                 .verticalScroll(rememberScrollState())
                 .padding(bottom = 20.dp)
         ) {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current).data(recipe.image)
-                    .crossfade(true)
-                    .build(),
-                contentDescription = "Recipe image",
-                modifier = Modifier
+            Box(
+                Modifier
                     .fillMaxWidth()
-                    .height(400.dp),
-                contentScale = ContentScale.Crop
-            )
+                    .wrapContentHeight()
+            ) {
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current).data(recipe.image)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = "Recipe image",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(400.dp),
+                    contentScale = ContentScale.Crop
+                )
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 10.dp)
+                        .align(Alignment.BottomCenter)
+                ) {
+                    RoundedTextWithIcon(
+                        text = recipe?.protein?.lowercase()?.replaceFirstChar { it.uppercase() }
+                            .toString(),
+                        Icons.Default.Dining,
+                        when (recipe?.protein) {
+                            Protein.BEEF.toString() -> {
+                                beef
+                            }
+
+                            Protein.PORK.toString() -> {
+                                pork
+                            }
+
+                            Protein.CHICKEN.toString() -> {
+                                chicken
+                            }
+
+                            Protein.SEAFOOD.toString() -> {
+                                seafood
+                            }
+
+                            Protein.VEGETABLES.toString() -> {
+                                vegetables
+                            }
+
+                            else -> {
+                                0xFFB8E986
+                            }
+                        }
+                    )
+
+                    Spacer(Modifier.size(5.dp))
+
+                    RoundedTextWithIcon(
+                        text = "${recipe?.estimatedMinutes.toString()} mins",
+                        Icons.Default.WatchLater,
+                        0xFFB8E986
+                    )
+
+                    Spacer(Modifier.size(5.dp))
+
+                    RoundedTextWithIcon(
+                        text = recipe?.difficulty?.lowercase()
+                            ?.replaceFirstChar { it.uppercase() }.toString(),
+                        icon = Icons.Filled.StackedBarChart,
+                        0xFFB39DDB
+                    )
+                }
+            }
 
             Spacer(modifier = Modifier.height(20.dp))
 
