@@ -2,12 +2,15 @@ package com.kira.android.filipinorecipe.features.recipes.details
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -75,6 +78,7 @@ fun PopulateRecipeDetails(recipe: Recipe) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState())
                 .padding(bottom = 20.dp)
         ) {
             AsyncImage(
@@ -88,71 +92,79 @@ fun PopulateRecipeDetails(recipe: Recipe) {
                 contentScale = ContentScale.Crop
             )
 
-            Spacer(modifier = Modifier.height(15.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
-            Text(
-                textAlign = TextAlign.Center,
-                fontSize = 25.sp,
-                fontFamily = Font(R.font.roboto_bold).toFontFamily(),
-                modifier = Modifier.fillMaxWidth(),
-                text = recipe.title,
-                color = Color.White
-            )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp)
+            ) {
+                Text(
+                    textAlign = TextAlign.Center,
+                    fontSize = 25.sp,
+                    fontFamily = Font(R.font.roboto_bold).toFontFamily(),
+                    modifier = Modifier.fillMaxWidth(),
+                    text = recipe.title,
+                    color = Color.White
+                )
 
-            Text(
-                textAlign = TextAlign.Start,
-                fontSize = 15.sp,
-                fontFamily = Font(R.font.roboto_regular).toFontFamily(),
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .padding(top = 20.dp),
-                text = recipe.description,
-                color = Color.White
-            )
-            Text(
-                textAlign = TextAlign.Start,
-                fontSize = 15.sp,
-                fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .padding(top = 20.dp),
-                text = "Steps:",
-                color = Color.White
-            )
-            NumberedList(recipe.steps)
-            Text(
-                textAlign = TextAlign.Start,
-                fontSize = 15.sp,
-                fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .padding(top = 20.dp),
-                text = "Cooking Tips:",
-                color = Color.White
-            )
-            NumberedList(recipe.cookingTips)
-            Text(
-                textAlign = TextAlign.Start,
-                fontSize = 15.sp,
-                fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .padding(top = 20.dp),
-                text = "Variations:",
-                color = Color.White
-            )
-            NumberedList(recipe.variations)
-            Text(
-                textAlign = TextAlign.Start,
-                fontSize = 15.sp,
-                fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .padding(top = 20.dp),
-                text = "Serving Suggestions:",
-                color = Color.White
-            )
-            NumberedList(recipe.servingSuggestions)
+                Text(
+                    textAlign = TextAlign.Start,
+                    fontSize = 15.sp,
+                    fontFamily = Font(R.font.roboto_regular).toFontFamily(),
+                    modifier = Modifier
+                        .wrapContentWidth()
+                        .padding(top = 20.dp),
+                    text = recipe.description,
+                    color = Color.White
+                )
+                Text(
+                    textAlign = TextAlign.Start,
+                    fontSize = 18.sp,
+                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
+                    modifier = Modifier
+                        .wrapContentWidth()
+                        .padding(top = 20.dp),
+                    text = "Steps:",
+                    color = Color.White
+                )
+                NumberedList(recipe.steps)
+                Text(
+                    textAlign = TextAlign.Start,
+                    fontSize = 18.sp,
+                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
+                    modifier = Modifier
+                        .wrapContentWidth()
+                        .padding(top = 20.dp),
+                    text = "Cooking Tips:",
+                    color = Color.White
+                )
+                NumberedList(recipe.cookingTips)
+                Text(
+                    textAlign = TextAlign.Start,
+                    fontSize = 18.sp,
+                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
+                    modifier = Modifier
+                        .wrapContentWidth()
+                        .padding(top = 20.dp),
+                    text = "Variations:",
+                    color = Color.White
+                )
+                NumberedList(recipe.variations)
+                Text(
+                    textAlign = TextAlign.Start,
+                    fontSize = 18.sp,
+                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
+                    modifier = Modifier
+                        .wrapContentWidth()
+                        .padding(top = 20.dp),
+                    text = "Serving Suggestions:",
+                    color = Color.White
+                )
+                NumberedList(recipe.servingSuggestions)
+            }
+
+
         }
     }
 }
@@ -164,14 +176,27 @@ fun NumberedList(
 ) {
     Column(modifier = modifier) {
         items.forEachIndexed { index, item ->
-            Text(
-                text = "${index + 1}. $item",
-                textAlign = TextAlign.Start,
-                fontSize = 15.sp,
-                fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                modifier = Modifier.padding(vertical = 4.dp),
-                color = Color.White
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp)
+            ) {
+                Text(
+                    text = "${index + 1}.",
+                    fontSize = 15.sp,
+                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
+                    color = Color.White,
+                    modifier = Modifier.padding(end = 8.dp)
+                )
+
+                Text(
+                    text = item,
+                    fontSize = 15.sp,
+                    fontFamily = Font(R.font.roboto_regular).toFontFamily(),
+                    color = Color.White,
+                    modifier = Modifier.weight(1f)
+                )
+            }
         }
     }
 }
