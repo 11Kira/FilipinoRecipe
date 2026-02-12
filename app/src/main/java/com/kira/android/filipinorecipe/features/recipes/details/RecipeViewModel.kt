@@ -17,7 +17,8 @@ class RecipeViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val mutableRecipeState: MutableSharedFlow<RecipeState> = MutableSharedFlow()
-    val recipeState = mutableRecipeState.asSharedFlow()
+    val recipeState
+        get() = mutableRecipeState.asSharedFlow()
 
     fun getRecipeById(recipeId: String) {
         viewModelScope.launch(CoroutineExceptionHandler { _, error ->
