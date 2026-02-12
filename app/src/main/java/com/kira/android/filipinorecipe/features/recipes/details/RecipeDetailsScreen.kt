@@ -198,6 +198,81 @@ fun PopulateRecipeDetails(recipe: Recipe) {
                     modifier = Modifier
                         .wrapContentWidth()
                         .padding(top = 20.dp),
+                    text = "Ingredients:",
+                    color = Color.White
+                )
+                if (recipe.ingredients.main.isNotEmpty()) {
+                    Text(
+                        textAlign = TextAlign.Start,
+                        fontSize = 15.sp,
+                        fontFamily = Font(R.font.roboto_medium).toFontFamily(),
+                        modifier = Modifier
+                            .wrapContentWidth()
+                            .padding(top = 4.dp),
+                        text = "Main:",
+                        color = Color.White
+                    )
+                    NumberedList(recipe.ingredients.main)
+                }
+                if (recipe.ingredients.aromatics.isNotEmpty()) {
+                    Text(
+                        textAlign = TextAlign.Start,
+                        fontSize = 15.sp,
+                        fontFamily = Font(R.font.roboto_medium).toFontFamily(),
+                        modifier = Modifier
+                            .wrapContentWidth()
+                            .padding(top = 10.dp),
+                        text = "Aromatics:",
+                        color = Color.White
+                    )
+                    NumberedList(recipe.ingredients.aromatics)
+                }
+                if (recipe.ingredients.liquidsAndSeasonings.isNotEmpty()) {
+                    Text(
+                        textAlign = TextAlign.Start,
+                        fontSize = 15.sp,
+                        fontFamily = Font(R.font.roboto_medium).toFontFamily(),
+                        modifier = Modifier
+                            .wrapContentWidth()
+                            .padding(top = 10.dp),
+                        text = "Liquids and Seasonings:",
+                        color = Color.White
+                    )
+                    NumberedList(recipe.ingredients.liquidsAndSeasonings)
+                }
+                if (recipe.ingredients.vegetables.isNotEmpty()) {
+                    Text(
+                        textAlign = TextAlign.Start,
+                        fontSize = 15.sp,
+                        fontFamily = Font(R.font.roboto_medium).toFontFamily(),
+                        modifier = Modifier
+                            .wrapContentWidth()
+                            .padding(top = 10.dp),
+                        text = "Vegetables:",
+                        color = Color.White
+                    )
+                    NumberedList(recipe.ingredients.vegetables)
+                }
+                if (recipe.ingredients.optionalAddons.isNotEmpty()) {
+                    Text(
+                        textAlign = TextAlign.Start,
+                        fontSize = 15.sp,
+                        fontFamily = Font(R.font.roboto_medium).toFontFamily(),
+                        modifier = Modifier
+                            .wrapContentWidth()
+                            .padding(top = 10.dp),
+                        text = "Optional Add-ons:",
+                        color = Color.White
+                    )
+                    NumberedList(recipe.ingredients.optionalAddons)
+                }
+                Text(
+                    textAlign = TextAlign.Start,
+                    fontSize = 18.sp,
+                    fontFamily = Font(R.font.roboto_medium).toFontFamily(),
+                    modifier = Modifier
+                        .wrapContentWidth()
+                        .padding(top = 20.dp),
                     text = "Steps:",
                     color = Color.White
                 )
