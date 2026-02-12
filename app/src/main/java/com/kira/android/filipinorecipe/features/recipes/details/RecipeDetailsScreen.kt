@@ -114,14 +114,13 @@ fun PopulateRecipeDetails(recipe: Recipe) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 10.dp)
+                        .padding(horizontal = 10.dp, vertical = 10.dp)
                         .align(Alignment.BottomCenter)
                 ) {
                     RoundedTextWithIcon(
-                        text = recipe?.protein?.lowercase()?.replaceFirstChar { it.uppercase() }
-                            .toString(),
+                        text = recipe.protein.lowercase().replaceFirstChar { it.uppercase() },
                         Icons.Default.Dining,
-                        when (recipe?.protein) {
+                        when (recipe.protein) {
                             Protein.BEEF.toString() -> {
                                 beef
                             }
@@ -151,7 +150,7 @@ fun PopulateRecipeDetails(recipe: Recipe) {
                     Spacer(Modifier.size(5.dp))
 
                     RoundedTextWithIcon(
-                        text = "${recipe?.estimatedMinutes.toString()} mins",
+                        text = "${recipe.estimatedMinutes} mins",
                         Icons.Default.WatchLater,
                         0xFFB8E986
                     )
@@ -159,8 +158,7 @@ fun PopulateRecipeDetails(recipe: Recipe) {
                     Spacer(Modifier.size(5.dp))
 
                     RoundedTextWithIcon(
-                        text = recipe?.difficulty?.lowercase()
-                            ?.replaceFirstChar { it.uppercase() }.toString(),
+                        text = recipe.difficulty.lowercase().replaceFirstChar { it.uppercase() },
                         icon = Icons.Filled.StackedBarChart,
                         0xFFB39DDB
                     )
