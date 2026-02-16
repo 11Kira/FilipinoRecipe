@@ -27,7 +27,7 @@ fun RoundedTextWithIcon(text: String, icon: ImageVector, color: Long) {
                 color = Color(color),
                 shape = RoundedCornerShape(12.dp)
             )
-            .padding(horizontal = 8.dp, vertical = 2.dp)
+            .padding(horizontal = 8.dp, vertical = 5.dp)
     ) {
         Icon(
             imageVector = icon,
