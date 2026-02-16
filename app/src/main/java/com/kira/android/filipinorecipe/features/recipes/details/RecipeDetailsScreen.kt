@@ -38,6 +38,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
@@ -105,10 +106,9 @@ fun PopulateRecipeDetails(navController: NavController, recipe: Recipe) {
     val toolbarHeight = 56.dp
     val showToolbarThreshold = with(LocalDensity.current) { (headerHeight - toolbarHeight).toPx() }
     val toolbarAlpha = (scrollState.value / showToolbarThreshold).coerceIn(0f, 1f)
-
     Box(modifier = Modifier
         .fillMaxSize()
-        .background(Color.Black)) {
+    ) {
         // 1. Background Image (extends to status bar)
         RecipeHeaderImage(
             recipe = recipe,
@@ -311,10 +311,59 @@ fun IngredientsSection(recipe: Recipe) {
 
 @Composable
 fun RecipeContent(recipe: Recipe) {
+    val beefGradient = Brush.linearGradient(
+        colors = listOf(Color(0xFFFF5F6D), Color(0xFFFFC371)),
+        start = Offset(0f, 0f),
+        end = Offset(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
+    )
+    val porkGradient = Brush.linearGradient(
+        colors = listOf(Color(0xFFF8AD9D), Color(0xFFFFDAB9)),
+        start = Offset(0f, 0f),
+        end = Offset(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
+    )
+    val chickenGradient = Brush.linearGradient(
+        colors = listOf(Color(0xFFFDCB82), Color(0xFFFFFBEE)),
+        start = Offset(0f, 0f),
+        end = Offset(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
+    )
+    val seafoodGradient = Brush.linearGradient(
+        colors = listOf(Color(0xFFA1C4FD), Color(0xFFC2E9FB)),
+        start = Offset(0f, 0f),
+        end = Offset(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
+    )
+    val vegetablesGradient = Brush.linearGradient(
+        colors = listOf(Color(0xFFD4FC79), Color(0xFF96E6A1)),
+        start = Offset(0f, 0f),
+        end = Offset(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
+    )
+    val colorGradientBrush = when (recipe.protein) {
+        Protein.BEEF.toString() -> {
+            beefGradient
+        }
+
+        Protein.PORK.toString() -> {
+            porkGradient
+        }
+
+        Protein.CHICKEN.toString() -> {
+            chickenGradient
+        }
+
+        Protein.SEAFOOD.toString() -> {
+            seafoodGradient
+        }
+
+        Protein.VEGETABLES.toString() -> {
+            vegetablesGradient
+        }
+
+        else -> {}
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.Black) // Matches the screenshot theme
+            .background(brush = colorGradientBrush as Brush)
             .padding(16.dp)
     ) {
         Text(
