@@ -20,7 +20,7 @@ fun DetailsListSection(title: String, list: List<String>) {
         modifier = Modifier
             .wrapContentWidth(),
         text = title,
-        color = Color.White
+        color = Color(0xFFFFDAB9)
     )
     NumberedList(list)
 }

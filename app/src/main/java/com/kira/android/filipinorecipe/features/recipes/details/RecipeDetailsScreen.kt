@@ -142,7 +142,7 @@ fun PopulateRecipeDetails(navController: NavController, recipe: Recipe) {
 
 @Composable
 fun RecipeHeaderImage(recipe: Recipe, headerHeight: Dp, scrollState: ScrollState) {
-    val beef = 0xFFFFB5C0
+    val beef = 0xFF7B1F1F
     val pork = 0xFFFFDBBB
     val chicken = 0xFFFFF9A3
     val seafood = 0xFFB3EBF2
@@ -181,42 +181,64 @@ fun RecipeHeaderImage(recipe: Recipe, headerHeight: Dp, scrollState: ScrollState
                 .padding(horizontal = 16.dp, vertical = 10.dp)
                 .align(Alignment.BottomCenter)
         ) {
-            RoundedTextWithIcon(
-                text = recipe.protein.lowercase().replaceFirstChar { it.uppercase() },
-                Icons.Default.Dining,
-                when (recipe.protein) {
-                    Protein.BEEF.toString() -> {
-                        beef
-                    }
-
-                    Protein.PORK.toString() -> {
-                        pork
-                    }
-
-                    Protein.CHICKEN.toString() -> {
-                        chicken
-                    }
-
-                    Protein.SEAFOOD.toString() -> {
-                        seafood
-                    }
-
-                    Protein.VEGETABLES.toString() -> {
-                        vegetables
-                    }
-
-                    else -> {
-                        0xFFB8E986
-                    }
+            when (recipe.protein) {
+                Protein.BEEF.toString() -> {
+                    RoundedTextWithIcon(
+                        text = recipe.protein.lowercase().replaceFirstChar { it.uppercase() },
+                        backgroundColor = beef,
+                        icon = Icons.Default.Dining,
+                        textColor = 0xFFFFFFFF
+                    )
                 }
-            )
+
+                Protein.PORK.toString() -> {
+                    RoundedTextWithIcon(
+                        text = recipe.protein.lowercase().replaceFirstChar { it.uppercase() },
+                        backgroundColor = pork,
+                        icon = Icons.Default.Dining,
+                        textColor = 0xFF000000
+                    )
+                }
+
+                Protein.CHICKEN.toString() -> {
+                    RoundedTextWithIcon(
+                        text = recipe.protein.lowercase().replaceFirstChar { it.uppercase() },
+                        backgroundColor = chicken,
+                        icon = Icons.Default.Dining,
+                        textColor = 0xFF000000
+                    )
+                }
+
+                Protein.SEAFOOD.toString() -> {
+                    RoundedTextWithIcon(
+                        text = recipe.protein.lowercase().replaceFirstChar { it.uppercase() },
+                        backgroundColor = seafood,
+                        icon = Icons.Default.Dining,
+                        textColor = 0xFF000000
+                    )
+                }
+
+                Protein.VEGETABLES.toString() -> {
+                    RoundedTextWithIcon(
+                        text = recipe.protein.lowercase().replaceFirstChar { it.uppercase() },
+                        backgroundColor = vegetables,
+                        icon = Icons.Default.Dining,
+                        textColor = 0xFF000000
+                    )
+                }
+
+                else -> {
+                    0xFFB8E986
+                }
+            }
 
             Spacer(Modifier.size(5.dp))
 
             RoundedTextWithIcon(
                 text = "${recipe.estimatedMinutes} mins",
                 Icons.Default.WatchLater,
-                0xFFB8E986
+                backgroundColor = 0xFFB8E986,
+                textColor = 0xFF000000
             )
 
             Spacer(Modifier.size(5.dp))
@@ -224,7 +246,8 @@ fun RecipeHeaderImage(recipe: Recipe, headerHeight: Dp, scrollState: ScrollState
             RoundedTextWithIcon(
                 text = recipe.difficulty.lowercase().replaceFirstChar { it.uppercase() },
                 icon = Icons.Filled.StackedBarChart,
-                0xFFB39DDB
+                backgroundColor = 0xFFB39DDB,
+                textColor = 0xFF000000
             )
         }
     }
@@ -312,9 +335,9 @@ fun IngredientsSection(recipe: Recipe) {
 @Composable
 fun RecipeContent(recipe: Recipe) {
     val beefGradient = Brush.linearGradient(
-        colors = listOf(Color(0xFFFF5F6D), Color(0xFFFFC371)),
-        start = Offset(0f, 0f),
-        end = Offset(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
+        colors = listOf(Color(0xFFA43931), Color(0xFFE47E5D)),
+        start = Offset.Zero,
+        end = Offset.Infinite
     )
     val porkGradient = Brush.linearGradient(
         colors = listOf(Color(0xFFF8AD9D), Color(0xFFFFDAB9)),
@@ -374,19 +397,34 @@ fun RecipeContent(recipe: Recipe) {
         )
         Text(
             text = recipe.description,
-            color = Color.White,
+            color = Color(0xFFF5F5F5),
             modifier = Modifier.padding(vertical = 8.dp)
         )
 
-        HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp), color = Color.DarkGray)
+        HorizontalDivider(
+            modifier = Modifier.padding(vertical = 16.dp),
+            color = Color.White.copy(alpha = 0.2f)
+        )
         IngredientsSection(recipe = recipe)
-        HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp), color = Color.DarkGray)
+        HorizontalDivider(
+            modifier = Modifier.padding(vertical = 16.dp),
+            color = Color.White.copy(alpha = 0.2f)
+        )
         DetailsListSection("Steps:", recipe.steps)
-        HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp), color = Color.DarkGray)
+        HorizontalDivider(
+            modifier = Modifier.padding(vertical = 16.dp),
+            color = Color.White.copy(alpha = 0.2f)
+        )
         DetailsListSection("Cooking Tips:", recipe.cookingTips)
-        HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp), color = Color.DarkGray)
+        HorizontalDivider(
+            modifier = Modifier.padding(vertical = 16.dp),
+            color = Color.White.copy(alpha = 0.2f)
+        )
         DetailsListSection("Variations:", recipe.variations)
-        HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp), color = Color.DarkGray)
+        HorizontalDivider(
+            modifier = Modifier.padding(vertical = 16.dp),
+            color = Color.White.copy(alpha = 0.2f)
+        )
         DetailsListSection("Serving Suggestions:", recipe.servingSuggestions)
     }
 }

@@ -61,7 +61,7 @@ fun MainRecipeScreen(
 
 @Composable
 fun PopulatedRecipeList(recipeList: LazyPagingItems<Recipe>, onItemClick: (String) -> Unit) {
-    val beef = 0xFFFFB5C0
+    val beef = 0xFF7B1F1F
     val pork = 0xFFFFDBBB
     val chicken = 0xFFFFF9A3
     val seafood = 0xFFB3EBF2
@@ -172,44 +172,47 @@ fun PopulatedRecipeList(recipeList: LazyPagingItems<Recipe>, onItemClick: (Strin
                             .fillMaxWidth()
                             .padding(horizontal = 10.dp),
                     ) {
-
-                        RoundedTextWithIcon(
-                            text = recipe?.protein?.lowercase()?.replaceFirstChar { it.uppercase() }
-                                .toString(),
-                            Icons.Default.Dining,
-                            when (recipe?.protein) {
-                                Protein.BEEF.toString() -> {
-                                    beef
-                                }
-
-                                Protein.PORK.toString() -> {
-                                    pork
-                                }
-
-                                Protein.CHICKEN.toString() -> {
-                                    chicken
-                                }
-
-                                Protein.SEAFOOD.toString() -> {
-                                    seafood
-                                }
-
-                                Protein.VEGETABLES.toString() -> {
-                                    vegetables
-                                }
-
-                                else -> {
-                                    0xFFB8E986
-                                }
+                        when (recipe?.protein) {
+                            Protein.BEEF.toString() -> {
+                                RoundedTextWithIcon(
+                                    text = recipe.protein.lowercase()
+                                        .replaceFirstChar { it.uppercase() },
+                                    backgroundColor = beef,
+                                    icon = Icons.Default.Dining,
+                                    textColor = 0xFFFFFFFF
+                                )
                             }
-                        )
+
+                            Protein.PORK.toString() -> {
+                                pork
+                            }
+
+                            Protein.CHICKEN.toString() -> {
+                                chicken
+                            }
+
+                            Protein.SEAFOOD.toString() -> {
+                                seafood
+                            }
+
+                            Protein.VEGETABLES.toString() -> {
+                                vegetables
+                            }
+
+                            else -> {
+                                0xFFB8E986
+                            }
+                        }
+
+
 
                         Spacer(Modifier.size(5.dp))
 
                         RoundedTextWithIcon(
                             text = "${recipe?.estimatedMinutes.toString()} mins",
                             Icons.Default.WatchLater,
-                            0xFFB8E986
+                            backgroundColor = 0xFFB8E986,
+                            textColor = 0xFF000000
                         )
 
                         Spacer(Modifier.size(5.dp))
@@ -218,7 +221,8 @@ fun PopulatedRecipeList(recipeList: LazyPagingItems<Recipe>, onItemClick: (Strin
                             text = recipe?.difficulty?.lowercase()
                                 ?.replaceFirstChar { it.uppercase() }.toString(),
                             icon = Icons.Filled.StackedBarChart,
-                            0xFFB39DDB
+                            backgroundColor = 0xFFB39DDB,
+                            textColor = 0xFF000000
                         )
                     }
                 }

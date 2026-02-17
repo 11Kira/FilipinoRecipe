@@ -19,12 +19,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun RoundedTextWithIcon(text: String, icon: ImageVector, color: Long) {
+fun RoundedTextWithIcon(text: String, icon: ImageVector, backgroundColor: Long, textColor: Long) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .background(
-                color = Color(color),
+                color = Color(backgroundColor),
                 shape = RoundedCornerShape(12.dp)
             )
             .padding(horizontal = 8.dp, vertical = 5.dp)
@@ -32,7 +32,7 @@ fun RoundedTextWithIcon(text: String, icon: ImageVector, color: Long) {
         Icon(
             imageVector = icon,
             contentDescription = "Time",
-            tint = Color.Black,
+            tint = Color(textColor),
             modifier = Modifier.size(14.dp)
         )
         Spacer(modifier = Modifier.width(3.dp))
@@ -40,7 +40,7 @@ fun RoundedTextWithIcon(text: String, icon: ImageVector, color: Long) {
             fontWeight = FontWeight.Medium,
             fontSize = 10.sp,
             text = text,
-            color = Color.Black
+            color = Color(textColor)
         )
     }
 }
