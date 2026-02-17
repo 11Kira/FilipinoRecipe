@@ -22,8 +22,6 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -55,6 +53,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.kira.android.filipinorecipe.R
+import com.kira.android.filipinorecipe.features.component.CircularIconButton
 import com.kira.android.filipinorecipe.features.component.DetailsListSection
 import com.kira.android.filipinorecipe.features.component.SubDetails
 import com.kira.android.filipinorecipe.model.Recipe
@@ -200,9 +199,7 @@ fun RecipeTopBar(alpha: Float, recipeName: String, onBackClick: () -> Unit) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            IconButton(onClick = onBackClick) {
-                Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
-            }
+            CircularIconButton(icon = Icons.Default.ArrowBack, onClick = onBackClick)
 
             Text(
                 text = recipeName,
@@ -214,14 +211,7 @@ fun RecipeTopBar(alpha: Float, recipeName: String, onBackClick: () -> Unit) {
                 overflow = TextOverflow.Ellipsis,
                 fontSize = 20.sp
             )
-
-            IconButton(onClick = { /* Favorite Logic */ }) {
-                Icon(
-                    Icons.Default.FavoriteBorder,
-                    contentDescription = "Favorite",
-                    tint = Color.White
-                )
-            }
+            CircularIconButton(icon = Icons.Default.FavoriteBorder, onClick = {})
         }
     }
 }

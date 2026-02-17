@@ -55,8 +55,8 @@ fun MainRecipeScreen(
 fun PopulatedRecipeList(recipeList: LazyPagingItems<Recipe>, onItemClick: (String) -> Unit) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
+        contentPadding = PaddingValues(top = 50.dp, start = 10.dp, end = 10.dp, bottom = 120.dp),
+        verticalArrangement = Arrangement.spacedBy(15.dp)
     ) {
         items(recipeList.itemCount) { index ->
             val recipe = recipeList[index]
