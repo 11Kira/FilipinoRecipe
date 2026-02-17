@@ -163,13 +163,33 @@ fun RecipeHeaderImage(recipe: Recipe, headerHeight: Dp, scrollState: ScrollState
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
         )
+        // 2. THE SYSTEM SCRIM (Add this code here)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(80.dp) // Covers the top area including status bar
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            Color.Black.copy(alpha = 0.4f), // Darker at the very top
+                            Color.Transparent              // Fades out into the photo
+                        )
+                    )
+                )
+                .align(Alignment.TopCenter)
+        )
         // Scrim/Gradient to make the bottom text readable
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(
                     Brush.verticalGradient(
-                        colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.6f)),
+                        colors = listOf(
+                            Color.Transparent,
+                            Color.Black.copy(alpha = 0.3f), // Added mid-stop for smoothness
+                            Color.Black.copy(alpha = 0.7f)  // Darkest stop
+                        ), // Close the listOf properly here
+                        // Using pixels for startY (headerHeight.value is Dp, we need Px)
                         startY = 400f
                     )
                 )

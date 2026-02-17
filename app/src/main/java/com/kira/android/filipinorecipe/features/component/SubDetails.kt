@@ -19,7 +19,7 @@ fun SubDetails(recipe: Recipe, modifier: Modifier = Modifier) {
     val beef = 0xFF7B1F1F
     val pork = 0xFFFFDBBB
     val chicken = 0xFFFFF9A3
-    val seafood = 0xFFB3EBF2
+    val seafood = 0xFF21618C
     val vegetables = 0xFFB6F2D1
     Row(modifier = modifier) {
         when (recipe.protein) {
@@ -59,7 +59,7 @@ fun SubDetails(recipe: Recipe, modifier: Modifier = Modifier) {
                         .replaceFirstChar { it.uppercase() },
                     backgroundColor = seafood,
                     icon = Icons.Default.Dining,
-                    textColor = 0xFF000000
+                    textColor = 0xFFFFFFFF
                 )
             }
 

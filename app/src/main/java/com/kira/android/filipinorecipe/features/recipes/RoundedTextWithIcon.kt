@@ -1,6 +1,7 @@
 package com.kira.android.filipinorecipe.features.recipes
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
@@ -28,6 +29,7 @@ fun RoundedTextWithIcon(text: String, icon: ImageVector, backgroundColor: Long, 
                 color = Color(backgroundColor),
                 shape = RoundedCornerShape(12.dp)
             )
+            .border(width = 0.5.dp, color = Color.White, shape = RoundedCornerShape(12.dp))
             .padding(horizontal = 8.dp, vertical = 3.dp)
     ) {
         Icon(

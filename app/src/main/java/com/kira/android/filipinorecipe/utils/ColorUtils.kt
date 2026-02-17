@@ -22,12 +22,12 @@ class ColorUtils {
         end = Offset.Infinite
     )
     val seafoodGradient = Brush.linearGradient(
-        colors = listOf(Color(0xFF1A5276), Color(0xFF5DADE2)),
+        colors = listOf(Color(0xFF154360), Color(0xFF21618C)),
         start = Offset.Zero,
         end = Offset.Infinite
     )
     val vegetablesGradient = Brush.linearGradient(
-        colors = listOf(Color(0xFF186A3B), Color(0xFF7DCEA0)),
+        colors = listOf(Color(0xFF1B4F31), Color(0xFF3D8B5E)),
         start = Offset.Zero,
         end = Offset.Infinite
     )
@@ -75,11 +75,11 @@ class ColorUtils {
             }
 
             Protein.SEAFOOD.toString() -> {
-                return Color(0xFFFFCCBC)
+                return Color(0xFFAED6F1)
             }
 
             Protein.VEGETABLES.toString() -> {
-                return Color(0xFFFFCCBC)
+                return Color(0xFFD5F5E3)
             }
 
             else -> {
