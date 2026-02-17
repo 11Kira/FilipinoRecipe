@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -20,10 +19,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Dining
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.StackedBarChart
-import androidx.compose.material.icons.filled.WatchLater
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -60,7 +56,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.kira.android.filipinorecipe.R
 import com.kira.android.filipinorecipe.features.component.DetailsListSection
-import com.kira.android.filipinorecipe.features.recipes.RoundedTextWithIcon
+import com.kira.android.filipinorecipe.features.component.SubDetails
 import com.kira.android.filipinorecipe.model.Recipe
 import com.kira.android.filipinorecipe.model.enums.Protein
 import kotlinx.coroutines.flow.SharedFlow
@@ -142,11 +138,6 @@ fun PopulateRecipeDetails(navController: NavController, recipe: Recipe) {
 
 @Composable
 fun RecipeHeaderImage(recipe: Recipe, headerHeight: Dp, scrollState: ScrollState) {
-    val beef = 0xFF7B1F1F
-    val pork = 0xFFFFDBBB
-    val chicken = 0xFFFFF9A3
-    val seafood = 0xFFB3EBF2
-    val vegetables = 0xFFB6F2D1
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -175,81 +166,13 @@ fun RecipeHeaderImage(recipe: Recipe, headerHeight: Dp, scrollState: ScrollState
                 )
         )
 
-        Row(
-            modifier = Modifier
+        SubDetails(
+            recipe = recipe,
+            Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 10.dp)
                 .align(Alignment.BottomCenter)
-        ) {
-            when (recipe.protein) {
-                Protein.BEEF.toString() -> {
-                    RoundedTextWithIcon(
-                        text = recipe.protein.lowercase().replaceFirstChar { it.uppercase() },
-                        backgroundColor = beef,
-                        icon = Icons.Default.Dining,
-                        textColor = 0xFFFFFFFF
-                    )
-                }
-
-                Protein.PORK.toString() -> {
-                    RoundedTextWithIcon(
-                        text = recipe.protein.lowercase().replaceFirstChar { it.uppercase() },
-                        backgroundColor = pork,
-                        icon = Icons.Default.Dining,
-                        textColor = 0xFF000000
-                    )
-                }
-
-                Protein.CHICKEN.toString() -> {
-                    RoundedTextWithIcon(
-                        text = recipe.protein.lowercase().replaceFirstChar { it.uppercase() },
-                        backgroundColor = chicken,
-                        icon = Icons.Default.Dining,
-                        textColor = 0xFF000000
-                    )
-                }
-
-                Protein.SEAFOOD.toString() -> {
-                    RoundedTextWithIcon(
-                        text = recipe.protein.lowercase().replaceFirstChar { it.uppercase() },
-                        backgroundColor = seafood,
-                        icon = Icons.Default.Dining,
-                        textColor = 0xFF000000
-                    )
-                }
-
-                Protein.VEGETABLES.toString() -> {
-                    RoundedTextWithIcon(
-                        text = recipe.protein.lowercase().replaceFirstChar { it.uppercase() },
-                        backgroundColor = vegetables,
-                        icon = Icons.Default.Dining,
-                        textColor = 0xFF000000
-                    )
-                }
-
-                else -> {
-                    0xFFB8E986
-                }
-            }
-
-            Spacer(Modifier.size(5.dp))
-
-            RoundedTextWithIcon(
-                text = "${recipe.estimatedMinutes} mins",
-                Icons.Default.WatchLater,
-                backgroundColor = 0xFFB8E986,
-                textColor = 0xFF000000
-            )
-
-            Spacer(Modifier.size(5.dp))
-
-            RoundedTextWithIcon(
-                text = recipe.difficulty.lowercase().replaceFirstChar { it.uppercase() },
-                icon = Icons.Filled.StackedBarChart,
-                backgroundColor = 0xFFB39DDB,
-                textColor = 0xFF000000
-            )
-        }
+        )
     }
 }
 
