@@ -20,7 +20,7 @@ fun CircularIconButton(
     Surface(
         onClick = onClick,
         shape = CircleShape,
-        color = Color.Black.copy(alpha = 0.3f), // Subtle dark glass
+        color = Color.Black.copy(alpha = 0.3f), // Subtle dark glass effect
         modifier = Modifier.size(40.dp)
     ) {
         Box(contentAlignment = Alignment.Center) {

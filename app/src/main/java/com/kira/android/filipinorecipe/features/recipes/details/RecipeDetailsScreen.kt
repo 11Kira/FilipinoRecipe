@@ -104,11 +104,22 @@ fun PopulateRecipeDetails(navController: NavController, recipe: Recipe) {
     Box(modifier = Modifier
         .fillMaxSize()
     ) {
-        // 1. Background Image (extends to status bar)
         RecipeHeaderImage(
             recipe = recipe,
             headerHeight = headerHeight,
             scrollState = scrollState
+        )
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(60.dp)
+                .background(
+                    Brush.verticalGradient(
+                        listOf(Color.Black.copy(alpha = 0.3f), Color.Transparent)
+                    )
+                )
+                .align(Alignment.TopCenter)
         )
 
         // 2. Scrolling Content
@@ -248,29 +259,29 @@ fun IngredientsSection(recipe: Recipe) {
 @Composable
 fun RecipeContent(recipe: Recipe) {
     val beefGradient = Brush.linearGradient(
-        colors = listOf(Color(0xFFA43931), Color(0xFFE47E5D)),
+        colors = listOf(Color(0xFF8E241E), Color(0xFFD86A4F)),
         start = Offset.Zero,
         end = Offset.Infinite
     )
     val porkGradient = Brush.linearGradient(
-        colors = listOf(Color(0xFFF8AD9D), Color(0xFFFFDAB9)),
-        start = Offset(0f, 0f),
-        end = Offset(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
+        colors = listOf(Color(0xFF7B241C), Color(0xFFE6B0AA)),
+        start = Offset.Zero,
+        end = Offset.Infinite
     )
     val chickenGradient = Brush.linearGradient(
-        colors = listOf(Color(0xFFFDCB82), Color(0xFFFFFBEE)),
-        start = Offset(0f, 0f),
-        end = Offset(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
+        colors = listOf(Color(0xFF935116), Color(0xFFF4D03F)),
+        start = Offset.Zero,
+        end = Offset.Infinite
     )
     val seafoodGradient = Brush.linearGradient(
-        colors = listOf(Color(0xFFA1C4FD), Color(0xFFC2E9FB)),
-        start = Offset(0f, 0f),
-        end = Offset(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
+        colors = listOf(Color(0xFF1A5276), Color(0xFF5DADE2)),
+        start = Offset.Zero,
+        end = Offset.Infinite
     )
     val vegetablesGradient = Brush.linearGradient(
-        colors = listOf(Color(0xFFD4FC79), Color(0xFF96E6A1)),
-        start = Offset(0f, 0f),
-        end = Offset(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
+        colors = listOf(Color(0xFF186A3B), Color(0xFF7DCEA0)),
+        start = Offset.Zero,
+        end = Offset.Infinite
     )
     val colorGradientBrush = when (recipe.protein) {
         Protein.BEEF.toString() -> {
