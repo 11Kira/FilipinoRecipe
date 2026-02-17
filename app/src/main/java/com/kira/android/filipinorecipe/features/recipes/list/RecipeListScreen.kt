@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
@@ -65,7 +66,7 @@ fun PopulatedRecipeList(recipeList: LazyPagingItems<Recipe>, onItemClick: (Strin
                     shape = RoundedCornerShape(12.dp),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(350.dp)
+                        .wrapContentHeight()
                         .clickable { onItemClick(recipe.id) },
                 ) {
                     Column(
