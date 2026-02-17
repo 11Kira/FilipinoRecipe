@@ -16,7 +16,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -67,7 +66,7 @@ fun PopulatedRecipeList(recipeList: LazyPagingItems<Recipe>, onItemClick: (Strin
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(350.dp)
-
+                        .clickable { onItemClick(recipe.id) },
                 ) {
                     Column(
                         modifier = Modifier
@@ -79,9 +78,7 @@ fun PopulatedRecipeList(recipeList: LazyPagingItems<Recipe>, onItemClick: (Strin
                                 .fillMaxWidth()
                                 .height(250.dp)
                                 .padding(10.dp)
-                                .clip(RoundedCornerShape(12.dp))
-                                .clickable { onItemClick(recipe.id) },
-
+                                .clip(RoundedCornerShape(12.dp)),
                             model = ImageRequest.Builder(LocalContext.current).data(recipe?.image)
                                 .crossfade(true).build(),
                             contentDescription = "Recipe",
@@ -111,10 +108,9 @@ fun PopulatedRecipeList(recipeList: LazyPagingItems<Recipe>, onItemClick: (Strin
 
                         SubDetails(
                             recipe = selectedRecipe,
-                            Modifier
+                            modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = 10.dp, vertical = 10.dp)
-                                .align(Alignment.CenterHorizontally)
                         )
                     }
                 }

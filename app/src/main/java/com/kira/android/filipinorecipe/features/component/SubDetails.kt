@@ -82,7 +82,7 @@ fun SubDetails(recipe: Recipe, modifier: Modifier = Modifier) {
 
         RoundedTextWithIcon(
             text = "${recipe.estimatedMinutes} mins",
-            Icons.Default.WatchLater,
+            icon = Icons.Default.WatchLater,
             backgroundColor = 0xFFB8E986,
             textColor = 0xFF000000
         )

@@ -168,7 +168,7 @@ fun RecipeHeaderImage(recipe: Recipe, headerHeight: Dp, scrollState: ScrollState
 
         SubDetails(
             recipe = recipe,
-            Modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 10.dp)
                 .align(Alignment.BottomCenter)

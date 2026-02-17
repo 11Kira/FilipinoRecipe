@@ -14,20 +14,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.toFontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kira.android.filipinorecipe.R
 
 @Composable
 fun RoundedTextWithIcon(text: String, icon: ImageVector, backgroundColor: Long, textColor: Long) {
     Row(
-        verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .background(
                 color = Color(backgroundColor),
                 shape = RoundedCornerShape(12.dp)
             )
-            .padding(horizontal = 8.dp, vertical = 5.dp)
+            .padding(horizontal = 8.dp, vertical = 3.dp)
     ) {
         Icon(
             imageVector = icon,
@@ -37,7 +38,8 @@ fun RoundedTextWithIcon(text: String, icon: ImageVector, backgroundColor: Long, 
         )
         Spacer(modifier = Modifier.width(3.dp))
         Text(
-            fontWeight = FontWeight.Medium,
+            modifier = Modifier.align(Alignment.CenterVertically),
+            fontFamily = Font(R.font.roboto_medium).toFontFamily(),
             fontSize = 10.sp,
             text = text,
             color = Color(textColor)
