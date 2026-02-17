@@ -1,5 +1,6 @@
 package com.kira.android.filipinorecipe.features.component
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -7,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.toFontFamily
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kira.android.filipinorecipe.R
 import com.kira.android.filipinorecipe.utils.ColorUtils
@@ -18,7 +20,8 @@ fun DetailsListSection(text: String, protein: String, list: List<String>) {
         fontSize = 20.sp,
         fontFamily = Font(R.font.roboto_medium).toFontFamily(),
         modifier = Modifier
-            .wrapContentWidth(),
+            .wrapContentWidth()
+            .padding(top = 16.dp),
         text = text,
         color = ColorUtils().getSubHeaderColor(protein)
     )

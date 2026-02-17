@@ -253,8 +253,7 @@ fun IngredientsSection(recipe: Recipe) {
         fontSize = 25.sp,
         fontFamily = Font(R.font.roboto_medium).toFontFamily(),
         modifier = Modifier
-            .wrapContentWidth()
-            .padding(bottom = 16.dp),
+            .wrapContentWidth(),
         text = "Ingredients:",
         color = Color.White
     )
@@ -305,22 +304,22 @@ fun RecipeContent(recipe: Recipe) {
         )
         IngredientsSection(recipe = recipe)
         HorizontalDivider(
-            modifier = Modifier.padding(vertical = 16.dp),
+            modifier = Modifier.padding(top = 16.dp),
             color = ColorUtils().getDividerColor(protein = recipe.protein)
         )
         DetailsListSection("Steps:", recipe.protein, recipe.steps)
         HorizontalDivider(
-            modifier = Modifier.padding(vertical = 16.dp),
+            modifier = Modifier.padding(top = 16.dp),
             color = ColorUtils().getDividerColor(protein = recipe.protein)
         )
         DetailsListSection("Cooking Tips:", recipe.protein, recipe.cookingTips)
         HorizontalDivider(
-            modifier = Modifier.padding(vertical = 16.dp),
+            modifier = Modifier.padding(top = 16.dp),
             color = ColorUtils().getDividerColor(protein = recipe.protein)
         )
         DetailsListSection("Variations:", recipe.protein, recipe.variations)
         HorizontalDivider(
-            modifier = Modifier.padding(vertical = 16.dp),
+            modifier = Modifier.padding(top = 16.dp),
             color = ColorUtils().getDividerColor(protein = recipe.protein)
         )
         DetailsListSection("Serving Suggestions:", recipe.protein, recipe.servingSuggestions)
