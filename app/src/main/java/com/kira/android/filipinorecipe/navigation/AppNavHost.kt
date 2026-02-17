@@ -32,6 +32,7 @@ fun AppNavHost(navController: NavHostController) {
         composable<DetailScreenNavigation> {
             val args = it.toRoute<DetailScreenNavigation>()
             RecipeDetailsScreen(
+                navController,
                 args.id,
             )
         }
