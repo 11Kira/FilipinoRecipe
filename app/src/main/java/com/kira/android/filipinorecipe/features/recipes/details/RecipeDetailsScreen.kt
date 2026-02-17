@@ -32,7 +32,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
@@ -57,7 +56,7 @@ import com.kira.android.filipinorecipe.features.component.CircularIconButton
 import com.kira.android.filipinorecipe.features.component.DetailsListSection
 import com.kira.android.filipinorecipe.features.component.SubDetails
 import com.kira.android.filipinorecipe.model.Recipe
-import com.kira.android.filipinorecipe.model.enums.Protein
+import com.kira.android.filipinorecipe.utils.ColorUtils
 import kotlinx.coroutines.flow.SharedFlow
 
 lateinit var viewModel: RecipeViewModel
@@ -258,59 +257,10 @@ fun IngredientsSection(recipe: Recipe) {
 
 @Composable
 fun RecipeContent(recipe: Recipe) {
-    val beefGradient = Brush.linearGradient(
-        colors = listOf(Color(0xFF8E241E), Color(0xFFD86A4F)),
-        start = Offset.Zero,
-        end = Offset.Infinite
-    )
-    val porkGradient = Brush.linearGradient(
-        colors = listOf(Color(0xFF7B241C), Color(0xFFE6B0AA)),
-        start = Offset.Zero,
-        end = Offset.Infinite
-    )
-    val chickenGradient = Brush.linearGradient(
-        colors = listOf(Color(0xFF935116), Color(0xFFF4D03F)),
-        start = Offset.Zero,
-        end = Offset.Infinite
-    )
-    val seafoodGradient = Brush.linearGradient(
-        colors = listOf(Color(0xFF1A5276), Color(0xFF5DADE2)),
-        start = Offset.Zero,
-        end = Offset.Infinite
-    )
-    val vegetablesGradient = Brush.linearGradient(
-        colors = listOf(Color(0xFF186A3B), Color(0xFF7DCEA0)),
-        start = Offset.Zero,
-        end = Offset.Infinite
-    )
-    val colorGradientBrush = when (recipe.protein) {
-        Protein.BEEF.toString() -> {
-            beefGradient
-        }
-
-        Protein.PORK.toString() -> {
-            porkGradient
-        }
-
-        Protein.CHICKEN.toString() -> {
-            chickenGradient
-        }
-
-        Protein.SEAFOOD.toString() -> {
-            seafoodGradient
-        }
-
-        Protein.VEGETABLES.toString() -> {
-            vegetablesGradient
-        }
-
-        else -> {}
-    }
-
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(brush = colorGradientBrush as Brush)
+            .background(brush = ColorUtils().getColorGradientBrush(recipe.protein))
             .padding(16.dp)
     ) {
         Text(
@@ -321,7 +271,7 @@ fun RecipeContent(recipe: Recipe) {
         )
         Text(
             text = recipe.description,
-            color = Color(0xFFF5F5F5),
+            color = Color.White.copy(alpha = 0.85f),
             modifier = Modifier.padding(vertical = 8.dp)
         )
 
