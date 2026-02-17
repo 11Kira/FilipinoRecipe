@@ -30,7 +30,7 @@ fun NumberedList(
                     text = "${index + 1}.",
                     fontSize = 15.sp,
                     fontFamily = Font(R.font.roboto_medium).toFontFamily(),
-                    color = Color(0xFFF5F5F5),
+                    color = Color(0xFFFDFEFE),
                     modifier = Modifier.padding(end = 8.dp)
                 )
 
@@ -38,7 +38,7 @@ fun NumberedList(
                     text = item,
                     fontSize = 15.sp,
                     fontFamily = Font(R.font.roboto_regular).toFontFamily(),
-                    color = Color(0xFFF5F5F5),
+                    color = Color(0xFFFDFEFE),
                     modifier = Modifier.weight(1f)
                 )
             }

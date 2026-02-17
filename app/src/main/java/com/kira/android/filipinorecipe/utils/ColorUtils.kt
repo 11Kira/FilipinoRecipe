@@ -12,7 +12,7 @@ class ColorUtils {
         end = Offset.Infinite
     )
     val porkGradient = Brush.linearGradient(
-        colors = listOf(Color(0xFF7B241C), Color(0xFFE6B0AA)),
+        colors = listOf(Color(0xFF702632), Color(0xFF964F4F)),
         start = Offset.Zero,
         end = Offset.Infinite
     )
@@ -56,6 +56,62 @@ class ColorUtils {
 
             else -> {
                 return beefGradient
+            }
+        }
+    }
+
+    fun getSubHeaderColor(protein: String): Color {
+        when (protein) {
+            Protein.BEEF.toString() -> {
+                return Color(0xFFFFCCBC)
+            }
+
+            Protein.PORK.toString() -> {
+                return Color(0xFFFADBD8)
+            }
+
+            Protein.CHICKEN.toString() -> {
+                return Color(0xFFFEF9E7)
+            }
+
+            Protein.SEAFOOD.toString() -> {
+                return Color(0xFFFFCCBC)
+            }
+
+            Protein.VEGETABLES.toString() -> {
+                return Color(0xFFFFCCBC)
+            }
+
+            else -> {
+                return Color(0xFFFFCCBC)
+            }
+        }
+    }
+
+    fun getDividerColor(protein: String): Color {
+        when (protein) {
+            Protein.BEEF.toString() -> {
+                return Color.White.copy(alpha = 0.2f)
+            }
+
+            Protein.PORK.toString() -> {
+                return Color.White.copy(alpha = 0.2f)
+            }
+
+            Protein.CHICKEN.toString() -> {
+                return Color.White.copy(alpha = 0.15f)
+            }
+
+            Protein.SEAFOOD.toString() -> {
+                return Color.White.copy(alpha = 0.2f)
+            }
+
+            Protein.VEGETABLES.toString() -> {
+                return Color.White.copy(alpha = 0.2f)
+            }
+
+            else -> {
+                return Color.White.copy(alpha = 0.2f)
             }
         }
     }

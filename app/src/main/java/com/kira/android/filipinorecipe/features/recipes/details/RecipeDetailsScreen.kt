@@ -239,19 +239,23 @@ fun IngredientsSection(recipe: Recipe) {
         color = Color.White
     )
     if (recipe.ingredients.main.isNotEmpty()) {
-        DetailsListSection("Main:", recipe.ingredients.main)
+        DetailsListSection("Main:", recipe.protein, recipe.ingredients.main)
     }
     if (recipe.ingredients.aromatics.isNotEmpty()) {
-        DetailsListSection("Aromatics:", recipe.ingredients.aromatics)
+        DetailsListSection("Aromatics:", recipe.protein, recipe.ingredients.aromatics)
     }
     if (recipe.ingredients.liquidsAndSeasonings.isNotEmpty()) {
-        DetailsListSection("Liquids and Seasonings:", recipe.ingredients.liquidsAndSeasonings)
+        DetailsListSection(
+            "Liquids and Seasonings:",
+            recipe.protein,
+            recipe.ingredients.liquidsAndSeasonings
+        )
     }
     if (recipe.ingredients.vegetables.isNotEmpty()) {
-        DetailsListSection("Vegetables:", recipe.ingredients.vegetables)
+        DetailsListSection("Vegetables:", recipe.protein, recipe.ingredients.vegetables)
     }
     if (recipe.ingredients.optionalAddons.isNotEmpty()) {
-        DetailsListSection("Optional Add-ons:", recipe.ingredients.optionalAddons)
+        DetailsListSection("Optional Add-ons:", recipe.protein, recipe.ingredients.optionalAddons)
     }
 }
 
@@ -277,28 +281,28 @@ fun RecipeContent(recipe: Recipe) {
 
         HorizontalDivider(
             modifier = Modifier.padding(vertical = 16.dp),
-            color = Color.White.copy(alpha = 0.2f)
+            color = ColorUtils().getDividerColor(protein = recipe.protein)
         )
         IngredientsSection(recipe = recipe)
         HorizontalDivider(
             modifier = Modifier.padding(vertical = 16.dp),
-            color = Color.White.copy(alpha = 0.2f)
+            color = ColorUtils().getDividerColor(protein = recipe.protein)
         )
-        DetailsListSection("Steps:", recipe.steps)
+        DetailsListSection("Steps:", recipe.protein, recipe.steps)
         HorizontalDivider(
             modifier = Modifier.padding(vertical = 16.dp),
-            color = Color.White.copy(alpha = 0.2f)
+            color = ColorUtils().getDividerColor(protein = recipe.protein)
         )
-        DetailsListSection("Cooking Tips:", recipe.cookingTips)
+        DetailsListSection("Cooking Tips:", recipe.protein, recipe.cookingTips)
         HorizontalDivider(
             modifier = Modifier.padding(vertical = 16.dp),
-            color = Color.White.copy(alpha = 0.2f)
+            color = ColorUtils().getDividerColor(protein = recipe.protein)
         )
-        DetailsListSection("Variations:", recipe.variations)
+        DetailsListSection("Variations:", recipe.protein, recipe.variations)
         HorizontalDivider(
             modifier = Modifier.padding(vertical = 16.dp),
-            color = Color.White.copy(alpha = 0.2f)
+            color = ColorUtils().getDividerColor(protein = recipe.protein)
         )
-        DetailsListSection("Serving Suggestions:", recipe.servingSuggestions)
+        DetailsListSection("Serving Suggestions:", recipe.protein, recipe.servingSuggestions)
     }
 }
