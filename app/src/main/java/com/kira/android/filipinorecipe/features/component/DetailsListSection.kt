@@ -8,16 +8,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.toFontFamily
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.kira.android.filipinorecipe.R
 import com.kira.android.filipinorecipe.utils.ColorUtils
 
 @Composable
-fun DetailsListSection(text: String, protein: String, list: List<String>) {
+fun DetailsListSection(text: String, headerSize: TextUnit, protein: String, list: List<String>) {
     Text(
         textAlign = TextAlign.Start,
-        fontSize = 20.sp,
+        fontSize = headerSize,
         fontFamily = Font(R.font.roboto_medium).toFontFamily(),
         modifier = Modifier
             .wrapContentWidth()
