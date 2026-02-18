@@ -52,22 +52,28 @@ lateinit var viewModel: RecipeListViewModel
 
 @Composable
 fun RecipeListScreen(
+    contentPadding: PaddingValues,
     onItemClick: (String) -> Unit,
 ) {
     viewModel = hiltViewModel()
-    MainRecipeScreen(onItemClick)
+    MainRecipeScreen(contentPadding, onItemClick)
 }
 
 @Composable
 fun MainRecipeScreen(
+    contentPadding: PaddingValues,
     onItemClick: (String) -> Unit,
 ) {
     val recipes = viewModel.recipePagingFlow.collectAsLazyPagingItems()
-    PopulateRecipeList(recipes, onItemClick)
+    PopulateRecipeList(recipes, contentPadding, onItemClick)
 }
 
 @Composable
-fun PopulateRecipeList(recipeList: LazyPagingItems<Recipe>, onItemClick: (String) -> Unit) {
+fun PopulateRecipeList(
+    recipeList: LazyPagingItems<Recipe>,
+    contentPadding: PaddingValues,
+    onItemClick: (String) -> Unit
+) {
     val listState = rememberLazyListState()
     val shimmerBrush = rememberShimmerBrush()
     LazyColumn(
@@ -77,7 +83,7 @@ fun PopulateRecipeList(recipeList: LazyPagingItems<Recipe>, onItemClick: (String
             top = 50.dp,
             start = 10.dp,
             end = 10.dp,
-            bottom = 120.dp
+            bottom = contentPadding.calculateBottomPadding() + 16.dp
         ),
         verticalArrangement = Arrangement.spacedBy(15.dp)
     ) {
