@@ -145,12 +145,6 @@ fun PopulateRecipeList(recipeList: LazyPagingItems<Recipe>, onItemClick: (String
                 }
             }
         }
-
-        if (recipeList.loadState.append is LoadState.Loading) {
-            item {
-                RecipeShimmerItem(shimmerBrush)
-            }
-        }
     }
 }
 
