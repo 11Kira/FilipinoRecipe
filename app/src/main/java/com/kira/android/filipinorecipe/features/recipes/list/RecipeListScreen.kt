@@ -69,96 +69,89 @@ fun MainRecipeScreen(
 @Composable
 fun PopulateRecipeList(recipeList: LazyPagingItems<Recipe>, onItemClick: (String) -> Unit) {
     val listState = rememberLazyListState()
-    val isRefreshing = recipeList.loadState.refresh is LoadState.Loading
     val shimmerBrush = rememberShimmerBrush()
-    /*if (recipeList.itemCount == 0 && isRefreshing) {
-        // 1. Show your Shimmer or Loading screen here
-        // RecipeShimmerList()
-        RecipeShimmerItem(shimmerBrush)
-    } else {*/
-        LazyColumn(
-            state = listState,
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(
-                top = 50.dp,
-                start = 10.dp,
-                end = 10.dp,
-                bottom = 120.dp
-            ),
-            verticalArrangement = Arrangement.spacedBy(15.dp)
-        ) {
-            if (recipeList.loadState.refresh is LoadState.Loading) {
-                items(5) {
-                    RecipeShimmerItem(shimmerBrush)
-                }
+    LazyColumn(
+        state = listState,
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(
+            top = 50.dp,
+            start = 10.dp,
+            end = 10.dp,
+            bottom = 120.dp
+        ),
+        verticalArrangement = Arrangement.spacedBy(15.dp)
+    ) {
+        if (recipeList.loadState.refresh is LoadState.Loading) {
+            items(5) {
+                RecipeShimmerItem(shimmerBrush)
             }
+        }
 
-            items(
-                count = recipeList.itemCount,
-                key = recipeList.itemKey { it.id }
-            ) { index ->
-                val recipe = recipeList[index]
-                recipe?.let { selectedRecipe ->
-                    Card(
-                        shape = RoundedCornerShape(12.dp),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color.White),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { onItemClick(selectedRecipe.id) },
-                    ) {
-                        Column {
-                            AsyncImage(
-                                model = selectedRecipe.image,
-                                contentDescription = "Recipe",
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(250.dp)
-                                    .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)),
-                                contentScale = ContentScale.Crop,
-                                placeholder = painterResource(id = R.drawable.ic_launcher_background),
-                                error = painterResource(id = R.drawable.ic_launcher_background)
-                            )
-                            Text(
-                                text = selectedRecipe.title,
-                                style = TextStyle(
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.Black
-                                ),
-                                modifier = Modifier.padding(top = 10.dp, start = 12.dp, end = 12.dp)
-                            )
-                            Text(
-                                text = selectedRecipe.description,
-                                style = TextStyle(
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.Normal,
-                                    color = Color.Gray,
-                                    lineHeight = 16.sp
-                                ),
-                                maxLines = 3,
-                                overflow = TextOverflow.Ellipsis,
-                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
-                            )
+        items(
+            count = recipeList.itemCount,
+            key = recipeList.itemKey { it.id }
+        ) { index ->
+            val recipe = recipeList[index]
+            recipe?.let { selectedRecipe ->
+                Card(
+                    shape = RoundedCornerShape(12.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { onItemClick(selectedRecipe.id) },
+                ) {
+                    Column {
+                        AsyncImage(
+                            model = selectedRecipe.image,
+                            contentDescription = "Recipe",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(250.dp)
+                                .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)),
+                            contentScale = ContentScale.Crop,
+                            placeholder = painterResource(id = R.drawable.ic_launcher_background),
+                            error = painterResource(id = R.drawable.ic_launcher_background)
+                        )
+                        Text(
+                            text = selectedRecipe.title,
+                            style = TextStyle(
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.Black
+                            ),
+                            modifier = Modifier.padding(top = 10.dp, start = 12.dp, end = 12.dp)
+                        )
+                        Text(
+                            text = selectedRecipe.description,
+                            style = TextStyle(
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Normal,
+                                color = Color.Gray,
+                                lineHeight = 16.sp
+                            ),
+                            maxLines = 3,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
+                        )
 
-                            SubDetails(
-                                recipe = selectedRecipe,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(start = 12.dp, end = 12.dp, bottom = 12.dp, top = 4.dp)
-                            )
-                        }
+                        SubDetails(
+                            recipe = selectedRecipe,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 12.dp, end = 12.dp, bottom = 12.dp, top = 4.dp)
+                        )
                     }
                 }
             }
+        }
 
-            if (recipeList.loadState.append is LoadState.Loading) {
-                item {
-                    RecipeShimmerItem(shimmerBrush)
-                }
+        if (recipeList.loadState.append is LoadState.Loading) {
+            item {
+                RecipeShimmerItem(shimmerBrush)
             }
         }
-    //}
+    }
 }
 
 @Composable
