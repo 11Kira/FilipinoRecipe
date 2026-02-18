@@ -37,6 +37,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.toFontFamily
@@ -50,7 +52,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
-import coil.compose.AsyncImage
+import coil3.compose.AsyncImage
 import com.kira.android.filipinorecipe.R
 import com.kira.android.filipinorecipe.features.component.CircularIconButton
 import com.kira.android.filipinorecipe.features.component.DetailsListSection
@@ -161,7 +163,9 @@ fun RecipeHeaderImage(recipe: Recipe, headerHeight: Dp, scrollState: ScrollState
             model = recipe.image,
             contentDescription = null,
             contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
+            placeholder = painterResource(id = R.drawable.ic_dish_knife_and_fork),
+            error = painterResource(id = R.drawable.ic_dish_knife_and_fork)
         )
         // 2. THE SYSTEM SCRIM (Add this code here)
         Box(
@@ -179,6 +183,8 @@ fun RecipeHeaderImage(recipe: Recipe, headerHeight: Dp, scrollState: ScrollState
                 .align(Alignment.TopCenter)
         )
         // Scrim/Gradient to make the bottom text readable
+        val density = LocalDensity.current
+        val startYPx = with(density) { (headerHeight * 0.6f).toPx() }
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -188,9 +194,8 @@ fun RecipeHeaderImage(recipe: Recipe, headerHeight: Dp, scrollState: ScrollState
                             Color.Transparent,
                             Color.Black.copy(alpha = 0.3f), // Added mid-stop for smoothness
                             Color.Black.copy(alpha = 0.7f)  // Darkest stop
-                        ), // Close the listOf properly here
-                        // Using pixels for startY (headerHeight.value is Dp, we need Px)
-                        startY = 400f
+                        ),
+                        startY = startYPx
                     )
                 )
         )
@@ -250,31 +255,52 @@ fun RecipeTopBar(alpha: Float, recipeName: String, onBackClick: () -> Unit) {
 fun IngredientsSection(recipe: Recipe) {
     Text(
         textAlign = TextAlign.Start,
-        fontSize = 25.sp,
-        fontFamily = Font(R.font.roboto_medium).toFontFamily(),
+        fontSize = 22.sp,
+        fontFamily = Font(R.font.roboto_bold).toFontFamily(),
         modifier = Modifier
             .wrapContentWidth(),
         text = "Ingredients:",
         color = Color.White
     )
     if (recipe.ingredients.main.isNotEmpty()) {
-        DetailsListSection("Main:", recipe.protein, recipe.ingredients.main)
+        DetailsListSection(
+            text = "Main:",
+            isAnchorHeader = false,
+            protein = recipe.protein,
+            list = recipe.ingredients.main
+        )
     }
     if (recipe.ingredients.aromatics.isNotEmpty()) {
-        DetailsListSection("Aromatics:", recipe.protein, recipe.ingredients.aromatics)
+        DetailsListSection(
+            text = "Aromatics:",
+            isAnchorHeader = false,
+            protein = recipe.protein,
+            list = recipe.ingredients.aromatics
+        )
     }
     if (recipe.ingredients.liquidsAndSeasonings.isNotEmpty()) {
         DetailsListSection(
-            "Liquids and Seasonings:",
-            recipe.protein,
-            recipe.ingredients.liquidsAndSeasonings
+            text = "Liquids and Seasonings:",
+            isAnchorHeader = false,
+            protein = recipe.protein,
+            list = recipe.ingredients.liquidsAndSeasonings
         )
     }
     if (recipe.ingredients.vegetables.isNotEmpty()) {
-        DetailsListSection("Vegetables:", recipe.protein, recipe.ingredients.vegetables)
+        DetailsListSection(
+            text = "Vegetables:",
+            isAnchorHeader = false,
+            protein = recipe.protein,
+            list = recipe.ingredients.vegetables
+        )
     }
     if (recipe.ingredients.optionalAddons.isNotEmpty()) {
-        DetailsListSection("Optional Add-ons:", recipe.protein, recipe.ingredients.optionalAddons)
+        DetailsListSection(
+            text = "Optional Add-ons:",
+            isAnchorHeader = false,
+            protein = recipe.protein,
+            list = recipe.ingredients.optionalAddons
+        )
     }
 }
 
@@ -288,13 +314,17 @@ fun RecipeContent(recipe: Recipe) {
     ) {
         Text(
             text = recipe.title,
-            style = MaterialTheme.typography.headlineLarge,
+            fontSize = 32.sp,
+            fontFamily = Font(R.font.roboto_bold).toFontFamily(),
             color = Color.White,
             fontWeight = FontWeight.Bold
         )
         Text(
             text = recipe.description,
-            color = Color.White.copy(alpha = 0.85f),
+            style = TextStyle(
+                lineHeight = 20.sp, // Adds "breathing room" between lines
+                color = Color.White.copy(alpha = 0.9f)
+            ),
             modifier = Modifier.padding(vertical = 8.dp)
         )
 
@@ -307,21 +337,41 @@ fun RecipeContent(recipe: Recipe) {
             modifier = Modifier.padding(top = 16.dp),
             color = ColorUtils().getDividerColor(protein = recipe.protein)
         )
-        DetailsListSection("Steps:", recipe.protein, recipe.steps)
+        DetailsListSection(
+            text = "Steps:",
+            isAnchorHeader = true,
+            protein = recipe.protein,
+            list = recipe.steps
+        )
         HorizontalDivider(
             modifier = Modifier.padding(top = 16.dp),
             color = ColorUtils().getDividerColor(protein = recipe.protein)
         )
-        DetailsListSection("Cooking Tips:", recipe.protein, recipe.cookingTips)
+        DetailsListSection(
+            text = "Cooking Tips:",
+            isAnchorHeader = true,
+            protein = recipe.protein,
+            list = recipe.cookingTips
+        )
         HorizontalDivider(
             modifier = Modifier.padding(top = 16.dp),
             color = ColorUtils().getDividerColor(protein = recipe.protein)
         )
-        DetailsListSection("Variations:", recipe.protein, recipe.variations)
+        DetailsListSection(
+            text = "Variations:",
+            isAnchorHeader = true,
+            protein = recipe.protein,
+            list = recipe.variations
+        )
         HorizontalDivider(
             modifier = Modifier.padding(top = 16.dp),
             color = ColorUtils().getDividerColor(protein = recipe.protein)
         )
-        DetailsListSection("Serving Suggestions:", recipe.protein, recipe.servingSuggestions)
+        DetailsListSection(
+            text = "Serving Suggestions:",
+            isAnchorHeader = true,
+            protein = recipe.protein,
+            list = recipe.servingSuggestions
+        )
     }
 }

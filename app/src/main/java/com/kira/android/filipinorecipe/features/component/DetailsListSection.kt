@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.toFontFamily
 import androidx.compose.ui.text.style.TextAlign
@@ -14,16 +15,16 @@ import com.kira.android.filipinorecipe.R
 import com.kira.android.filipinorecipe.utils.ColorUtils
 
 @Composable
-fun DetailsListSection(text: String, protein: String, list: List<String>) {
+fun DetailsListSection(text: String, isAnchorHeader: Boolean, protein: String, list: List<String>) {
     Text(
         textAlign = TextAlign.Start,
-        fontSize = 20.sp,
-        fontFamily = Font(R.font.roboto_medium).toFontFamily(),
+        fontSize = if (isAnchorHeader) 22.sp else 16.sp,
+        fontFamily = if (isAnchorHeader) Font(R.font.roboto_bold).toFontFamily() else Font(R.font.roboto_medium).toFontFamily(),
         modifier = Modifier
             .wrapContentWidth()
             .padding(top = 16.dp),
         text = text,
-        color = ColorUtils().getSubHeaderColor(protein)
+        color = if (isAnchorHeader) Color.White else ColorUtils().getSubHeaderColor(protein)
     )
     NumberedList(list)
 }
