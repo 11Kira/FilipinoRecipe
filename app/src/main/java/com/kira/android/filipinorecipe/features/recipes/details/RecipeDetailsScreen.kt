@@ -255,7 +255,7 @@ fun RecipeTopBar(alpha: Float, recipeName: String, onBackClick: () -> Unit) {
 fun IngredientsSection(recipe: Recipe) {
     Text(
         textAlign = TextAlign.Start,
-        fontSize = 20.sp,
+        fontSize = 22.sp,
         fontFamily = Font(R.font.roboto_bold).toFontFamily(),
         modifier = Modifier
             .wrapContentWidth(),
