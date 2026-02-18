@@ -6,6 +6,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -70,7 +73,11 @@ fun MainScreenView() {
     ) == true
     Scaffold(
         bottomBar = {
-            if (!isDetailScreen) {
+            AnimatedVisibility(
+                visible = !isDetailScreen,
+                enter = slideInVertically(initialOffsetY = { it }),
+                exit = slideOutVertically(targetOffsetY = { it })
+            ) {
                 BottomNavigation(navController = navController)
             }
         },
@@ -78,7 +85,7 @@ fun MainScreenView() {
         Box(modifier = Modifier
             .background(Color.Black)
             .fillMaxSize()) {
-            AppNavHost(navController = navController)
+            AppNavHost(navController = navController, contentPadding)
         }
     }
 }

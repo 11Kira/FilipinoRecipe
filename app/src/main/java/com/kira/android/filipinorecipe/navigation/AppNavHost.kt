@@ -1,5 +1,6 @@
 package com.kira.android.filipinorecipe.navigation
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -11,13 +12,14 @@ import com.kira.android.filipinorecipe.features.recipes.details.RecipeDetailsScr
 import com.kira.android.filipinorecipe.features.recipes.list.RecipeListScreen
 
 @Composable
-fun AppNavHost(navController: NavHostController) {
+fun AppNavHost(navController: NavHostController, contentPadding: PaddingValues) {
     NavHost(
         navController = navController,
         startDestination = BottomMenuItem.Recipes.screenRoute
     ) {
         composable(BottomMenuItem.Recipes.screenRoute) {
             RecipeListScreen(
+                contentPadding,
                 onItemClick = { id ->
                     navController.navigate(
                         DetailScreenNavigation(id)
