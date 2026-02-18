@@ -110,8 +110,8 @@ fun PopulateRecipeList(recipeList: LazyPagingItems<Recipe>, onItemClick: (String
                                 .height(250.dp)
                                 .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)),
                             contentScale = ContentScale.Crop,
-                            placeholder = painterResource(id = R.drawable.ic_launcher_background),
-                            error = painterResource(id = R.drawable.ic_launcher_background)
+                            placeholder = painterResource(id = R.drawable.ic_dish_knife_and_fork),
+                            error = painterResource(id = R.drawable.ic_dish_knife_and_fork)
                         )
                         Text(
                             text = selectedRecipe.title,

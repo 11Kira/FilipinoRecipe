@@ -164,8 +164,8 @@ fun RecipeHeaderImage(recipe: Recipe, headerHeight: Dp, scrollState: ScrollState
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize(),
-            placeholder = painterResource(id = R.drawable.ic_launcher_background),
-            error = painterResource(id = R.drawable.ic_launcher_background)
+            placeholder = painterResource(id = R.drawable.ic_dish_knife_and_fork),
+            error = painterResource(id = R.drawable.ic_dish_knife_and_fork)
         )
         // 2. THE SYSTEM SCRIM (Add this code here)
         Box(
