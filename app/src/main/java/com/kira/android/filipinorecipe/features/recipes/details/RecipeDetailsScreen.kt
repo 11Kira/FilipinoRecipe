@@ -265,7 +265,7 @@ fun IngredientsSection(recipe: Recipe) {
     if (recipe.ingredients.main.isNotEmpty()) {
         DetailsListSection(
             text = "Main:",
-            headerSize = 16.sp,
+            isAnchorHeader = false,
             protein = recipe.protein,
             list = recipe.ingredients.main
         )
@@ -273,7 +273,7 @@ fun IngredientsSection(recipe: Recipe) {
     if (recipe.ingredients.aromatics.isNotEmpty()) {
         DetailsListSection(
             text = "Aromatics:",
-            headerSize = 16.sp,
+            isAnchorHeader = false,
             protein = recipe.protein,
             list = recipe.ingredients.aromatics
         )
@@ -281,7 +281,7 @@ fun IngredientsSection(recipe: Recipe) {
     if (recipe.ingredients.liquidsAndSeasonings.isNotEmpty()) {
         DetailsListSection(
             text = "Liquids and Seasonings:",
-            headerSize = 16.sp,
+            isAnchorHeader = false,
             protein = recipe.protein,
             list = recipe.ingredients.liquidsAndSeasonings
         )
@@ -289,7 +289,7 @@ fun IngredientsSection(recipe: Recipe) {
     if (recipe.ingredients.vegetables.isNotEmpty()) {
         DetailsListSection(
             text = "Vegetables:",
-            headerSize = 16.sp,
+            isAnchorHeader = false,
             protein = recipe.protein,
             list = recipe.ingredients.vegetables
         )
@@ -297,7 +297,7 @@ fun IngredientsSection(recipe: Recipe) {
     if (recipe.ingredients.optionalAddons.isNotEmpty()) {
         DetailsListSection(
             text = "Optional Add-ons:",
-            headerSize = 16.sp,
+            isAnchorHeader = false,
             protein = recipe.protein,
             list = recipe.ingredients.optionalAddons
         )
@@ -339,7 +339,7 @@ fun RecipeContent(recipe: Recipe) {
         )
         DetailsListSection(
             text = "Steps:",
-            headerSize = 20.sp,
+            isAnchorHeader = true,
             protein = recipe.protein,
             list = recipe.steps
         )
@@ -349,7 +349,7 @@ fun RecipeContent(recipe: Recipe) {
         )
         DetailsListSection(
             text = "Cooking Tips:",
-            headerSize = 20.sp,
+            isAnchorHeader = true,
             protein = recipe.protein,
             list = recipe.cookingTips
         )
@@ -359,7 +359,7 @@ fun RecipeContent(recipe: Recipe) {
         )
         DetailsListSection(
             text = "Variations:",
-            headerSize = 20.sp,
+            isAnchorHeader = true,
             protein = recipe.protein,
             list = recipe.variations
         )
@@ -369,7 +369,7 @@ fun RecipeContent(recipe: Recipe) {
         )
         DetailsListSection(
             text = "Serving Suggestions:",
-            headerSize = 20.sp,
+            isAnchorHeader = true,
             protein = recipe.protein,
             list = recipe.servingSuggestions
         )
