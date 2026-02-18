@@ -1,7 +1,9 @@
 package com.kira.android.filipinorecipe.model
 
+import androidx.compose.runtime.Immutable
 import com.google.gson.annotations.SerializedName
 
+@Immutable
 data class Recipe(
     @SerializedName("id")
     val id: String,

@@ -179,6 +179,8 @@ fun RecipeHeaderImage(recipe: Recipe, headerHeight: Dp, scrollState: ScrollState
                 .align(Alignment.TopCenter)
         )
         // Scrim/Gradient to make the bottom text readable
+        val density = LocalDensity.current
+        val startYPx = with(density) { (headerHeight * 0.6f).toPx() }
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -188,9 +190,8 @@ fun RecipeHeaderImage(recipe: Recipe, headerHeight: Dp, scrollState: ScrollState
                             Color.Transparent,
                             Color.Black.copy(alpha = 0.3f), // Added mid-stop for smoothness
                             Color.Black.copy(alpha = 0.7f)  // Darkest stop
-                        ), // Close the listOf properly here
-                        // Using pixels for startY (headerHeight.value is Dp, we need Px)
-                        startY = 400f
+                        ),
+                        startY = startYPx
                     )
                 )
         )
