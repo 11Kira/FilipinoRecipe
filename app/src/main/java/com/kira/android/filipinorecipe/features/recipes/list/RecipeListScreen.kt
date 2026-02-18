@@ -20,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -31,10 +30,6 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil3.compose.AsyncImage
-import coil3.request.CachePolicy
-import coil3.request.ImageRequest
-import coil3.request.crossfade
-import coil3.size.Precision
 import com.kira.android.filipinorecipe.R
 import com.kira.android.filipinorecipe.features.component.SubDetails
 import com.kira.android.filipinorecipe.model.Recipe
@@ -81,19 +76,12 @@ fun PopulateRecipeList(recipeList: LazyPagingItems<Recipe>, onItemClick: (String
                 ) {
                     Column {
                         AsyncImage(
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(selectedRecipe.image)
-                                .crossfade(true)
-                                .diskCachePolicy(CachePolicy.ENABLED)
-                                .memoryCachePolicy(CachePolicy.ENABLED)
-                                .precision(Precision.EXACT)
-                                .build(),
+                            model = selectedRecipe.image,
                             contentDescription = "Recipe",
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(250.dp)
-                                .padding(10.dp)
-                                .clip(RoundedCornerShape(12.dp)),
+                                .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)),
                             contentScale = ContentScale.Crop,
                             placeholder = painterResource(id = R.drawable.ic_launcher_background),
                             error = painterResource(id = R.drawable.ic_launcher_background)

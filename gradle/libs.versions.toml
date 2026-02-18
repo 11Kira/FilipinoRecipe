@@ -1,5 +1,6 @@
 [versions]
 agp = "9.0.1"
+coilCompose = "3.3.0"
 coilNetworkOkhttp = "3.3.0"
 kotlin = "2.3.10"
 coreKtx = "1.17.0"
@@ -27,7 +28,7 @@ pagingCompose = "3.4.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
-coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilNetworkOkhttp" }
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
 coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coilNetworkOkhttp" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
