@@ -185,8 +185,7 @@ fun RecipeShimmerItem(shimmerBrush: Brush) {
     Card(
         shape = RoundedCornerShape(12.dp),
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 10.dp, vertical = 8.dp),
+            .fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
         Column {
@@ -195,8 +194,7 @@ fun RecipeShimmerItem(shimmerBrush: Brush) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(250.dp)
-                    .padding(10.dp)
-                    .clip(RoundedCornerShape(12.dp))
+                    .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp))
                     .background(shimmerBrush)
             )
 
