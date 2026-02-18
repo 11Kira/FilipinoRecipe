@@ -50,7 +50,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
-import coil.compose.AsyncImage
+import coil3.compose.AsyncImage
 import com.kira.android.filipinorecipe.R
 import com.kira.android.filipinorecipe.features.component.CircularIconButton
 import com.kira.android.filipinorecipe.features.component.DetailsListSection

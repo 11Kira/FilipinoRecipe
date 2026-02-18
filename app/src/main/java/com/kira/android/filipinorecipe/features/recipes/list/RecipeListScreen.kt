@@ -30,9 +30,11 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import coil.compose.AsyncImage
-import coil.request.CachePolicy
-import coil.request.ImageRequest
+import coil3.compose.AsyncImage
+import coil3.request.CachePolicy
+import coil3.request.ImageRequest
+import coil3.request.crossfade
+import coil3.size.Precision
 import com.kira.android.filipinorecipe.R
 import com.kira.android.filipinorecipe.features.component.SubDetails
 import com.kira.android.filipinorecipe.model.Recipe
@@ -82,11 +84,9 @@ fun PopulateRecipeList(recipeList: LazyPagingItems<Recipe>, onItemClick: (String
                             model = ImageRequest.Builder(LocalContext.current)
                                 .data(selectedRecipe.image)
                                 .crossfade(true)
-                                // Ensure these are correctly resolved with the imports above
                                 .diskCachePolicy(CachePolicy.ENABLED)
                                 .memoryCachePolicy(CachePolicy.ENABLED)
-                                // Optional: precision helps with scrolling smoothness
-                                //.precision(coil.request.Precision.INEXACT)
+                                .precision(Precision.EXACT)
                                 .build(),
                             contentDescription = "Recipe",
                             modifier = Modifier
