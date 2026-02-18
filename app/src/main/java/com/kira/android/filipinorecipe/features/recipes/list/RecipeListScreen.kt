@@ -1,6 +1,5 @@
 package com.kira.android.filipinorecipe.features.recipes.list
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,10 +8,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Surface
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -22,14 +21,19 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
+import coil.request.CachePolicy
 import coil.request.ImageRequest
+import com.kira.android.filipinorecipe.R
 import com.kira.android.filipinorecipe.features.component.SubDetails
 import com.kira.android.filipinorecipe.model.Recipe
 
@@ -49,69 +53,78 @@ fun MainRecipeScreen(
 ) {
     val recipes by rememberUpdatedState(newValue = viewModel.recipePagingState.collectAsLazyPagingItems())
     viewModel.getAllRecipes()
-    PopulatedRecipeList(recipes, onItemClick)
+    PopulateRecipeList(recipes, onItemClick)
 }
 
 @Composable
-fun PopulatedRecipeList(recipeList: LazyPagingItems<Recipe>, onItemClick: (String) -> Unit) {
+fun PopulateRecipeList(recipeList: LazyPagingItems<Recipe>, onItemClick: (String) -> Unit) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(top = 50.dp, start = 10.dp, end = 10.dp, bottom = 120.dp),
         verticalArrangement = Arrangement.spacedBy(15.dp)
     ) {
-        items(recipeList.itemCount) { index ->
+        items(
+            count = recipeList.itemCount,
+            key = { index -> recipeList[index]?.id ?: index }
+        ) { index ->
             val recipe = recipeList[index]
             recipe?.let { selectedRecipe ->
-                Surface(
+                Card(
                     shape = RoundedCornerShape(12.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .wrapContentHeight()
-                        .clickable { onItemClick(recipe.id) },
+                        .clickable { onItemClick(selectedRecipe.id) },
                 ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(color = Color.White)
-                    ) {
+                    Column {
                         AsyncImage(
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(selectedRecipe.image)
+                                .crossfade(true)
+                                // Ensure these are correctly resolved with the imports above
+                                .diskCachePolicy(CachePolicy.ENABLED)
+                                .memoryCachePolicy(CachePolicy.ENABLED)
+                                // Optional: precision helps with scrolling smoothness
+                                //.precision(coil.request.Precision.INEXACT)
+                                .build(),
+                            contentDescription = "Recipe",
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(250.dp)
                                 .padding(10.dp)
                                 .clip(RoundedCornerShape(12.dp)),
-                            model = ImageRequest.Builder(LocalContext.current).data(recipe?.image)
-                                .crossfade(true).build(),
-                            contentDescription = "Recipe",
                             contentScale = ContentScale.Crop,
+                            placeholder = painterResource(id = R.drawable.ic_launcher_background),
+                            error = painterResource(id = R.drawable.ic_launcher_background)
                         )
                         Text(
                             text = selectedRecipe.title,
-                            fontSize = 15.sp,
-                            color = Color.Black,
-                            fontWeight = FontWeight.Medium,
-                            modifier = Modifier.padding(
-                                top = 5.dp,
-                                start = 10.dp,
-                                end = 10.dp,
-                                bottom = 2.dp
+                            style = TextStyle(
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.Black
                             ),
-
-                            )
+                            modifier = Modifier.padding(top = 10.dp, start = 12.dp, end = 12.dp)
+                        )
                         Text(
                             text = selectedRecipe.description,
-                            fontSize = 9.sp,
-                            color = Color.Black,
-                            fontWeight = FontWeight.Normal,
-                            modifier = Modifier.padding(start = 10.dp, end = 10.dp, bottom = 5.dp),
-                            lineHeight = 10.sp
+                            style = TextStyle(
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Normal,
+                                color = Color.Gray,
+                                lineHeight = 16.sp
+                            ),
+                            maxLines = 3,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
                         )
 
                         SubDetails(
                             recipe = selectedRecipe,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = 10.dp, vertical = 10.dp)
+                                .padding(start = 12.dp, end = 12.dp, bottom = 12.dp, top = 4.dp)
                         )
                     }
                 }
