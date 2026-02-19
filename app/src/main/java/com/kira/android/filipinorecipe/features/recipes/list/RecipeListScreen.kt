@@ -201,8 +201,8 @@ fun RecipeShimmerItem(shimmerBrush: Brush) {
             // Title Box
             Box(
                 modifier = Modifier
-                    .padding(horizontal = 12.dp, vertical = 8.dp)
-                    .fillMaxWidth(0.6f)
+                    .padding(top = 10.dp, start = 12.dp, end = 12.dp)
+                    .fillMaxWidth(0.5f)
                     .height(20.dp)
                     .background(shimmerBrush)
             )
@@ -211,13 +211,20 @@ fun RecipeShimmerItem(shimmerBrush: Brush) {
             Box(
                 modifier = Modifier
                     .padding(horizontal = 12.dp, vertical = 4.dp)
-                    .fillMaxWidth(0.9f)
-                    .height(14.dp)
+                    .fillMaxWidth()
+                    .height(50.dp)
                     .background(shimmerBrush)
             )
 
             // SubDetails Tags Row
-            Row(modifier = Modifier.padding(12.dp)) {
+            Row(
+                modifier = Modifier.padding(
+                    start = 12.dp,
+                    end = 12.dp,
+                    bottom = 12.dp,
+                    top = 4.dp
+                )
+            ) {
                 repeat(3) {
                     Box(
                         modifier = Modifier
