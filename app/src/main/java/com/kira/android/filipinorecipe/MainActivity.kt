@@ -12,6 +12,8 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -25,15 +27,21 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import coil3.compose.AsyncImage
 import com.kira.android.filipinorecipe.navigation.AppNavHost
 import com.kira.android.filipinorecipe.navigation.BottomMenuItem
 import dagger.hilt.android.AndroidEntryPoint
@@ -146,6 +154,23 @@ fun FavoritesScreen() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Green)
-    )
+            .background(Color.Black)
+    ) {
+        AsyncImage(
+            model = R.drawable.ic_dish_knife_and_fork,
+            contentDescription = "Favorites",
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(500.dp)
+                .align(Alignment.Center),
+            contentScale = ContentScale.Crop,
+        )
+        Text(
+            text = "Your Favorite Recipes\n(Coming soon!)",
+            fontSize = 25.sp,
+            textAlign = TextAlign.Center,
+            color = Color.LightGray,
+            modifier = Modifier.align(Alignment.Center),
+        )
+    }
 }
