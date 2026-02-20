@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -80,17 +81,20 @@ fun MainRecipeScreen(
 ) {
     val recipes = viewModel.recipePagingFlow.collectAsLazyPagingItems()
     val query by viewModel.searchQuery.collectAsState()
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(brush = ColorUtils().recipeListBackgroundGradient)
     ) {
+        PopulateRecipeList(recipes, contentPadding, onItemClick)
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 60.dp, start = 16.dp, end = 16.dp, bottom = 8.dp),
+                .statusBarsPadding()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(5.dp)
         ) {
             BasicTextField(
                 value = query,
@@ -157,7 +161,6 @@ fun MainRecipeScreen(
             }
         }
 
-        PopulateRecipeList(recipes, contentPadding, onItemClick)
     }
 }
 
@@ -173,7 +176,7 @@ fun PopulateRecipeList(
         state = listState,
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(
-            top = 8.dp,
+            top = 128.dp,
             start = 10.dp,
             end = 10.dp,
             bottom = contentPadding.calculateBottomPadding() + 16.dp
