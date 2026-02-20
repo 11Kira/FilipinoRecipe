@@ -88,6 +88,20 @@ fun MainRecipeScreen(
     ) {
         PopulateRecipeList(recipes, contentPadding, onItemClick)
 
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp) // Covers the status bar and search area slightly
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            Color.Black.copy(alpha = 0.3f), // Darker at the very top
+                            Color.Transparent              // Fades out
+                        )
+                    )
+                )
+        )
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
