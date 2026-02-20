@@ -1,10 +1,11 @@
 package com.kira.android.filipinorecipe.model.response
 
 import com.google.gson.annotations.SerializedName
+import com.kira.android.filipinorecipe.model.enums.ResponseStatus
 
 data class ApiResponse<T>(
     @SerializedName("status")
-    val status: String,
+    val status: ResponseStatus,
     @SerializedName("message")
     val message: String,
     @SerializedName("data")

@@ -6,6 +6,7 @@ import androidx.paging.PagingData
 import com.google.gson.JsonObject
 import com.kira.android.filipinorecipe.features.recipes.list.RecipePagingSource
 import com.kira.android.filipinorecipe.model.Recipe
+import com.kira.android.filipinorecipe.model.response.ApiResponse
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -17,15 +18,15 @@ class RecipeRepository @Inject constructor(
             RecipePagingSource(remoteSource = recipeRemoteSource)
         }.flow
 
-    suspend fun getRecipeById(recipeId: String): Recipe {
+    suspend fun getRecipeById(recipeId: String): ApiResponse<Recipe> {
         return recipeRemoteSource.getRecipeById(recipeId = recipeId)
     }
 
-    suspend fun saveRecipe(body: JsonObject): Recipe {
+    suspend fun saveRecipe(body: JsonObject): ApiResponse<Recipe> {
         return recipeRemoteSource.saveRecipe(body)
     }
 
-    suspend fun updateRecipeById(recipeId: String, body: JsonObject): Recipe {
+    suspend fun updateRecipeById(recipeId: String, body: JsonObject): ApiResponse<Recipe> {
         return recipeRemoteSource.updateRecipeById(recipeId = recipeId, body = body)
     }
 
