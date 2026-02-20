@@ -115,4 +115,12 @@ class ColorUtils {
             }
         }
     }
+
+    val PastelBlue = Color(0xFFD6EEFF)
+    val PastelPurple = Color(0xFFE2D7F7)
+    val PastelMint = Color(0xFFE2F1E7)
+
+    val recipeListBackgroundGradient = Brush.verticalGradient(
+        colors = listOf(PastelBlue, PastelPurple, PastelMint)
+    )
 }
