@@ -6,6 +6,7 @@ import androidx.paging.cachedIn
 import com.kira.android.filipinorecipe.features.recipes.RecipeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
@@ -17,14 +18,12 @@ class RecipeListViewModel @Inject constructor(
     private val recipeUseCase: RecipeUseCase
 ) : ViewModel() {
 
-    // 1. Create a state for the search query
     private val _searchQuery = MutableStateFlow("")
     val searchQuery = _searchQuery.asStateFlow()
 
-    // 2. Transform the query into a PagingFlow
-    @OptIn(ExperimentalCoroutinesApi::class)
+    @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
     val recipePagingFlow = _searchQuery
-        .debounce(500L) // Wait for user to stop typing
+        .debounce(500L)
         .flatMapLatest { query ->
             recipeUseCase.getAllRecipes(query)
         }

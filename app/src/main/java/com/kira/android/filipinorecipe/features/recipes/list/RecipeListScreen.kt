@@ -123,7 +123,7 @@ fun PopulateRecipeList(
         verticalArrangement = Arrangement.spacedBy(15.dp)
     ) {
         if (recipeList.loadState.refresh is LoadState.Loading) {
-            items(5) {
+            items(2) {
                 RecipeShimmerItem(shimmerBrush)
             }
         }
