@@ -123,4 +123,8 @@ class ColorUtils {
     val recipeListBackgroundGradient = Brush.verticalGradient(
         colors = listOf(PastelBlue, PastelPurple, PastelMint)
     )
+
+    val bottomNavGradient = Brush.verticalGradient(
+        colors = listOf(PastelPurple, PastelMint) // Blends from the middle-bottom color to the end
+    )
 }
