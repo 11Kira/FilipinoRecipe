@@ -3,6 +3,7 @@ package com.kira.android.filipinorecipe.features.recipes.details
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kira.android.filipinorecipe.features.recipes.RecipeUseCase
+import com.kira.android.filipinorecipe.model.enums.ResponseStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -24,8 +25,12 @@ class RecipeViewModel @Inject constructor(
         viewModelScope.launch(CoroutineExceptionHandler { _, error ->
             runBlocking { mutableRecipeState.emit(RecipeState.ShowError(error)) }
         }) {
-            val invoke = recipeUseCase.getRecipeById(recipeId)
-            mutableRecipeState.emit(RecipeState.SetRecipeDetails(invoke))
+            val response = recipeUseCase.getRecipeById(recipeId)
+            if (response.status == ResponseStatus.SUCCESS) {
+                response.data?.let { data ->
+                    mutableRecipeState.emit(RecipeState.SetRecipeDetails(data))
+                }
+            }
         }
     }
 

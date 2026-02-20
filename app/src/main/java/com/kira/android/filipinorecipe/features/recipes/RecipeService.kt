@@ -21,18 +21,18 @@ interface RecipeService {
     @GET("recipes/{id}")
     suspend fun getRecipeById(
         @Path("id") id: String,
-    ): Recipe
+    ): ApiResponse<Recipe>
 
     @POST("recipes")
     suspend fun saveRecipe(
         @Body body: JsonObject
-    ): Recipe
+    ): ApiResponse<Recipe>
 
     @PUT("recipes/{id}")
     suspend fun updateRecipe(
         @Path("id") id: String,
         @Body body: JsonObject
-    ): Recipe
+    ): ApiResponse<Recipe>
 
     @DELETE("recipes/{id}")
     suspend fun deleteRecipeById(
