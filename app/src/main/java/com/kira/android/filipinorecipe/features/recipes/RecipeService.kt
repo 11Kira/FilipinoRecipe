@@ -14,6 +14,7 @@ import retrofit2.http.Query
 interface RecipeService {
     @GET("recipes")
     suspend fun getAllRecipes(
+        @Query("query") query: String = "",
         @Query("page") page: Int,
         @Query("size") size: Int = 10,
     ): ApiResponse<List<Recipe>>
