@@ -22,10 +22,19 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
@@ -65,7 +74,33 @@ fun MainRecipeScreen(
     onItemClick: (String) -> Unit,
 ) {
     val recipes = viewModel.recipePagingFlow.collectAsLazyPagingItems()
-    PopulateRecipeList(recipes, contentPadding, onItemClick)
+    val query by viewModel.searchQuery.collectAsState()
+    Column(modifier = Modifier.fillMaxSize()) {
+        OutlinedTextField(
+            value = query,
+            onValueChange = { newQuery -> viewModel.onSearchQueryChanged(newQuery) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 60.dp, start = 16.dp, end = 16.dp, bottom = 8.dp),
+            placeholder = { Text("Search recipes...") },
+            leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search Icon") },
+            trailingIcon = {
+                if (query.isNotEmpty()) {
+                    IconButton(onClick = { viewModel.onSearchQueryChanged("") }) {
+                        Icon(Icons.Default.Clear, contentDescription = "Clear")
+                    }
+                }
+            },
+            singleLine = true,
+            shape = RoundedCornerShape(24.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = Color.White,
+                unfocusedContainerColor = Color.White,
+                focusedBorderColor = Color(0xFF6200EE)
+            )
+        )
+        PopulateRecipeList(recipes, contentPadding, onItemClick)
+    }
 }
 
 @Composable
@@ -80,7 +115,7 @@ fun PopulateRecipeList(
         state = listState,
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(
-            top = 50.dp,
+            top = 8.dp,
             start = 10.dp,
             end = 10.dp,
             bottom = contentPadding.calculateBottomPadding() + 16.dp
@@ -88,7 +123,7 @@ fun PopulateRecipeList(
         verticalArrangement = Arrangement.spacedBy(15.dp)
     ) {
         if (recipeList.loadState.refresh is LoadState.Loading) {
-            items(5) {
+            items(2) {
                 RecipeShimmerItem(shimmerBrush)
             }
         }

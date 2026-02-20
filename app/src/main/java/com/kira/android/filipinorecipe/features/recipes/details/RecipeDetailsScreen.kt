@@ -74,8 +74,6 @@ fun RecipeDetailsScreen(navController: NavController, id: String) {
 fun MainScreen(navController: NavController, sharedFlow: SharedFlow<RecipeState>) {
     val lifecycleOwner = LocalLifecycleOwner.current
     var selectedRecipe by remember { mutableStateOf<Recipe?>(null) }
-
-
     LaunchedEffect(key1 = Unit) {
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
             sharedFlow.collect { state ->

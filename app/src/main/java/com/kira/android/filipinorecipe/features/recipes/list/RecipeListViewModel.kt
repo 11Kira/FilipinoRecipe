@@ -5,6 +5,12 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import com.kira.android.filipinorecipe.features.recipes.RecipeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.flatMapLatest
 import javax.inject.Inject
 
 @HiltViewModel
@@ -12,5 +18,18 @@ class RecipeListViewModel @Inject constructor(
     private val recipeUseCase: RecipeUseCase
 ) : ViewModel() {
 
-    val recipePagingFlow = recipeUseCase.getAllRecipes().cachedIn(viewModelScope)
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery = _searchQuery.asStateFlow()
+
+    @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
+    val recipePagingFlow = _searchQuery
+        .debounce(500L)
+        .flatMapLatest { query ->
+            recipeUseCase.getAllRecipes(query)
+        }
+        .cachedIn(viewModelScope)
+
+    fun onSearchQueryChanged(newQuery: String) {
+        _searchQuery.value = newQuery
+    }
 }

@@ -6,12 +6,13 @@ import com.kira.android.filipinorecipe.features.recipes.RecipeRemoteSource
 import com.kira.android.filipinorecipe.model.Recipe
 
 class RecipePagingSource(
-    private val remoteSource: RecipeRemoteSource
+    private val remoteSource: RecipeRemoteSource,
+    private val query: String
 ) : PagingSource<Int, Recipe>() {
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Recipe> {
         return try {
             val currentPage = params.key ?: 1
-            val response = remoteSource.getAllRecipes(page = currentPage)
+            val response = remoteSource.getAllRecipes(query = query, page = currentPage)
             val recipes = response.data.orEmpty()
             LoadResult.Page(
                 data = recipes,
