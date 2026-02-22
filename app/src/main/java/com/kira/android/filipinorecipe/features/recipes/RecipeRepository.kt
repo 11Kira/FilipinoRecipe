@@ -13,9 +13,18 @@ import javax.inject.Inject
 class RecipeRepository @Inject constructor(
     private val recipeRemoteSource: RecipeRemoteSource
 ) {
-    fun getAllRecipes(query: String): Flow<PagingData<Recipe>> =
+    fun getAllRecipes(
+        query: String,
+        protein: String,
+        difficulty: String,
+    ): Flow<PagingData<Recipe>> =
         Pager(PagingConfig(pageSize = 10, prefetchDistance = 10, enablePlaceholders = false)) {
-            RecipePagingSource(remoteSource = recipeRemoteSource, query = query)
+            RecipePagingSource(
+                remoteSource = recipeRemoteSource,
+                query = query,
+                protein = protein,
+                difficulty = difficulty,
+            )
         }.flow
 
     suspend fun getRecipeById(recipeId: String): ApiResponse<Recipe> {

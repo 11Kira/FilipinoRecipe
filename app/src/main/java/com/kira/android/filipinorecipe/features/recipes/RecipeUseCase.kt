@@ -10,8 +10,11 @@ import javax.inject.Inject
 class RecipeUseCase @Inject constructor(
     private val recipeRepository: RecipeRepository
 ){
-    fun getAllRecipes(query: String): Flow<PagingData<Recipe>> =
-        recipeRepository.getAllRecipes(query)
+    fun getAllRecipes(
+        query: String,
+        protein: String,
+        difficulty: String
+    ): Flow<PagingData<Recipe>> = recipeRepository.getAllRecipes(query, protein, difficulty)
 
     suspend fun getRecipeById(recipeId: String): ApiResponse<Recipe> {
         return recipeRepository.getRecipeById(recipeId = recipeId)

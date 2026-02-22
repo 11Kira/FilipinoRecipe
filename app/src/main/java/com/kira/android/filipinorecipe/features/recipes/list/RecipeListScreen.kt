@@ -6,38 +6,57 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -46,9 +65,11 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -62,6 +83,8 @@ import com.kira.android.filipinorecipe.R
 import com.kira.android.filipinorecipe.features.component.SubDetails
 import com.kira.android.filipinorecipe.model.Recipe
 import com.kira.android.filipinorecipe.utils.ColorUtils
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 lateinit var viewModel: RecipeListViewModel
 
@@ -74,19 +97,36 @@ fun RecipeListScreen(
     MainRecipeScreen(contentPadding, onItemClick)
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainRecipeScreen(
     contentPadding: PaddingValues,
     onItemClick: (String) -> Unit,
 ) {
     val recipes = viewModel.recipePagingFlow.collectAsLazyPagingItems()
+    val listState = rememberLazyListState() // Hoisted here
     val query by viewModel.searchQuery.collectAsState()
+    val scope = rememberCoroutineScope() // Needed for manual show/hide
+    val focusManager = LocalFocusManager.current
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true,
+        confirmValueChange = { newValue ->
+            // Allow the sheet to expand, but block the user from swiping it to Hidden
+            newValue != SheetValue.Hidden
+        }
+    )
+    var showFilterSheet by remember { mutableStateOf(false) }
+    LaunchedEffect(recipes.loadState.refresh) {
+        if (recipes.loadState.refresh is LoadState.NotLoading) {
+            listState.scrollToItem(0)
+        }
+    }
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(brush = ColorUtils().recipeListBackgroundGradient)
     ) {
-        PopulateRecipeList(recipes, contentPadding, onItemClick)
+        PopulateRecipeList(recipes, listState, contentPadding, onItemClick)
 
         Box(
             modifier = Modifier
@@ -113,6 +153,12 @@ fun MainRecipeScreen(
             BasicTextField(
                 value = query,
                 onValueChange = { viewModel.onSearchQueryChanged(it) },
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                keyboardActions = KeyboardActions(
+                    onSearch = {
+                        focusManager.clearFocus() // Closes keyboard on search click
+                    }
+                ),
                 modifier = Modifier
                     .weight(1f)
                     .height(50.dp)
@@ -164,7 +210,14 @@ fun MainRecipeScreen(
                 color = Color.White
             ) {
                 IconButton(
-                    onClick = { /* Handle button click */ }
+                    onClick = {
+                        focusManager.clearFocus()
+                        scope.launch {
+                            delay(100)
+                            showFilterSheet = true
+                            sheetState.show()
+                        }
+                    }
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_filter),
@@ -175,29 +228,123 @@ fun MainRecipeScreen(
             }
         }
 
+        if (showFilterSheet) {
+            ModalBottomSheet(
+                onDismissRequest = { showFilterSheet = false },
+                sheetState = sheetState,
+                containerColor = ColorUtils().PastelMint, // Matches your bottom gradient color
+                dragHandle = null, // Removes the default "pill" handle since swipe is disabled
+                shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(370.dp)
+                        .padding(24.dp)
+                        .navigationBarsPadding() // Ensures buttons aren't hidden by system nav
+                ) {
+                    // Header Row
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Filter Recipes",
+                            style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                        )
+                        IconButton(onClick = { showFilterSheet = false }) {
+                            Icon(Icons.Default.Close, contentDescription = "Close")
+                        }
+                    }
+
+                    val proteins = listOf("Pork", "Beef", "Chicken", "Seafood", "Vegetables")
+                    val difficulties = listOf("Easy", "Medium", "Hard")
+
+                    val selectedProteins by viewModel.selectedProteins.collectAsState()
+                    val selectedDifficulty by viewModel.selectedDifficulty.collectAsState()
+
+                    Text(
+                        "Protein",
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                    FlowRow(modifier = Modifier.fillMaxWidth()) {
+                        proteins.forEach { protein ->
+                            FilterChip(
+                                label = protein,
+                                isSelected = selectedProteins.contains(protein),
+                                onToggle = { viewModel.toggleProtein(protein) }
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    Text(
+                        "Difficulty",
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                    FlowRow(modifier = Modifier.fillMaxWidth()) {
+                        difficulties.forEach { level ->
+                            FilterChip(
+                                label = level,
+                                isSelected = selectedDifficulty.contains(level),
+                                onToggle = { viewModel.toggleDifficulty(level) }
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(32.dp))
+
+                    // Action Buttons
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        OutlinedButton(
+                            onClick = { viewModel.resetFilters() },
+                            modifier = Modifier.weight(1f)
+                        ) { Text("Reset") }
+
+                        Button(
+                            onClick = {
+                                scope.launch { sheetState.hide() }.invokeOnCompletion {
+                                    showFilterSheet = false
+                                    viewModel.applyFilters()
+                                }
+                            },
+                            modifier = Modifier.weight(1f),
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
+                        ) { Text("Apply") }
+                    }
+                }
+            }
+        }
     }
 }
 
 @Composable
 fun PopulateRecipeList(
     recipeList: LazyPagingItems<Recipe>,
+    listState: LazyListState,
     contentPadding: PaddingValues,
     onItemClick: (String) -> Unit
 ) {
-    val listState = rememberLazyListState()
     val shimmerBrush = rememberShimmerBrush()
     LazyColumn(
         state = listState,
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(
-            top = 128.dp,
+            top = 120.dp,
             start = 10.dp,
             end = 10.dp,
             bottom = contentPadding.calculateBottomPadding() + 16.dp
         ),
         verticalArrangement = Arrangement.spacedBy(15.dp)
     ) {
-        if (recipeList.loadState.refresh is LoadState.Loading) {
+        if (recipeList.loadState.refresh is LoadState.Loading && recipeList.itemCount == 0) {
             items(2) {
                 RecipeShimmerItem(shimmerBrush)
             }
@@ -345,6 +492,43 @@ fun RecipeShimmerItem(shimmerBrush: Brush) {
                     )
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun FilterChip(
+    label: String,
+    isSelected: Boolean,
+    onToggle: () -> Unit
+) {
+    Surface(
+        // Move the padding to the outside
+        modifier = Modifier.padding(4.dp),
+        shape = RoundedCornerShape(16.dp),
+        color = if (isSelected) Color.Black else Color.White,
+        border = BorderStroke(
+            1.dp,
+            if (isSelected) Color.Black else Color.LightGray.copy(alpha = 0.5f)
+        )
+    ) {
+        Box(
+            modifier = Modifier
+                // 1. Clip to the shape first
+                .clip(RoundedCornerShape(16.dp))
+                // 2. Then add clickable so the ripple respects the clip
+                .clickable { onToggle() }
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = label,
+                style = TextStyle(
+                    color = if (isSelected) Color.White else Color.Black,
+                    fontSize = 14.sp,
+                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                )
+            )
         }
     }
 }
