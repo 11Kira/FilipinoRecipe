@@ -328,7 +328,7 @@ fun MainRecipeScreen(
 @Composable
 fun PopulateRecipeList(
     recipeList: LazyPagingItems<Recipe>,
-    listState: LazyListState, // Accept as param
+    listState: LazyListState,
     contentPadding: PaddingValues,
     onItemClick: (String) -> Unit
 ) {
@@ -337,7 +337,7 @@ fun PopulateRecipeList(
         state = listState,
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(
-            top = 128.dp,
+            top = 120.dp,
             start = 10.dp,
             end = 10.dp,
             bottom = contentPadding.calculateBottomPadding() + 16.dp
