@@ -15,6 +15,8 @@ interface RecipeService {
     @GET("recipes")
     suspend fun getAllRecipes(
         @Query("query") query: String = "",
+        @Query("protein") protein: String = "",
+        @Query("difficulty") difficulty: String = "",
         @Query("page") page: Int,
         @Query("size") size: Int = 10,
     ): ApiResponse<List<Recipe>>

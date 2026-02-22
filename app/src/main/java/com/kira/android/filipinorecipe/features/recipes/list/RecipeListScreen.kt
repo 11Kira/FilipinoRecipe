@@ -6,11 +6,13 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -229,7 +231,7 @@ fun MainRecipeScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(300.dp)
+                        .height(370.dp)
                         .padding(24.dp)
                         .navigationBarsPadding() // Ensures buttons aren't hidden by system nav
                 ) {
@@ -248,11 +250,43 @@ fun MainRecipeScreen(
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(24.dp))
+                    val proteins = listOf("Pork", "Beef", "Chicken", "Seafood", "Vegetables")
+                    val difficulties = listOf("Easy", "Medium", "Hard")
 
-                    // --- Your Filter Content Here ---
-                    Text("Categories", fontWeight = FontWeight.SemiBold)
-                    // Example: LazyRow with Chips for Beef, Chicken, Seafood, etc.
+                    val selectedProteins by viewModel.selectedProteins.collectAsState()
+                    val selectedDifficulty by viewModel.selectedDifficulty.collectAsState()
+
+                    Text(
+                        "Protein",
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                    FlowRow(modifier = Modifier.fillMaxWidth()) {
+                        proteins.forEach { protein ->
+                            FilterChip(
+                                label = protein,
+                                isSelected = selectedProteins.contains(protein),
+                                onToggle = { viewModel.toggleProtein(protein) }
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    Text(
+                        "Difficulty",
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                    FlowRow(modifier = Modifier.fillMaxWidth()) {
+                        difficulties.forEach { level ->
+                            FilterChip(
+                                label = level,
+                                isSelected = selectedDifficulty.contains(level),
+                                onToggle = { viewModel.toggleDifficulty(level) }
+                            )
+                        }
+                    }
 
                     Spacer(modifier = Modifier.height(32.dp))
 
@@ -262,23 +296,20 @@ fun MainRecipeScreen(
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         OutlinedButton(
-                            onClick = { /* Handle Reset */ },
-                            modifier = Modifier.weight(1f),
-                            shape = RoundedCornerShape(12.dp)
-                        ) {
-                            Text("Reset")
-                        }
+                            onClick = { viewModel.resetFilters() },
+                            modifier = Modifier.weight(1f)
+                        ) { Text("Reset") }
+
                         Button(
                             onClick = {
-                                /* Apply filters and close */
-                                showFilterSheet = false
+                                scope.launch { sheetState.hide() }.invokeOnCompletion {
+                                    showFilterSheet = false
+                                    viewModel.applyFilters()
+                                }
                             },
                             modifier = Modifier.weight(1f),
-                            shape = RoundedCornerShape(12.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
-                        ) {
-                            Text("Apply")
-                        }
+                        ) { Text("Apply") }
                     }
                 }
             }
@@ -453,6 +484,43 @@ fun RecipeShimmerItem(shimmerBrush: Brush) {
                     )
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun FilterChip(
+    label: String,
+    isSelected: Boolean,
+    onToggle: () -> Unit
+) {
+    Surface(
+        // Move the padding to the outside
+        modifier = Modifier.padding(4.dp),
+        shape = RoundedCornerShape(16.dp),
+        color = if (isSelected) Color.Black else Color.White,
+        border = BorderStroke(
+            1.dp,
+            if (isSelected) Color.Black else Color.LightGray.copy(alpha = 0.5f)
+        )
+    ) {
+        Box(
+            modifier = Modifier
+                // 1. Clip to the shape first
+                .clip(RoundedCornerShape(16.dp))
+                // 2. Then add clickable so the ripple respects the clip
+                .clickable { onToggle() }
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = label,
+                style = TextStyle(
+                    color = if (isSelected) Color.White else Color.Black,
+                    fontSize = 14.sp,
+                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                )
+            )
         }
     }
 }

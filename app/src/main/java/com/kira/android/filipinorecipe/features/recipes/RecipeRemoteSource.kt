@@ -8,8 +8,19 @@ import javax.inject.Inject
 class RecipeRemoteSource @Inject constructor(
     private val recipeService: RecipeService
 ) {
-    suspend fun getAllRecipes(query: String, page: Int) =
-        withContext(Dispatchers.IO) { recipeService.getAllRecipes(query, page) }
+    suspend fun getAllRecipes(
+        query: String,
+        protein: String,
+        difficulty: String,
+        page: Int
+    ) = withContext(Dispatchers.IO) {
+        recipeService.getAllRecipes(
+            query,
+            protein,
+            difficulty,
+            page
+        )
+    }
 
     suspend fun getRecipeById(recipeId: String) =
         withContext(Dispatchers.IO) { recipeService.getRecipeById(recipeId) }
