@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -49,6 +50,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -102,6 +104,7 @@ fun MainRecipeScreen(
     onItemClick: (String) -> Unit,
 ) {
     val recipes = viewModel.recipePagingFlow.collectAsLazyPagingItems()
+    val listState = rememberLazyListState() // Hoisted here
     val query by viewModel.searchQuery.collectAsState()
     val scope = rememberCoroutineScope() // Needed for manual show/hide
     val focusManager = LocalFocusManager.current
@@ -113,12 +116,17 @@ fun MainRecipeScreen(
         }
     )
     var showFilterSheet by remember { mutableStateOf(false) }
+    LaunchedEffect(recipes.loadState.refresh) {
+        if (recipes.loadState.refresh is LoadState.NotLoading) {
+            listState.scrollToItem(0)
+        }
+    }
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(brush = ColorUtils().recipeListBackgroundGradient)
     ) {
-        PopulateRecipeList(recipes, contentPadding, onItemClick)
+        PopulateRecipeList(recipes, listState, contentPadding, onItemClick)
 
         Box(
             modifier = Modifier
@@ -320,10 +328,10 @@ fun MainRecipeScreen(
 @Composable
 fun PopulateRecipeList(
     recipeList: LazyPagingItems<Recipe>,
+    listState: LazyListState, // Accept as param
     contentPadding: PaddingValues,
     onItemClick: (String) -> Unit
 ) {
-    val listState = rememberLazyListState()
     val shimmerBrush = rememberShimmerBrush()
     LazyColumn(
         state = listState,
@@ -336,7 +344,7 @@ fun PopulateRecipeList(
         ),
         verticalArrangement = Arrangement.spacedBy(15.dp)
     ) {
-        if (recipeList.loadState.refresh is LoadState.Loading) {
+        if (recipeList.loadState.refresh is LoadState.Loading && recipeList.itemCount == 0) {
             items(2) {
                 RecipeShimmerItem(shimmerBrush)
             }
