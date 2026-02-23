@@ -77,7 +77,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.compose.itemKey
+import androidx.paging.compose.itemContentType
 import coil3.compose.AsyncImage
 import com.kira.android.filipinorecipe.R
 import com.kira.android.filipinorecipe.features.component.SubDetails
@@ -104,9 +104,9 @@ fun MainRecipeScreen(
     onItemClick: (String) -> Unit,
 ) {
     val recipes = viewModel.recipePagingFlow.collectAsLazyPagingItems()
-    val listState = rememberLazyListState() // Hoisted here
+    val listState = rememberLazyListState()
     val query by viewModel.searchQuery.collectAsState()
-    val scope = rememberCoroutineScope() // Needed for manual show/hide
+    val scope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true,
@@ -117,8 +117,12 @@ fun MainRecipeScreen(
     )
     var showFilterSheet by remember { mutableStateOf(false) }
     LaunchedEffect(recipes.loadState.refresh) {
+        // ONLY reset scroll if we are definitely NOT loading anymore
         if (recipes.loadState.refresh is LoadState.NotLoading) {
-            listState.scrollToItem(0)
+            // Use a slight delay or check if the list actually has items now
+            if (recipes.itemCount > 0) {
+                listState.scrollToItem(0)
+            }
         }
     }
     Box(
@@ -126,17 +130,17 @@ fun MainRecipeScreen(
             .fillMaxSize()
             .background(brush = ColorUtils().recipeListBackgroundGradient)
     ) {
-        PopulateRecipeList(recipes, listState, contentPadding, onItemClick)
+        PopulateRecipeList(recipes, listState, query, contentPadding, onItemClick)
 
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(100.dp) // Covers the status bar and search area slightly
+                .height(100.dp)
                 .background(
                     brush = Brush.verticalGradient(
                         colors = listOf(
-                            Color.Black.copy(alpha = 0.3f), // Darker at the very top
-                            Color.Transparent              // Fades out
+                            Color.Black.copy(alpha = 0.3f),
+                            Color.Transparent
                         )
                     )
                 )
@@ -154,11 +158,7 @@ fun MainRecipeScreen(
                 value = query,
                 onValueChange = { viewModel.onSearchQueryChanged(it) },
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                keyboardActions = KeyboardActions(
-                    onSearch = {
-                        focusManager.clearFocus() // Closes keyboard on search click
-                    }
-                ),
+                keyboardActions = KeyboardActions(onSearch = { focusManager.clearFocus() }),
                 modifier = Modifier
                     .weight(1f)
                     .height(50.dp)
@@ -232,8 +232,8 @@ fun MainRecipeScreen(
             ModalBottomSheet(
                 onDismissRequest = { showFilterSheet = false },
                 sheetState = sheetState,
-                containerColor = ColorUtils().PastelMint, // Matches your bottom gradient color
-                dragHandle = null, // Removes the default "pill" handle since swipe is disabled
+                containerColor = ColorUtils().PastelMint,
+                dragHandle = null,
                 shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
             ) {
                 Column(
@@ -329,81 +329,44 @@ fun MainRecipeScreen(
 fun PopulateRecipeList(
     recipeList: LazyPagingItems<Recipe>,
     listState: LazyListState,
+    searchQuery: String,
     contentPadding: PaddingValues,
     onItemClick: (String) -> Unit
 ) {
     val shimmerBrush = rememberShimmerBrush()
-    LazyColumn(
-        state = listState,
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(
-            top = 120.dp,
-            start = 10.dp,
-            end = 10.dp,
-            bottom = contentPadding.calculateBottomPadding() + 16.dp
-        ),
-        verticalArrangement = Arrangement.spacedBy(15.dp)
-    ) {
-        if (recipeList.loadState.refresh is LoadState.Loading && recipeList.itemCount == 0) {
-            items(2) {
-                RecipeShimmerItem(shimmerBrush)
-            }
-        }
+    val isRefreshing = recipeList.loadState.refresh is LoadState.Loading
+    val isSearchStale = isRefreshing && recipeList.itemCount > 0
+    val isInitialLoad = isRefreshing && recipeList.itemCount == 0
+    Box(modifier = Modifier.fillMaxSize()) {
+        LazyColumn(
+            state = listState,
+            modifier = Modifier
+                .fillMaxSize(),
+            contentPadding = PaddingValues(
+                top = 120.dp,
+                start = 10.dp,
+                end = 10.dp,
+                bottom = contentPadding.calculateBottomPadding() + 16.dp
+            ),
+            verticalArrangement = Arrangement.spacedBy(15.dp)
+        ) {
+            if (isInitialLoad || isSearchStale) {
+                items(3) {
+                    RecipeShimmerItem(shimmerBrush)
+                }
+            } else {
+                items(
+                    count = recipeList.itemCount,
+                    key = { index ->
+                        val recipe = recipeList[index]
+                        "${recipe?.id}_$searchQuery"
+                    },
+                    contentType = recipeList.itemContentType { "recipe_item" }
 
-        items(
-            count = recipeList.itemCount,
-            key = recipeList.itemKey { it.id }
-        ) { index ->
-            val recipe = recipeList[index]
-            recipe?.let { selectedRecipe ->
-                Card(
-                    shape = RoundedCornerShape(12.dp),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { onItemClick(selectedRecipe.id) },
-                ) {
-                    Column {
-                        AsyncImage(
-                            model = selectedRecipe.image,
-                            contentDescription = "Recipe",
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(250.dp)
-                                .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)),
-                            contentScale = ContentScale.Crop,
-                            placeholder = painterResource(id = R.drawable.ic_dish_knife_and_fork),
-                            error = painterResource(id = R.drawable.ic_dish_knife_and_fork)
-                        )
-                        Text(
-                            text = selectedRecipe.title,
-                            style = TextStyle(
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.Black
-                            ),
-                            modifier = Modifier.padding(top = 10.dp, start = 12.dp, end = 12.dp)
-                        )
-                        Text(
-                            text = selectedRecipe.description,
-                            style = TextStyle(
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Normal,
-                                color = Color.Gray,
-                                lineHeight = 16.sp
-                            ),
-                            maxLines = 3,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
-                        )
-
-                        SubDetails(
-                            recipe = selectedRecipe,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 12.dp, end = 12.dp, bottom = 12.dp, top = 4.dp)
-                        )
+                ) { index ->
+                    val recipe = recipeList[index]
+                    recipe?.let { selectedRecipe ->
+                        RecipeCardItem(selectedRecipe, onItemClick)
                     }
                 }
             }
@@ -435,6 +398,60 @@ fun rememberShimmerBrush(): Brush {
         start = Offset.Zero,
         end = Offset(x = translateAnim.value, y = translateAnim.value)
     )
+}
+
+@Composable
+fun RecipeCardItem(selectedRecipe: Recipe, onItemClick: (String) -> Unit) {
+    Card(
+        shape = RoundedCornerShape(12.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onItemClick(selectedRecipe.id) },
+    ) {
+        Column {
+            AsyncImage(
+                model = selectedRecipe.image,
+                contentDescription = "Recipe",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(250.dp)
+                    .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)),
+                contentScale = ContentScale.Crop,
+                placeholder = painterResource(id = R.drawable.ic_dish_knife_and_fork),
+                error = painterResource(id = R.drawable.ic_dish_knife_and_fork)
+            )
+            Text(
+                text = selectedRecipe.title,
+                style = TextStyle(
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
+                ),
+                modifier = Modifier.padding(top = 10.dp, start = 12.dp, end = 12.dp)
+            )
+            Text(
+                text = selectedRecipe.description,
+                style = TextStyle(
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Normal,
+                    color = Color.Gray,
+                    lineHeight = 16.sp
+                ),
+                maxLines = 3,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
+            )
+
+            SubDetails(
+                recipe = selectedRecipe,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 12.dp, end = 12.dp, bottom = 12.dp, top = 4.dp)
+            )
+        }
+    }
 }
 
 @Composable
@@ -503,7 +520,6 @@ fun FilterChip(
     onToggle: () -> Unit
 ) {
     Surface(
-        // Move the padding to the outside
         modifier = Modifier.padding(4.dp),
         shape = RoundedCornerShape(16.dp),
         color = if (isSelected) Color.Black else Color.White,
@@ -514,9 +530,7 @@ fun FilterChip(
     ) {
         Box(
             modifier = Modifier
-                // 1. Clip to the shape first
                 .clip(RoundedCornerShape(16.dp))
-                // 2. Then add clickable so the ripple respects the clip
                 .clickable { onToggle() }
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             contentAlignment = Alignment.Center
