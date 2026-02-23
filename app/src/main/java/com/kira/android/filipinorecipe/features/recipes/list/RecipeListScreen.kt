@@ -36,6 +36,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Badge
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -106,6 +107,9 @@ fun MainRecipeScreen(
     val recipes = viewModel.recipePagingFlow.collectAsLazyPagingItems()
     val listState = rememberLazyListState()
     val query by viewModel.searchQuery.collectAsState()
+    val selectedProteins by viewModel.selectedProteins.collectAsState()
+    val selectedDifficulties by viewModel.selectedDifficulties.collectAsState()
+    val appliedFilterCount by viewModel.appliedFilterCount.collectAsState()
     val scope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
     val sheetState = rememberModalBottomSheetState(
@@ -209,21 +213,36 @@ fun MainRecipeScreen(
                 shape = CircleShape,
                 color = Color.White
             ) {
-                IconButton(
-                    onClick = {
-                        focusManager.clearFocus()
-                        scope.launch {
-                            delay(100)
-                            showFilterSheet = true
-                            sheetState.show()
+                Box(modifier = Modifier.fillMaxSize()) {
+                    IconButton(
+                        onClick = {
+                            focusManager.clearFocus()
+                            viewModel.syncSelectedWithApplied()
+                            scope.launch {
+                                delay(100)
+                                showFilterSheet = true
+                                sheetState.show()
+                            }
+                        }
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_filter),
+                            contentDescription = "Filter",
+                            modifier = Modifier.size(24.dp),
+                        )
+                    }
+
+                    if (appliedFilterCount > 0) {
+                        Badge(
+                            modifier = Modifier
+                                .align(Alignment.TopEnd)
+                                .padding(top = 6.dp, end = 6.dp),
+                            containerColor = Color.Black,
+                            contentColor = Color.White
+                        ) {
+                            Text(text = appliedFilterCount.toString())
                         }
                     }
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_filter),
-                        contentDescription = "Filter",
-                        modifier = Modifier.size(22.dp),
-                    )
                 }
             }
         }
@@ -261,9 +280,6 @@ fun MainRecipeScreen(
                     val proteins = listOf("Pork", "Beef", "Chicken", "Seafood", "Vegetables")
                     val difficulties = listOf("Easy", "Medium", "Hard")
 
-                    val selectedProteins by viewModel.selectedProteins.collectAsState()
-                    val selectedDifficulty by viewModel.selectedDifficulty.collectAsState()
-
                     Text(
                         "Protein",
                         fontWeight = FontWeight.Bold,
@@ -290,7 +306,7 @@ fun MainRecipeScreen(
                         difficulties.forEach { level ->
                             FilterChip(
                                 label = level,
-                                isSelected = selectedDifficulty.contains(level),
+                                isSelected = selectedDifficulties.contains(level),
                                 onToggle = { viewModel.toggleDifficulty(level) }
                             )
                         }
@@ -310,9 +326,11 @@ fun MainRecipeScreen(
 
                         Button(
                             onClick = {
-                                scope.launch { sheetState.hide() }.invokeOnCompletion {
+                                viewModel.applyFilters()
+                                scope.launch {
+                                    sheetState.hide()
+                                }.invokeOnCompletion {
                                     showFilterSheet = false
-                                    viewModel.applyFilters()
                                 }
                             },
                             modifier = Modifier.weight(1f),
@@ -351,7 +369,7 @@ fun PopulateRecipeList(
             verticalArrangement = Arrangement.spacedBy(15.dp)
         ) {
             if (isInitialLoad || isSearchStale) {
-                items(3) {
+                items(2) {
                     RecipeShimmerItem(shimmerBrush)
                 }
             } else {
