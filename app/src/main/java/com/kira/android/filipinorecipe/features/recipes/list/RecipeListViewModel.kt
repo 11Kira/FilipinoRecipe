@@ -8,10 +8,13 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
@@ -24,22 +27,31 @@ class RecipeListViewModel @Inject constructor(
 
     private val _selectedProteins = MutableStateFlow<Set<String>>(emptySet())
     val selectedProteins = _selectedProteins.asStateFlow()
+    private val _appliedProteins = MutableStateFlow<Set<String>>(emptySet())
 
-    private val _selectedDifficulty = MutableStateFlow<Set<String>>(emptySet())
-    val selectedDifficulty = _selectedDifficulty.asStateFlow()
+    private val _selectedDifficulties = MutableStateFlow<Set<String>>(emptySet())
+    val selectedDifficulties = _selectedDifficulties.asStateFlow()
+    private val _appliedDifficulties = MutableStateFlow<Set<String>>(emptySet())
 
     private val _searchQuery = MutableStateFlow("")
     val searchQuery = _searchQuery.asStateFlow()
 
+    val appliedFilterCount =
+        combine(_appliedProteins, _appliedDifficulties) { proteins, difficulties ->
+            proteins.size + difficulties.size
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
+
     @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
     val recipePagingFlow = combine(
         _searchQuery.debounce(500L),
-        _filterTrigger // This makes the flow wait for a trigger
-    ) { query, _ ->
-        val proteins = _selectedProteins.value.joinToString(",").lowercase()
-        val difficulties = _selectedDifficulty.value.joinToString(",").lowercase()
-        Triple(query, proteins, difficulties)
-    }.flatMapLatest { (query, proteins, difficulties) ->
+        _filterTrigger,
+        _appliedProteins,
+        _appliedDifficulties
+    ) { query, _, proteins, difficulties ->
+        val proteinQuery = proteins.joinToString(",").lowercase()
+        val difficultyQuery = difficulties.joinToString(",").lowercase()
+        Triple(query, proteinQuery, difficultyQuery)
+    }.distinctUntilChanged().flatMapLatest { (query, proteins, difficulties) ->
         recipeUseCase.getAllRecipes(
             query = query,
             protein = proteins,
@@ -48,7 +60,15 @@ class RecipeListViewModel @Inject constructor(
     }.cachedIn(viewModelScope)
 
     fun applyFilters() {
+        _appliedProteins.value = _selectedProteins.value
+        _appliedDifficulties.value = _selectedDifficulties.value
         _filterTrigger.value += 1
+    }
+
+    fun syncSelectedWithApplied() {
+        // Call this when opening the sheet to ensure the chips match the actual filter
+        _selectedProteins.value = _appliedProteins.value
+        _selectedDifficulties.value = _appliedDifficulties.value
     }
 
     fun onSearchQueryChanged(newQuery: String) {
@@ -62,13 +82,13 @@ class RecipeListViewModel @Inject constructor(
     }
 
     fun toggleDifficulty(difficulty: String) {
-        _selectedDifficulty.update { current ->
+        _selectedDifficulties.update { current ->
             if (current.contains(difficulty)) current - difficulty else current + difficulty
         }
     }
 
     fun resetFilters() {
         _selectedProteins.value = emptySet()
-        _selectedDifficulty.value = emptySet()
+        _selectedDifficulties.value = emptySet()
     }
 }
