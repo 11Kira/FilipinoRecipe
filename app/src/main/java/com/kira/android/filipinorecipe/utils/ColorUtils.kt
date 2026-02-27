@@ -6,125 +6,105 @@ import androidx.compose.ui.graphics.Color
 import com.kira.android.filipinorecipe.model.enums.Protein
 
 class ColorUtils {
+    // Beef: Soft Blush to Rose
     val beefGradient = Brush.linearGradient(
-        colors = listOf(Color(0xFF8E241E), Color(0xFFD86A4F)),
+        colors = listOf(Color(0xFFFFF1F1), Color(0xFFFDE2E2)),
         start = Offset.Zero,
         end = Offset.Infinite
     )
+
+    // Pork: Pale Pink to Lavender Mist
     val porkGradient = Brush.linearGradient(
-        colors = listOf(Color(0xFF702632), Color(0xFF964F4F)),
+        colors = listOf(Color(0xFFFFF5F8), Color(0xFFFCE7F3)),
         start = Offset.Zero,
         end = Offset.Infinite
     )
+
+    // Chicken: Creamy Custard to Pale Lemon
     val chickenGradient = Brush.linearGradient(
-        colors = listOf(Color(0xFF7B5E10), Color(0xFFB9970B)),
+        colors = listOf(Color(0xFFFFFBEB), Color(0xFFFEF3C7)),
         start = Offset.Zero,
         end = Offset.Infinite
     )
+
+    // Seafood: Ice Blue to Sky Tint
     val seafoodGradient = Brush.linearGradient(
-        colors = listOf(Color(0xFF154360), Color(0xFF21618C)),
+        colors = listOf(Color(0xFFF0F9FF), Color(0xFFE0F2FE)),
         start = Offset.Zero,
         end = Offset.Infinite
     )
+
+    // Vegetables: Mint Cream to Soft Sage
     val vegetablesGradient = Brush.linearGradient(
-        colors = listOf(Color(0xFF1B4F31), Color(0xFF3D8B5E)),
+        colors = listOf(Color(0xFFF0FDF4), Color(0xFFDCFCE7)),
         start = Offset.Zero,
         end = Offset.Infinite
     )
 
     fun getColorGradientBrush(protein: String): Brush {
-        when (protein) {
-            Protein.BEEF.toString() -> {
-                return beefGradient
-            }
+        return when (protein) {
+            Protein.BEEF.toString() -> beefGradient
+            Protein.PORK.toString() -> porkGradient
+            Protein.CHICKEN.toString() -> chickenGradient
+            Protein.SEAFOOD.toString() -> seafoodGradient
+            Protein.VEGETABLES.toString() -> vegetablesGradient
+            else -> beefGradient
+        }
+    }
 
-            Protein.PORK.toString() -> {
-                return porkGradient
-            }
-
-            Protein.CHICKEN.toString() -> {
-                return chickenGradient
-            }
-
-            Protein.SEAFOOD.toString() -> {
-                return seafoodGradient
-            }
-
-            Protein.VEGETABLES.toString() -> {
-                return vegetablesGradient
-            }
-
-            else -> {
-                return beefGradient
-            }
+    fun getMainHeaderColor(protein: String): Color {
+        return when (protein) {
+            Protein.BEEF.toString() -> Color(0xFF5D1B1B) // Deep Wine Red
+            Protein.PORK.toString() -> Color(0xFF5B1D3A) // Dark Plum
+            Protein.CHICKEN.toString() -> Color(0xFF54410B) // Dark Umber / Brown
+            Protein.SEAFOOD.toString() -> Color(0xFF0E344D) // Midnight Navy
+            Protein.VEGETABLES.toString() -> Color(0xFF143D27) // Deep Forest Green
+            else -> Color(0xFF4B4B4B)
         }
     }
 
     fun getSubHeaderColor(protein: String): Color {
-        when (protein) {
-            Protein.BEEF.toString() -> {
-                return Color(0xFFFFCCBC)
-            }
+        return when (protein) {
+            Protein.BEEF.toString() -> Color(0xFFB34E4E) // Muted Rose
+            Protein.PORK.toString() -> Color(0xFF9D4C73) // Muted Mauve
+            Protein.CHICKEN.toString() -> Color(0xFF96781D) // Dark Gold/Ochre
+            Protein.SEAFOOD.toString() -> Color(0xFF2E6A8F) // Slate Blue
+            Protein.VEGETABLES.toString() -> Color(0xFF458B64) // Sage Green
+            else -> Color(0xFF4B4B4B) // Dark Gray fallback
+        }
+    }
 
-            Protein.PORK.toString() -> {
-                return Color(0xFFFADBD8)
-            }
-
-            Protein.CHICKEN.toString() -> {
-                return Color(0xFFFEF9E7)
-            }
-
-            Protein.SEAFOOD.toString() -> {
-                return Color(0xFFAED6F1)
-            }
-
-            Protein.VEGETABLES.toString() -> {
-                return Color(0xFFD5F5E3)
-            }
-
-            else -> {
-                return Color(0xFFFFCCBC)
-            }
+    fun getContentColor(protein: String): Color {
+        return when (protein) {
+            Protein.BEEF.toString() -> Color(0xFF2D2424) // Deep Espresso
+            Protein.PORK.toString() -> Color(0xFF2D2428) // Dark Raisin
+            Protein.CHICKEN.toString() -> Color(0xFF2D2B22) // Dark Olive Drab
+            Protein.SEAFOOD.toString() -> Color(0xFF22282D) // Deep Slate
+            Protein.VEGETABLES.toString() -> Color(0xFF222D26) // Deep Juniper
+            else -> Color(0xFF000000)
         }
     }
 
     fun getDividerColor(protein: String): Color {
-        when (protein) {
-            Protein.BEEF.toString() -> {
-                return Color.White.copy(alpha = 0.2f)
-            }
-
-            Protein.PORK.toString() -> {
-                return Color.White.copy(alpha = 0.2f)
-            }
-
-            Protein.CHICKEN.toString() -> {
-                return Color.White.copy(alpha = 0.15f)
-            }
-
-            Protein.SEAFOOD.toString() -> {
-                return Color.White.copy(alpha = 0.2f)
-            }
-
-            Protein.VEGETABLES.toString() -> {
-                return Color.White.copy(alpha = 0.2f)
-            }
-
-            else -> {
-                return Color.White.copy(alpha = 0.2f)
-            }
+        return when (protein) {
+            Protein.BEEF.toString() -> Color(0xFF5D1B1B).copy(alpha = 0.15f) // Subtle Wine
+            Protein.PORK.toString() -> Color(0xFF5B1D3A).copy(alpha = 0.15f) // Subtle Plum
+            Protein.CHICKEN.toString() -> Color(0xFF54410B).copy(alpha = 0.15f) // Subtle Bronze
+            Protein.SEAFOOD.toString() -> Color(0xFF0E344D).copy(alpha = 0.15f) // Subtle Navy
+            Protein.VEGETABLES.toString() -> Color(0xFF143D27).copy(alpha = 0.15f) // Subtle Forest
+            else -> Color.Black.copy(alpha = 0.1f)
         }
     }
 
-    val PastelBlue = Color(0xFFD6EEFF)
-    val PastelPurple = Color(0xFFE2D7F7)
-    val PastelMint = Color(0xFFE2F1E7)
+    val pastelBlue = Color(0xFFD6EEFF)
+    val pastelPurple = Color(0xFFE2D7F7)
+    val pastelMint = Color(0xFFE2F1E7)
 
     val recipeListBackgroundGradient = Brush.verticalGradient(
-        colors = listOf(PastelBlue, PastelPurple, PastelMint)
+        colors = listOf(pastelBlue, pastelPurple, pastelMint)
     )
 
     val bottomNavGradient = Brush.verticalGradient(
-        colors = listOf(PastelPurple, PastelMint) // Blends from the middle-bottom color to the end
+        colors = listOf(pastelPurple, pastelMint) // Blends from the middle-bottom color to the end
     )
 }

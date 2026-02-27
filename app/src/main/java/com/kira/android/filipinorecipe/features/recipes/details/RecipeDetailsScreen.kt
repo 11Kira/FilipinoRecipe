@@ -258,7 +258,7 @@ fun IngredientsSection(recipe: Recipe) {
         modifier = Modifier
             .wrapContentWidth(),
         text = "Ingredients:",
-        color = Color.White
+        color = ColorUtils().getMainHeaderColor(recipe.protein),
     )
     if (recipe.ingredients.main.isNotEmpty()) {
         DetailsListSection(
@@ -314,14 +314,14 @@ fun RecipeContent(recipe: Recipe) {
             text = recipe.title,
             fontSize = 32.sp,
             fontFamily = Font(R.font.roboto_bold).toFontFamily(),
-            color = Color.White,
+            color = ColorUtils().getMainHeaderColor(recipe.protein),
             fontWeight = FontWeight.Bold
         )
         Text(
             text = recipe.description,
             style = TextStyle(
                 lineHeight = 20.sp, // Adds "breathing room" between lines
-                color = Color.White.copy(alpha = 0.9f)
+                color = ColorUtils().getContentColor(recipe.protein)
             ),
             modifier = Modifier.padding(vertical = 8.dp)
         )

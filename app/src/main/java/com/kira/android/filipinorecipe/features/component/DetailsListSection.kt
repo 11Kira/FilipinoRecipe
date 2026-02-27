@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.toFontFamily
 import androidx.compose.ui.text.style.TextAlign
@@ -24,7 +23,9 @@ fun DetailsListSection(text: String, isAnchorHeader: Boolean, protein: String, l
             .wrapContentWidth()
             .padding(top = 16.dp),
         text = text,
-        color = if (isAnchorHeader) Color.White else ColorUtils().getSubHeaderColor(protein)
+        color = if (isAnchorHeader) ColorUtils().getMainHeaderColor(protein) else ColorUtils().getSubHeaderColor(
+            protein
+        )
     )
-    NumberedList(list)
+    NumberedList(list, protein)
 }
