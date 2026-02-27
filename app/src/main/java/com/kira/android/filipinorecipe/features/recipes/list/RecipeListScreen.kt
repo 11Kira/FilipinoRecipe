@@ -57,6 +57,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -104,28 +105,25 @@ fun MainRecipeScreen(
     contentPadding: PaddingValues,
     onItemClick: (String) -> Unit,
 ) {
-    val recipes = viewModel.recipePagingFlow.collectAsLazyPagingItems()
+    val scope = rememberCoroutineScope()
     val listState = rememberLazyListState()
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true,
+        confirmValueChange = { newValue -> newValue != SheetValue.Hidden })
+    val recipes = viewModel.recipePagingFlow.collectAsLazyPagingItems()
+    val focusManager = LocalFocusManager.current
     val query by viewModel.searchQuery.collectAsState()
+    var lastScrolledQuery by rememberSaveable { mutableStateOf("") }
     val selectedProteins by viewModel.selectedProteins.collectAsState()
     val selectedDifficulties by viewModel.selectedDifficulties.collectAsState()
     val appliedFilterCount by viewModel.appliedFilterCount.collectAsState()
-    val scope = rememberCoroutineScope()
-    val focusManager = LocalFocusManager.current
-    val sheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true,
-        confirmValueChange = { newValue ->
-            // Allow the sheet to expand, but block the user from swiping it to Hidden
-            newValue != SheetValue.Hidden
-        }
-    )
     var showFilterSheet by remember { mutableStateOf(false) }
+
     LaunchedEffect(recipes.loadState.refresh) {
-        // ONLY reset scroll if we are definitely NOT loading anymore
-        if (recipes.loadState.refresh is LoadState.NotLoading) {
-            // Use a slight delay or check if the list actually has items now
-            if (recipes.itemCount > 0) {
+        if (recipes.loadState.refresh is LoadState.NotLoading && recipes.itemCount > 0) {
+            if (query != lastScrolledQuery) {
                 listState.scrollToItem(0)
+                lastScrolledQuery = query
             }
         }
     }
