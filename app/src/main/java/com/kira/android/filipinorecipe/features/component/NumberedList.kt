@@ -7,16 +7,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.toFontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kira.android.filipinorecipe.R
+import com.kira.android.filipinorecipe.utils.ColorUtils
 
 @Composable
 fun NumberedList(
     items: List<String>,
+    protein: String,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
@@ -30,7 +31,7 @@ fun NumberedList(
                     text = "${index + 1}.",
                     fontSize = 15.sp,
                     fontFamily = Font(R.font.roboto_bold).toFontFamily(),
-                    color = Color(0xFFFDFEFE),
+                    color = ColorUtils().getContentColor(protein),
                     modifier = Modifier.padding(end = 8.dp)
                 )
 
@@ -38,7 +39,7 @@ fun NumberedList(
                     text = item,
                     fontSize = 15.sp,
                     fontFamily = Font(R.font.roboto_regular).toFontFamily(),
-                    color = Color(0xFFFDFEFE),
+                    color = ColorUtils().getContentColor(protein),
                     modifier = Modifier.weight(1f)
                 )
             }

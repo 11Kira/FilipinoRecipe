@@ -251,7 +251,7 @@ fun MainRecipeScreen(
             ModalBottomSheet(
                 onDismissRequest = { showFilterSheet = false },
                 sheetState = sheetState,
-                containerColor = ColorUtils().PastelMint,
+                containerColor = ColorUtils().pastelMint,
                 dragHandle = null,
                 shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
             ) {
