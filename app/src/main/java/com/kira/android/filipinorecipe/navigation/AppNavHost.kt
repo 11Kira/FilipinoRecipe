@@ -2,6 +2,7 @@ package com.kira.android.filipinorecipe.navigation
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -21,9 +22,11 @@ fun AppNavHost(navController: NavHostController, contentPadding: PaddingValues) 
             RecipeListScreen(
                 contentPadding,
                 onItemClick = { id ->
-                    navController.navigate(
-                        DetailScreenNavigation(id)
-                    )
+                    if (navController.currentBackStackEntry?.lifecycle?.currentState == Lifecycle.State.RESUMED) {
+                        navController.navigate(
+                            DetailScreenNavigation(id)
+                        )
+                    }
                 }
             )
         }
