@@ -54,14 +54,14 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.kira.android.filipinorecipe.R
-import com.kira.android.filipinorecipe.features.component.CircularIconButton
-import com.kira.android.filipinorecipe.features.component.DetailsListSection
-import com.kira.android.filipinorecipe.features.component.SubDetails
+import com.kira.android.filipinorecipe.component.CircularIconButton
+import com.kira.android.filipinorecipe.component.DetailsListSection
+import com.kira.android.filipinorecipe.component.SubDetails
 import com.kira.android.filipinorecipe.model.Recipe
 import com.kira.android.filipinorecipe.utils.ColorUtils
 import kotlinx.coroutines.flow.SharedFlow
 
-lateinit var viewModel: RecipeViewModel
+lateinit var viewModel: RecipeDetailsViewModel
 
 @Composable
 fun RecipeDetailsScreen(navController: NavController, id: String) {
@@ -71,18 +71,18 @@ fun RecipeDetailsScreen(navController: NavController, id: String) {
 }
 
 @Composable
-fun MainScreen(navController: NavController, sharedFlow: SharedFlow<RecipeState>) {
+fun MainScreen(navController: NavController, sharedFlow: SharedFlow<RecipeDetailsState>) {
     val lifecycleOwner = LocalLifecycleOwner.current
     var selectedRecipe by remember { mutableStateOf<Recipe?>(null) }
     LaunchedEffect(key1 = Unit) {
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
             sharedFlow.collect { state ->
                 when (state) {
-                    is RecipeState.SetRecipeDetails -> {
+                    is RecipeDetailsState.SetRecipeDetails -> {
                         selectedRecipe = state.recipe
                     }
 
-                    is RecipeState.ShowError -> {
+                    is RecipeDetailsState.ShowError -> {
 
                     }
                 }
