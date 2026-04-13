@@ -71,10 +71,16 @@ fun MainScreenView() {
     val isDetailScreen = navBackStackEntry?.destination?.route?.startsWith(
         DetailScreenNavigation::class.qualifiedName ?: ""
     ) == true
+    val isAuthScreen = navBackStackEntry?.destination?.route?.let { route ->
+        route.startsWith("login") ||
+                route.startsWith("register") ||
+                route.startsWith("splash")
+    } == true
+    val shouldShowBottomBar = !isDetailScreen && !isAuthScreen
     Scaffold(
         bottomBar = {
             AnimatedVisibility(
-                visible = !isDetailScreen,
+                visible = shouldShowBottomBar,
                 enter = slideInVertically(initialOffsetY = { it }),
                 exit = slideOutVertically(targetOffsetY = { it })
             ) {
