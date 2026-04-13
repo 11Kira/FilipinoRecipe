@@ -3,13 +3,20 @@ package com.kira.android.filipinorecipe.features.account.auth.login
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Key
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -79,13 +86,30 @@ fun PopulateLoginScreen() {
                 value = email,
                 onValueChange = { email = it },
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .height(50.dp),
                 singleLine = true,
                 decorationBox = { innerTextField ->
-                    if (email.isEmpty()) {
-                        Text("Email", color = Color.Gray)
+                    Row(
+                        modifier = Modifier
+                            .background(Color.White, RoundedCornerShape(24.dp))
+                            .padding(horizontal = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Person,
+                            contentDescription = null,
+                            tint = Color.LightGray,
+                        )
+
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        Box(modifier = Modifier.weight(1f)) {
+                            if (email.isEmpty()) {
+                                Text("Email", color = Color.Gray)
+                            }
+                            innerTextField()
+                        }
                     }
-                    innerTextField()
                 }
             )
 
@@ -95,13 +119,30 @@ fun PopulateLoginScreen() {
                 value = password,
                 onValueChange = { password = it },
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .height(50.dp),
                 singleLine = true,
                 decorationBox = { innerTextField ->
-                    if (password.isEmpty()) {
-                        Text("Password", color = Color.Gray)
+                    Row(
+                        modifier = Modifier
+                            .background(Color.White, RoundedCornerShape(24.dp))
+                            .padding(horizontal = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Key,
+                            contentDescription = null,
+                            tint = Color.LightGray,
+                        )
+
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        Box(modifier = Modifier.weight(1f)) {
+                            if (email.isEmpty()) {
+                                Text("Password", color = Color.Gray)
+                            }
+                            innerTextField()
+                        }
                     }
-                    innerTextField()
                 }
             )
 
@@ -111,7 +152,10 @@ fun PopulateLoginScreen() {
                 onClick = {
                     viewModel.login(email, password)
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
+
             ) {
                 Text("Login")
             }

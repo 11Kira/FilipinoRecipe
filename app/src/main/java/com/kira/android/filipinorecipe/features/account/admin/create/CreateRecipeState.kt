@@ -1,4 +1,4 @@
-package com.kira.android.filipinorecipe.features.admin.create
+package com.kira.android.filipinorecipe.features.account.admin.create
 
 import com.kira.android.filipinorecipe.model.Recipe
 
