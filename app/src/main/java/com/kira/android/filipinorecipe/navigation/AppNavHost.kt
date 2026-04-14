@@ -30,8 +30,12 @@ fun AppNavHost(
                 onShowSnackbar = onShowSnackbar
             )
         }
-        composable<RegisterRoute> { RegisterScreen(navController) }
-
+        composable<RegisterRoute> {
+            RegisterScreen(
+                navController = navController,
+                onShowSnackbar = onShowSnackbar
+            )
+        }
         composable<RecipeListRoute> {
             RecipeListScreen(
                 contentPadding,

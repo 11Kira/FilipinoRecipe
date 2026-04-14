@@ -51,8 +51,6 @@ import com.kira.android.filipinorecipe.navigation.LoginRoute
 import com.kira.android.filipinorecipe.navigation.RegisterRoute
 import com.kira.android.filipinorecipe.utils.ColorUtils
 
-lateinit var viewModel: RegisterViewModel
-
 @Composable
 fun RegisterScreen(
     navController: NavController,
