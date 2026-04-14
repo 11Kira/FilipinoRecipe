@@ -60,7 +60,14 @@ fun RegisterScreen(
     val lifecycleOwner = LocalLifecycleOwner.current
     LaunchedEffect(key1 = Unit) {
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-
+            viewModel.registerState.collect { state ->
+                when (state) {
+                    is RegisterState.OnRegister -> {}
+                    is RegisterState.ShowError -> {
+                        onShowSnackbar(state.error.message ?: "Registration failed")
+                    }
+                }
+            }
         }
     }
     val isLoading by viewModel.isLoading.collectAsState()
