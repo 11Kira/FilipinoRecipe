@@ -1,9 +1,9 @@
 package com.kira.android.filipinorecipe.features.account.auth.login
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kira.android.filipinorecipe.features.account.auth.AuthUseCase
+import com.kira.android.filipinorecipe.features.account.auth.token.TokenManager
 import com.kira.android.filipinorecipe.model.request.LoginRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -15,7 +15,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val authUseCase: AuthUseCase
+    private val authUseCase: AuthUseCase,
+    private val tokenManager: TokenManager
 ) : ViewModel() {
 
     private val mutableLoginState: MutableSharedFlow<LoginState> = MutableSharedFlow()
@@ -29,8 +30,7 @@ class LoginViewModel @Inject constructor(
             val request = LoginRequest(email, password)
             val invoke = authUseCase.login(request)
             invoke.apply {
-                Log.e("ACCESS", data?.accessToken.toString())
-                Log.e("REFRESH", data?.refreshToken.toString())
+                tokenManager.saveTokens(data?.accessToken.toString(), data?.refreshToken.toString())
                 mutableLoginState.emit(LoginState.OnLogin)
             }
         }
