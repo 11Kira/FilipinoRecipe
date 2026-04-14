@@ -1,6 +1,7 @@
 package com.kira.android.filipinorecipe.features.account.auth.login
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,12 +12,18 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicSecureTextField
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.input.TextObfuscationMode
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Key
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -71,6 +78,8 @@ fun MainScreen(navController: NavController, sharedFlow: SharedFlow<LoginState>)
 fun PopulateLoginScreen() {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    val passwordState = rememberTextFieldState()
+    var isVisible by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -115,13 +124,15 @@ fun PopulateLoginScreen() {
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            BasicTextField(
-                value = password,
-                onValueChange = { password = it },
-                modifier = Modifier
-                    .height(50.dp),
-                singleLine = true,
-                decorationBox = { innerTextField ->
+            BasicSecureTextField(
+                state = passwordState,
+                textObfuscationMode = if (isVisible) {
+                    TextObfuscationMode.Visible
+                } else {
+                    TextObfuscationMode.RevealLastTyped
+                },
+                modifier = Modifier.height(50.dp),
+                decorator = { innerTextField ->
                     Row(
                         modifier = Modifier
                             .background(Color.White, RoundedCornerShape(24.dp))
@@ -137,10 +148,18 @@ fun PopulateLoginScreen() {
                         Spacer(modifier = Modifier.width(8.dp))
 
                         Box(modifier = Modifier.weight(1f)) {
-                            if (email.isEmpty()) {
+                            if (passwordState.text.isEmpty()) {
                                 Text("Password", color = Color.Gray)
                             }
                             innerTextField()
+                        }
+
+                        IconButton(onClick = { isVisible = !isVisible }) {
+                            Icon(
+                                imageVector = if (isVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                                contentDescription = if (isVisible) "Hide password" else "Show password",
+                                tint = Color.LightGray
+                            )
                         }
                     }
                 }
@@ -158,6 +177,24 @@ fun PopulateLoginScreen() {
 
             ) {
                 Text("Login")
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "Don't have an account? ",
+                    color = Color.Gray
+                )
+                Text(
+                    text = "Register",
+                    color = Color.Magenta
+                )
             }
         }
     }
