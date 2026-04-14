@@ -25,6 +25,7 @@ class RegisterViewModel @Inject constructor(
 
     fun register(email: String, password: String, username: String) {
         viewModelScope.launch {
+            _isLoading.value = true
             try {
                 val response = authUseCase.register(RegisterRequest(email, password, username))
                 response.apply {
