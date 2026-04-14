@@ -164,12 +164,3 @@ fun SplashScreen(navController: NavController) {
             .background(brush = ColorUtils().recipeListBackgroundGradient)
     )
 }
-
-@Composable
-fun RegisterScreen(navController: NavController) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(brush = ColorUtils().recipeListBackgroundGradient)
-    )
-}

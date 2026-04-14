@@ -1,8 +1,8 @@
 package com.kira.android.filipinorecipe.features.account.auth
 
-import com.google.gson.JsonObject
 import com.kira.android.filipinorecipe.model.Token
 import com.kira.android.filipinorecipe.model.request.LoginRequest
+import com.kira.android.filipinorecipe.model.request.RegisterRequest
 import com.kira.android.filipinorecipe.model.response.ApiResponse
 import javax.inject.Inject
 
@@ -10,7 +10,7 @@ class AuthUseCase @Inject constructor(
     private val authRepository: AuthRepository
 ) {
 
-    suspend fun register(body: JsonObject): ApiResponse<Token> {
+    suspend fun register(body: RegisterRequest): ApiResponse<Token> {
         return authRepository.register(body)
     }
 

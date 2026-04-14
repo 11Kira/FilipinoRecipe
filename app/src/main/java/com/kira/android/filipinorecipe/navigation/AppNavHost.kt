@@ -9,9 +9,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.kira.android.filipinorecipe.DetailScreenNavigation
 import com.kira.android.filipinorecipe.FavoritesScreen
-import com.kira.android.filipinorecipe.RegisterScreen
 import com.kira.android.filipinorecipe.SplashScreen
 import com.kira.android.filipinorecipe.features.account.auth.login.LoginScreen
+import com.kira.android.filipinorecipe.features.account.auth.register.RegisterScreen
 import com.kira.android.filipinorecipe.features.recipes.details.RecipeDetailsScreen
 import com.kira.android.filipinorecipe.features.recipes.list.RecipeListScreen
 
@@ -20,7 +20,7 @@ fun AppNavHost(navController: NavHostController, contentPadding: PaddingValues) 
     NavHost(
         navController = navController,
         //startDestination = BottomMenuItem.Recipes.screenRoute
-        startDestination = Screen.Login.route
+        startDestination = Screen.Register.route
     ) {
         composable(Screen.Splash.route) { SplashScreen(navController) }
         composable(Screen.Login.route) { LoginScreen(navController) }
