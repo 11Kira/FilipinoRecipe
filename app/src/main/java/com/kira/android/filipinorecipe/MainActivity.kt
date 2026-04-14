@@ -146,21 +146,3 @@ fun BottomNavigation(navController: NavController) {
 data class DetailScreenNavigation(
     val id: String
 )
-
-@Composable
-fun FavoritesScreen() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(brush = ColorUtils().recipeListBackgroundGradient)
-    )
-}
-
-@Composable
-fun SplashScreen(navController: NavController) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(brush = ColorUtils().recipeListBackgroundGradient)
-    )
-}

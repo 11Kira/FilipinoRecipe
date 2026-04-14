@@ -196,9 +196,11 @@ fun PopulateLoginScreen(navController: NavController) {
                     text = "Register",
                     color = Color.Magenta,
                     modifier = Modifier
-                        .clickable(onClick = {
-                            navController.navigate("register")
-                        })
+                        .clickable(
+                            onClick = {
+                                navController.navigate("register")
+                            }
+                        )
                 )
             }
         }
