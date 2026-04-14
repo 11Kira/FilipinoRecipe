@@ -66,8 +66,8 @@ class NetworkModule {
             .connectTimeout(Constants.CONNECT_TIMEOUT, TimeUnit.SECONDS)
             .writeTimeout(Constants.WRITE_TIMEOUT, TimeUnit.SECONDS)
             .readTimeout(Constants.READ_TIMEOUT, TimeUnit.SECONDS)
-            .addInterceptor(httpLoggingInterceptor)
             .addInterceptor(authInterceptor)
+            .addInterceptor(httpLoggingInterceptor)
             .build()
     }
 
