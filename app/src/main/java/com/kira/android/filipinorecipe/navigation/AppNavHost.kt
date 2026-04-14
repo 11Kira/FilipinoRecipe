@@ -14,13 +14,22 @@ import com.kira.android.filipinorecipe.features.recipes.list.RecipeListScreen
 import com.kira.android.filipinorecipe.features.splash.SplashScreen
 
 @Composable
-fun AppNavHost(navController: NavHostController, contentPadding: PaddingValues) {
+fun AppNavHost(
+    navController: NavHostController,
+    contentPadding: PaddingValues,
+    onShowSnackbar: (String) -> Unit
+) {
     NavHost(
         navController = navController,
         startDestination = SplashRoute
     ) {
         composable<SplashRoute> { SplashScreen(navController) }
-        composable<LoginRoute> { LoginScreen(navController) }
+        composable<LoginRoute> {
+            LoginScreen(
+                navController = navController,
+                onShowSnackbar = onShowSnackbar
+            )
+        }
         composable<RegisterRoute> { RegisterScreen(navController) }
 
         composable<RecipeListRoute> {

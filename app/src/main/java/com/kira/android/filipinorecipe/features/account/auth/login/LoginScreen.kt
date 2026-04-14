@@ -23,11 +23,14 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,41 +48,46 @@ import com.kira.android.filipinorecipe.navigation.LoginRoute
 import com.kira.android.filipinorecipe.navigation.RecipeListRoute
 import com.kira.android.filipinorecipe.navigation.RegisterRoute
 import com.kira.android.filipinorecipe.utils.ColorUtils
-import kotlinx.coroutines.flow.SharedFlow
-
-lateinit var viewModel: LoginViewModel
 
 @Composable
 fun LoginScreen(
-    navController: NavController
+    navController: NavController,
+    viewModel: LoginViewModel = hiltViewModel(),
+    onShowSnackbar: (String) -> Unit
 ) {
-    viewModel = hiltViewModel()
-    MainScreen(navController, viewModel.loginState)
-}
-
-@Composable
-fun MainScreen(navController: NavController, sharedFlow: SharedFlow<LoginState>) {
     val lifecycleOwner = LocalLifecycleOwner.current
     LaunchedEffect(key1 = Unit) {
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            sharedFlow.collect { state ->
+            viewModel.loginState.collect { state ->
                 when (state) {
                     is LoginState.OnLogin -> {
-                        navController.navigate(RecipeListRoute)
+                        navController.navigate(RecipeListRoute) {
+                            popUpTo<LoginRoute> { inclusive = true }
+                        }
                     }
 
                     is LoginState.ShowError -> {
-
+                        onShowSnackbar(state.error.message ?: "Login failed")
                     }
                 }
             }
         }
     }
-    PopulateLoginScreen(navController)
+    val isLoading by viewModel.isLoading.collectAsState()
+    PopulateLoginScreen(
+        isLoading = isLoading,
+        navController = navController,
+        onLoginClick = { email, password -> viewModel.login(email, password) }
+    )
 }
 
 @Composable
-fun PopulateLoginScreen(navController: NavController) {
+fun PopulateLoginScreen(
+    isLoading: Boolean,
+    navController: NavController,
+    onLoginClick: (String, String) -> Unit,
+) {
+
     var email by remember { mutableStateOf("") }
     val passwordState = rememberTextFieldState()
     var isVisible by remember { mutableStateOf(false) }
@@ -91,8 +99,10 @@ fun PopulateLoginScreen(navController: NavController) {
     ) {
         Column(
             modifier = Modifier
-                .padding(16.dp)
-                .align(Alignment.Center)
+                .fillMaxSize()
+                .padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
             BasicTextField(
                 value = email,
@@ -172,7 +182,7 @@ fun PopulateLoginScreen(navController: NavController) {
 
             Button(
                 onClick = {
-                    viewModel.login(email, passwordState.text.toString())
+                    onLoginClick(email, passwordState.text.toString())
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -205,6 +215,21 @@ fun PopulateLoginScreen(navController: NavController) {
                                 }
                             }
                         )
+                )
+            }
+        }
+
+        if (isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.4f))
+                    .clickable(enabled = false) {},
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(
+                    color = MaterialTheme.colorScheme.primary,
+                    strokeWidth = 4.dp
                 )
             }
         }
