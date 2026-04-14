@@ -1,6 +1,6 @@
 package com.kira.android.filipinorecipe.features.account.auth.register
 
 sealed class RegisterState {
-    data class ShowError(val error: Any) : RegisterState()
+    data class ShowError(val error: Exception) : RegisterState()
     object OnRegister : RegisterState()
 }
