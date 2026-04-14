@@ -1,6 +1,7 @@
 package com.kira.android.filipinorecipe.features.account.auth.register
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -52,11 +53,11 @@ fun RegisterScreen(
 
 @Composable
 fun MainScreen(navController: NavController, sharedFlow: SharedFlow<RegisterState>) {
-    PopulateRegisterScreen()
+    PopulateRegisterScreen(navController)
 }
 
 @Composable
-fun PopulateRegisterScreen() {
+fun PopulateRegisterScreen(navController: NavController) {
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     val passwordState = rememberTextFieldState()
@@ -251,7 +252,11 @@ fun PopulateRegisterScreen() {
                 )
                 Text(
                     text = "Sign in",
-                    color = Color.Magenta
+                    color = Color.Magenta,
+                    modifier = Modifier
+                        .clickable(onClick = {
+                            navController.navigate("login")
+                        })
                 )
             }
         }

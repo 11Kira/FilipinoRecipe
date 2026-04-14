@@ -1,6 +1,7 @@
 package com.kira.android.filipinorecipe.features.account.auth.login
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,6 +41,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
+import com.kira.android.filipinorecipe.navigation.BottomMenuItem
 import com.kira.android.filipinorecipe.utils.ColorUtils
 import kotlinx.coroutines.flow.SharedFlow
 
@@ -61,7 +63,7 @@ fun MainScreen(navController: NavController, sharedFlow: SharedFlow<LoginState>)
             sharedFlow.collect { state ->
                 when (state) {
                     is LoginState.OnLogin -> {
-
+                        navController.navigate(BottomMenuItem.Recipes.screenRoute)
                     }
 
                     is LoginState.ShowError -> {
@@ -71,13 +73,12 @@ fun MainScreen(navController: NavController, sharedFlow: SharedFlow<LoginState>)
             }
         }
     }
-    PopulateLoginScreen()
+    PopulateLoginScreen(navController)
 }
 
 @Composable
-fun PopulateLoginScreen() {
+fun PopulateLoginScreen(navController: NavController) {
     var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
     val passwordState = rememberTextFieldState()
     var isVisible by remember { mutableStateOf(false) }
 
@@ -169,7 +170,7 @@ fun PopulateLoginScreen() {
 
             Button(
                 onClick = {
-                    viewModel.login(email, password)
+                    viewModel.login(email, passwordState.text.toString())
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -193,7 +194,11 @@ fun PopulateLoginScreen() {
                 )
                 Text(
                     text = "Register",
-                    color = Color.Magenta
+                    color = Color.Magenta,
+                    modifier = Modifier
+                        .clickable(onClick = {
+                            navController.navigate("register")
+                        })
                 )
             }
         }

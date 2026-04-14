@@ -20,7 +20,7 @@ fun AppNavHost(navController: NavHostController, contentPadding: PaddingValues) 
     NavHost(
         navController = navController,
         //startDestination = BottomMenuItem.Recipes.screenRoute
-        startDestination = Screen.Register.route
+        startDestination = Screen.Login.route
     ) {
         composable(Screen.Splash.route) { SplashScreen(navController) }
         composable(Screen.Login.route) { LoginScreen(navController) }
