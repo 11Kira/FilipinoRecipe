@@ -38,6 +38,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.kira.android.filipinorecipe.navigation.LoginRoute
+import com.kira.android.filipinorecipe.navigation.RegisterRoute
 import com.kira.android.filipinorecipe.utils.ColorUtils
 import kotlinx.coroutines.flow.SharedFlow
 
@@ -255,7 +257,9 @@ fun PopulateRegisterScreen(navController: NavController) {
                     color = Color.Magenta,
                     modifier = Modifier
                         .clickable(onClick = {
-                            navController.navigate("login")
+                            navController.navigate(LoginRoute) {
+                                popUpTo<RegisterRoute> { inclusive = true }
+                            }
                         })
                 )
             }

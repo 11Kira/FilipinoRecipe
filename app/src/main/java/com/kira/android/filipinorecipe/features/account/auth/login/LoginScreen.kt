@@ -41,7 +41,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
-import com.kira.android.filipinorecipe.navigation.BottomMenuItem
+import com.kira.android.filipinorecipe.navigation.LoginRoute
+import com.kira.android.filipinorecipe.navigation.RecipeListRoute
+import com.kira.android.filipinorecipe.navigation.RegisterRoute
 import com.kira.android.filipinorecipe.utils.ColorUtils
 import kotlinx.coroutines.flow.SharedFlow
 
@@ -63,7 +65,7 @@ fun MainScreen(navController: NavController, sharedFlow: SharedFlow<LoginState>)
             sharedFlow.collect { state ->
                 when (state) {
                     is LoginState.OnLogin -> {
-                        navController.navigate(BottomMenuItem.Recipes.screenRoute)
+                        navController.navigate(RecipeListRoute)
                     }
 
                     is LoginState.ShowError -> {
@@ -198,7 +200,9 @@ fun PopulateLoginScreen(navController: NavController) {
                     modifier = Modifier
                         .clickable(
                             onClick = {
-                                navController.navigate("register")
+                                navController.navigate(RegisterRoute) {
+                                    popUpTo<LoginRoute> { inclusive = true }
+                                }
                             }
                         )
                 )

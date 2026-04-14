@@ -31,13 +31,18 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.vectorResource
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.kira.android.filipinorecipe.navigation.AppNavHost
 import com.kira.android.filipinorecipe.navigation.BottomMenuItem
+import com.kira.android.filipinorecipe.navigation.DetailScreenNavigation
+import com.kira.android.filipinorecipe.navigation.LoginRoute
+import com.kira.android.filipinorecipe.navigation.RecipeListRoute
+import com.kira.android.filipinorecipe.navigation.RegisterRoute
+import com.kira.android.filipinorecipe.navigation.SplashRoute
 import com.kira.android.filipinorecipe.utils.ColorUtils
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.serialization.Serializable
 
 private lateinit var viewModel: MainViewModel
 
@@ -68,14 +73,12 @@ class MainActivity : ComponentActivity() {
 fun MainScreenView() {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val isDetailScreen = navBackStackEntry?.destination?.route?.startsWith(
-        DetailScreenNavigation::class.qualifiedName ?: ""
-    ) == true
-    val isAuthScreen = navBackStackEntry?.destination?.route?.let { route ->
-        route.startsWith("login") ||
-                route.startsWith("register") ||
-                route.startsWith("splash")
-    } == true
+    val currentDestination = navBackStackEntry?.destination
+    val isDetailScreen = currentDestination?.hasRoute<DetailScreenNavigation>() == true
+    val isAuthScreen = currentDestination?.hasRoute<SplashRoute>() == true ||
+            currentDestination?.hasRoute<LoginRoute>() == true ||
+            currentDestination?.hasRoute<RegisterRoute>() == true
+
     val shouldShowBottomBar = !isDetailScreen && !isAuthScreen
     Scaffold(
         bottomBar = {
@@ -115,11 +118,9 @@ fun BottomNavigation(navController: NavController) {
                 selected = (selectedItem == selectedTab.collectAsState().value),
                 onClick = {
                     selectedItem = bottomMenuItem.label
-                    navController.navigate(bottomMenuItem.screenRoute) {
-                        navController.graph.startDestinationRoute?.let { screenRoute ->
-                            popUpTo(screenRoute) {
-                                saveState = true
-                            }
+                    navController.navigate(bottomMenuItem.route) {
+                        popUpTo<RecipeListRoute> {
+                            saveState = true
                         }
                         launchSingleTop = true
                         restoreState = true
@@ -141,8 +142,3 @@ fun BottomNavigation(navController: NavController) {
         }
     }
 }
-
-@Serializable
-data class DetailScreenNavigation(
-    val id: String
-)

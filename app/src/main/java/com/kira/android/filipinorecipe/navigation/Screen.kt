@@ -1,7 +1,17 @@
 package com.kira.android.filipinorecipe.navigation
 
-sealed class Screen(val route: String) {
-    object Splash : Screen("splash")
-    object Login : Screen("login")
-    object Register : Screen("register")
-}
+import kotlinx.serialization.Serializable
+
+@Serializable
+data object SplashRoute
+@Serializable
+data object LoginRoute
+@Serializable
+data object RegisterRoute
+@Serializable
+data object RecipeListRoute
+@Serializable
+data object FavoritesRoute
+
+@Serializable
+data class DetailScreenNavigation(val id: String)
