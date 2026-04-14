@@ -1,5 +1,8 @@
 package com.kira.android.filipinorecipe.features.account.auth.register
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -24,10 +27,13 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,29 +43,48 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import com.kira.android.filipinorecipe.navigation.LoginRoute
 import com.kira.android.filipinorecipe.navigation.RegisterRoute
 import com.kira.android.filipinorecipe.utils.ColorUtils
-import kotlinx.coroutines.flow.SharedFlow
 
 lateinit var viewModel: RegisterViewModel
 
 @Composable
 fun RegisterScreen(
-    navController: NavController
+    navController: NavController,
+    viewModel: RegisterViewModel = hiltViewModel(),
+    onShowSnackbar: (String) -> Unit
 ) {
-    viewModel = hiltViewModel()
-    MainScreen(navController, viewModel.registerState)
+    val lifecycleOwner = LocalLifecycleOwner.current
+    LaunchedEffect(key1 = Unit) {
+        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+
+        }
+    }
+    val isLoading by viewModel.isLoading.collectAsState()
+    PopulateRegisterScreen(
+        isLoading = isLoading,
+        navController = navController,
+        onRegisterClick = { email, password, username ->
+            viewModel.register(
+                email,
+                password,
+                username
+            )
+        }
+    )
 }
 
 @Composable
-fun MainScreen(navController: NavController, sharedFlow: SharedFlow<RegisterState>) {
-    PopulateRegisterScreen(navController)
-}
-
-@Composable
-fun PopulateRegisterScreen(navController: NavController) {
+fun PopulateRegisterScreen(
+    isLoading: Boolean,
+    navController: NavController,
+    onRegisterClick: (String, String, String) -> Unit
+) {
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     val passwordState = rememberTextFieldState()
@@ -230,7 +255,7 @@ fun PopulateRegisterScreen(navController: NavController) {
 
             Button(
                 onClick = {
-                    viewModel.register(email, passwordState.text.toString(), username)
+                    onRegisterClick(email, passwordState.text.toString(), username)
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -262,6 +287,21 @@ fun PopulateRegisterScreen(navController: NavController) {
                             }
                         })
                 )
+            }
+        }
+
+        AnimatedVisibility(
+            visible = isLoading,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.4f)),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
             }
         }
     }
