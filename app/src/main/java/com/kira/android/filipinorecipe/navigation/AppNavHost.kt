@@ -50,7 +50,7 @@ fun AppNavHost(
             FavoriteRecipeListScreen(navController)
         }
 
-        composable<AccountRoute> {
+        composable<ProfileRoute> {
             Profilecreen(navController)
         }
 
