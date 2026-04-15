@@ -1,0 +1,3 @@
+package com.kira.android.filipinorecipe.features.recipes.favorites
+
+class FavoriteRecipePagingSource

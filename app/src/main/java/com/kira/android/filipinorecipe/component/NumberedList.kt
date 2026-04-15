@@ -1,4 +1,4 @@
-package com.kira.android.filipinorecipe.features.component
+package com.kira.android.filipinorecipe.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row

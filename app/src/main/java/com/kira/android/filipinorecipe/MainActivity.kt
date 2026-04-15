@@ -10,14 +10,12 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
@@ -25,27 +23,28 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import coil3.compose.AsyncImage
 import com.kira.android.filipinorecipe.navigation.AppNavHost
 import com.kira.android.filipinorecipe.navigation.BottomMenuItem
+import com.kira.android.filipinorecipe.navigation.DetailScreenNavigation
+import com.kira.android.filipinorecipe.navigation.LoginRoute
+import com.kira.android.filipinorecipe.navigation.RecipeListRoute
+import com.kira.android.filipinorecipe.navigation.RegisterRoute
+import com.kira.android.filipinorecipe.navigation.SplashRoute
 import com.kira.android.filipinorecipe.utils.ColorUtils
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.serialization.Serializable
+import kotlinx.coroutines.launch
 
 private lateinit var viewModel: MainViewModel
 
@@ -76,13 +75,20 @@ class MainActivity : ComponentActivity() {
 fun MainScreenView() {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val isDetailScreen = navBackStackEntry?.destination?.route?.startsWith(
-        DetailScreenNavigation::class.qualifiedName ?: ""
-    ) == true
+    val currentDestination = navBackStackEntry?.destination
+    val isDetailScreen = currentDestination?.hasRoute<DetailScreenNavigation>() == true
+    val isAuthScreen = currentDestination?.hasRoute<SplashRoute>() == true ||
+            currentDestination?.hasRoute<LoginRoute>() == true ||
+            currentDestination?.hasRoute<RegisterRoute>() == true
+
+    val shouldShowBottomBar = !isDetailScreen && !isAuthScreen
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
     Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         bottomBar = {
             AnimatedVisibility(
-                visible = !isDetailScreen,
+                visible = shouldShowBottomBar,
                 enter = slideInVertically(initialOffsetY = { it }),
                 exit = slideOutVertically(targetOffsetY = { it })
             ) {
@@ -90,11 +96,15 @@ fun MainScreenView() {
             }
         },
     ) { contentPadding ->
-        Box(modifier = Modifier
-            .background(Color.Black)
-            .fillMaxSize()) {
-            AppNavHost(navController = navController, contentPadding)
-        }
+        AppNavHost(
+            navController = navController,
+            contentPadding = contentPadding,
+            onShowSnackbar = { message ->
+                scope.launch {
+                    snackbarHostState.showSnackbar(message)
+                }
+            }
+        )
     }
 }
 
@@ -105,7 +115,8 @@ fun BottomNavigation(navController: NavController) {
 
     val screens = listOf(
         BottomMenuItem.Recipes,
-        BottomMenuItem.Favorites
+        BottomMenuItem.Favorites,
+        BottomMenuItem.Profile
     )
 
     NavigationBar(
@@ -117,11 +128,9 @@ fun BottomNavigation(navController: NavController) {
                 selected = (selectedItem == selectedTab.collectAsState().value),
                 onClick = {
                     selectedItem = bottomMenuItem.label
-                    navController.navigate(bottomMenuItem.screenRoute) {
-                        navController.graph.startDestinationRoute?.let { screenRoute ->
-                            popUpTo(screenRoute) {
-                                saveState = true
-                            }
+                    navController.navigate(bottomMenuItem.route) {
+                        popUpTo<RecipeListRoute> {
+                            saveState = true
                         }
                         launchSingleTop = true
                         restoreState = true
@@ -141,36 +150,5 @@ fun BottomNavigation(navController: NavController) {
                 }
             )
         }
-    }
-}
-
-@Serializable
-data class DetailScreenNavigation(
-    val id: String
-)
-
-@Composable
-fun FavoritesScreen() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black)
-    ) {
-        AsyncImage(
-            model = R.drawable.ic_dish_knife_and_fork,
-            contentDescription = "Favorites",
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(500.dp)
-                .align(Alignment.Center),
-            contentScale = ContentScale.Crop,
-        )
-        Text(
-            text = "Your Favorite Recipes\n(Coming soon!)",
-            fontSize = 25.sp,
-            textAlign = TextAlign.Center,
-            color = Color.LightGray,
-            modifier = Modifier.align(Alignment.Center),
-        )
     }
 }

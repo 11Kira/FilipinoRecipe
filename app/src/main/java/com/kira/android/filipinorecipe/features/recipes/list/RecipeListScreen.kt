@@ -82,7 +82,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemContentType
 import coil3.compose.AsyncImage
 import com.kira.android.filipinorecipe.R
-import com.kira.android.filipinorecipe.features.component.SubDetails
+import com.kira.android.filipinorecipe.component.SubDetails
 import com.kira.android.filipinorecipe.model.Recipe
 import com.kira.android.filipinorecipe.utils.ColorUtils
 import kotlinx.coroutines.delay
@@ -360,8 +360,8 @@ fun PopulateRecipeList(
                 .fillMaxSize(),
             contentPadding = PaddingValues(
                 top = 120.dp,
-                start = 10.dp,
-                end = 10.dp,
+                start = 16.dp,
+                end = 16.dp,
                 bottom = contentPadding.calculateBottomPadding() + 16.dp
             ),
             verticalArrangement = Arrangement.spacedBy(15.dp)
@@ -435,8 +435,6 @@ fun RecipeCardItem(selectedRecipe: Recipe, onItemClick: (String) -> Unit) {
                     .height(250.dp)
                     .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)),
                 contentScale = ContentScale.Crop,
-                placeholder = painterResource(id = R.drawable.ic_dish_knife_and_fork),
-                error = painterResource(id = R.drawable.ic_dish_knife_and_fork)
             )
             Text(
                 text = selectedRecipe.title,

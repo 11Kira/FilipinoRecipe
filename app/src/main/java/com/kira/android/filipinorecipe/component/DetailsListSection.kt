@@ -1,4 +1,4 @@
-package com.kira.android.filipinorecipe.features.component
+package com.kira.android.filipinorecipe.component
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
