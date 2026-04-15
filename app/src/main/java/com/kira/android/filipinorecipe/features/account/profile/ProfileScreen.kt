@@ -10,7 +10,7 @@ import androidx.navigation.NavController
 import com.kira.android.filipinorecipe.utils.ColorUtils
 
 @Composable
-fun Profilecreen(
+fun ProfileScreen(
     navController: NavController,
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
