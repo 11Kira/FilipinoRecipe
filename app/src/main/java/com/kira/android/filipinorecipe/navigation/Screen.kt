@@ -14,4 +14,6 @@ data object RecipeListRoute
 data object FavoritesRoute
 
 @Serializable
+data object AccountRoute
+@Serializable
 data class DetailScreenNavigation(val id: String)

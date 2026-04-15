@@ -37,7 +37,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontWeight
@@ -162,8 +161,6 @@ fun RecipeHeaderImage(recipe: Recipe, headerHeight: Dp, scrollState: ScrollState
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize(),
-            placeholder = painterResource(id = R.drawable.ic_dish_knife_and_fork),
-            error = painterResource(id = R.drawable.ic_dish_knife_and_fork)
         )
         // 2. THE SYSTEM SCRIM (Add this code here)
         Box(

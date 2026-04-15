@@ -1,0 +1,10 @@
+package com.kira.android.filipinorecipe.features.account.profile
+
+import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+
+@HiltViewModel
+class ProfileViewModel @Inject constructor(
+) : ViewModel() {
+}

@@ -115,7 +115,8 @@ fun BottomNavigation(navController: NavController) {
 
     val screens = listOf(
         BottomMenuItem.Recipes,
-        BottomMenuItem.Favorites
+        BottomMenuItem.Favorites,
+        BottomMenuItem.Account
     )
 
     NavigationBar(

@@ -1,4 +1,4 @@
-package com.kira.android.filipinorecipe.features.recipes.favorites
+package com.kira.android.filipinorecipe.features.account.profile
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -10,20 +10,19 @@ import androidx.navigation.NavController
 import com.kira.android.filipinorecipe.utils.ColorUtils
 
 @Composable
-fun FavoriteRecipeListScreen(
+fun Profilecreen(
     navController: NavController,
-    viewModel: FavoriteRecipeListViewModel = hiltViewModel()
+    viewModel: ProfileViewModel = hiltViewModel()
 ) {
-    PopulateFavoriteRecipeListScreen(
+    PopulateProfileScreen(
         viewModel = viewModel,
         navController = navController
-
     )
 }
 
 @Composable
-fun PopulateFavoriteRecipeListScreen(
-    viewModel: FavoriteRecipeListViewModel,
+fun PopulateProfileScreen(
+    viewModel: ProfileViewModel,
     navController: NavController
 ) {
     Box(

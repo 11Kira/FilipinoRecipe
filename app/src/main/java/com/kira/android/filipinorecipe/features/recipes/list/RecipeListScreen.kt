@@ -435,7 +435,6 @@ fun RecipeCardItem(selectedRecipe: Recipe, onItemClick: (String) -> Unit) {
                     .height(250.dp)
                     .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)),
                 contentScale = ContentScale.Crop,
-                error = painterResource(id = R.drawable.ic_dish_knife_and_fork)
             )
             Text(
                 text = selectedRecipe.title,
