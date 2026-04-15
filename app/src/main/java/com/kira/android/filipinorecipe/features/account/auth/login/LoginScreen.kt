@@ -208,7 +208,20 @@ fun PopulateLoginScreen(
                 }
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.CenterEnd
+            ) {
+                Text(
+                    text = "Forgot Password?",
+                    color = Color(0xFF7B5DB0),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier
+                        .padding(vertical = 8.dp)
+                        .clickable { /* Navigate to a ForgotPasswordRoute later */ }
+                )
+            }
 
             Button(
                 onClick = {

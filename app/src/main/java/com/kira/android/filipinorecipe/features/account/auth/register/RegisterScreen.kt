@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -66,7 +67,12 @@ fun RegisterScreen(
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.registerState.collect { state ->
                 when (state) {
-                    is RegisterState.OnRegister -> {}
+                    is RegisterState.OnRegister -> {
+                        onShowSnackbar("Account created! Please sign in.")
+                        navController.navigate(LoginRoute) {
+                            popUpTo<RegisterRoute> { inclusive = true }
+                        }
+                    }
                     is RegisterState.ShowError -> {
                         onShowSnackbar(state.error.message ?: "Registration failed")
                     }
@@ -76,6 +82,7 @@ fun RegisterScreen(
     }
     val isLoading by viewModel.isLoading.collectAsState()
     PopulateRegisterScreen(
+        viewModel = viewModel,
         isLoading = isLoading,
         navController = navController,
         onRegisterClick = { email, password, username ->
@@ -90,6 +97,7 @@ fun RegisterScreen(
 
 @Composable
 fun PopulateRegisterScreen(
+    viewModel: RegisterViewModel,
     isLoading: Boolean,
     navController: NavController,
     onRegisterClick: (String, String, String) -> Unit
@@ -99,6 +107,19 @@ fun PopulateRegisterScreen(
     val passwordState = rememberTextFieldState()
     val confirmPasswordState = rememberTextFieldState()
     var isVisible by remember { mutableStateOf(false) }
+
+    val passwordsMatch =
+        viewModel.password == viewModel.confirmPassword || viewModel.confirmPassword.isEmpty()
+
+    LaunchedEffect(username, email) {
+        viewModel.username = username
+        viewModel.email = email
+    }
+
+    LaunchedEffect(passwordState.text, confirmPasswordState.text) {
+        viewModel.password = passwordState.text.toString()
+        viewModel.confirmPassword = confirmPasswordState.text.toString()
+    }
 
     Box(
         modifier = Modifier
@@ -233,6 +254,11 @@ fun PopulateRegisterScreen(
                     Row(
                         modifier = Modifier
                             .background(Color.White, RoundedCornerShape(24.dp))
+                            .border(
+                                width = 1.dp,
+                                color = if (passwordsMatch) Color.Transparent else Color.Red, // Error border
+                                shape = RoundedCornerShape(24.dp)
+                            )
                             .padding(horizontal = 16.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -262,18 +288,29 @@ fun PopulateRegisterScreen(
                 }
             )
 
+            AnimatedVisibility(visible = !passwordsMatch) {
+                Text(
+                    text = "Passwords do not match",
+                    color = Color.Red,
+                    fontSize = 12.sp,
+                    modifier = Modifier.padding(start = 16.dp, top = 4.dp)
+                )
+            }
+
             Spacer(modifier = Modifier.height(12.dp))
 
             Button(
                 onClick = {
                     onRegisterClick(email, passwordState.text.toString(), username)
                 },
+                enabled = !isLoading && viewModel.isInputValid,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFF7B5DB0),
-                    contentColor = Color.White
+                    contentColor = Color.White,
+                    disabledContainerColor = Color.Gray.copy(alpha = 0.3f)
                 )
             ) {
                 Text("Register")
