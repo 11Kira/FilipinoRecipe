@@ -27,6 +27,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -41,7 +42,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -103,8 +107,10 @@ fun PopulateRegisterScreen(
     ) {
         Column(
             modifier = Modifier
-                .padding(16.dp)
-                .align(Alignment.Center)
+                .fillMaxSize()
+                .padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
             BasicTextField(
                 value = username,
@@ -264,8 +270,11 @@ fun PopulateRegisterScreen(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(50.dp)
-
+                    .height(50.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF7B5DB0),
+                    contentColor = Color.White
+                )
             ) {
                 Text("Register")
             }
@@ -280,11 +289,13 @@ fun PopulateRegisterScreen(
             ) {
                 Text(
                     text = "Already have an account? ",
-                    color = Color.Gray
+                    color = Color.Gray,
+                    style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
                 )
                 Text(
                     text = "Sign in",
-                    color = Color.Magenta,
+                    style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Bold),
+                    color = Color(0xFF7B5DB0),
                     modifier = Modifier
                         .clickable(onClick = {
                             navController.navigate(LoginRoute) {

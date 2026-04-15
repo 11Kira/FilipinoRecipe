@@ -1,5 +1,8 @@
 package com.kira.android.filipinorecipe.features.account.auth.login
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kira.android.filipinorecipe.features.account.auth.AuthUseCase
@@ -25,6 +28,24 @@ class LoginViewModel @Inject constructor(
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
+
+    var email by mutableStateOf("")
+        private set
+    var password by mutableStateOf("")
+        private set
+
+    fun updateEmail(newValue: String) {
+        email = newValue
+    }
+
+    fun updatePassword(newValue: String) {
+        password = newValue
+    }
+
+    val isInputValid: Boolean
+        get() = android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() && password.length >= 6
+
+
 
     fun login(email: String, password: String) {
         viewModelScope.launch {
