@@ -6,7 +6,7 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface UserService {
-    @GET("favorites")
+    @GET("users/favorites")
     suspend fun getAllFavoriteRecipes(
         @Query("query") query: String = "",
         @Query("page") page: Int,

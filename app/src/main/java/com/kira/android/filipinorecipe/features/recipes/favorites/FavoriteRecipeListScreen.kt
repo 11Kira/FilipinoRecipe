@@ -13,14 +13,11 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.SheetValue
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -57,11 +54,7 @@ fun MainFavoriteRecipeScreen(
     contentPadding: PaddingValues,
     onItemClick: (String) -> Unit,
 ) {
-    val scope = rememberCoroutineScope()
     val listState = rememberLazyListState()
-    val sheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true,
-        confirmValueChange = { newValue -> newValue != SheetValue.Hidden })
     val recipes = viewModel.favoritePagingFlow.collectAsLazyPagingItems()
     val focusManager = LocalFocusManager.current
     val query by viewModel.searchQuery.collectAsState()
