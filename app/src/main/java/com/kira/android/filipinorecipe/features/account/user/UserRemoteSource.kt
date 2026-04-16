@@ -16,4 +16,12 @@ class UserRemoteSource @Inject constructor(
             page
         )
     }
+
+    suspend fun addFavoriteRecipe(
+        recipeId: String
+    ) = withContext(Dispatchers.IO) {
+        userService.addFavoriteRecipe(
+            recipeId
+        )
+    }
 }

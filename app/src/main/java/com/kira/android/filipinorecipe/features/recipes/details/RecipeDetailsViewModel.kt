@@ -2,6 +2,7 @@ package com.kira.android.filipinorecipe.features.recipes.details
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kira.android.filipinorecipe.features.account.user.UserUseCase
 import com.kira.android.filipinorecipe.features.recipes.RecipeUseCase
 import com.kira.android.filipinorecipe.model.enums.ResponseStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,7 +15,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RecipeDetailsViewModel @Inject constructor(
-    private val recipeUseCase: RecipeUseCase
+    private val recipeUseCase: RecipeUseCase,
+    private val userUseCase: UserUseCase
 ) : ViewModel() {
 
     private val mutableRecipeState: MutableSharedFlow<RecipeDetailsState> = MutableSharedFlow()
@@ -34,6 +36,19 @@ class RecipeDetailsViewModel @Inject constructor(
         }
     }
 
+    fun addFavoriteRecipe(recipeId: String) {
+        viewModelScope.launch(CoroutineExceptionHandler { _, error ->
+            runBlocking { mutableRecipeState.emit(RecipeDetailsState.ShowError(error)) }
+        }) {
+            val response = userUseCase.addFavoriteRecipe(recipeId)
+            if (response.status == ResponseStatus.SUCCESS) {
+                response.data?.let { data ->
+                    //mutableRecipeState.emit(RecipeDetailsState.SetRecipeDetails(data))
+                }
+            }
+        }
+    }
+
     fun updateRecipeById(recipeId: String) {
         viewModelScope.launch(CoroutineExceptionHandler { _, error ->
             runBlocking { mutableRecipeState.emit(RecipeDetailsState.ShowError(error)) }
@@ -47,7 +62,7 @@ class RecipeDetailsViewModel @Inject constructor(
         viewModelScope.launch(CoroutineExceptionHandler { _, error ->
             runBlocking { mutableRecipeState.emit(RecipeDetailsState.ShowError(error)) }
         }) {
-            val invoke = recipeUseCase.deleteRecipeById(recipeId)
+            recipeUseCase.deleteRecipeById(recipeId)
         }
     }
 }

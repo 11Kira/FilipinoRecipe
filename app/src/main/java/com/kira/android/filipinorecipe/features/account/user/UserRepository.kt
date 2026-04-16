@@ -5,7 +5,9 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.kira.android.filipinorecipe.features.recipes.favorites.FavoriteRecipePagingSource
 import com.kira.android.filipinorecipe.model.Recipe
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class UserRepository @Inject constructor(
@@ -20,4 +22,12 @@ class UserRepository @Inject constructor(
                 query = query,
             )
         }.flow
+
+    suspend fun addFavoriteRecipe(
+        recipeId: String
+    ) = withContext(Dispatchers.IO) {
+        userRemoteSource.addFavoriteRecipe(
+            recipeId
+        )
+    }
 }

@@ -136,7 +136,7 @@ fun PopulateRecipeDetails(navController: NavController, recipe: Recipe) {
         // 3. Dynamic Top App Bar
         RecipeTopBar(
             alpha = toolbarAlpha,
-            recipeName = recipe.title,
+            recipe = recipe,
             onBackClick = {
                 navController.navigateUp()
             }
@@ -206,7 +206,7 @@ fun RecipeHeaderImage(recipe: Recipe, headerHeight: Dp, scrollState: ScrollState
 }
 
 @Composable
-fun RecipeTopBar(alpha: Float, recipeName: String, onBackClick: () -> Unit) {
+fun RecipeTopBar(alpha: Float, recipe: Recipe, onBackClick: () -> Unit) {
     // The parent container covers the status bar + the toolbar area
     Column(
         modifier = Modifier
@@ -232,7 +232,7 @@ fun RecipeTopBar(alpha: Float, recipeName: String, onBackClick: () -> Unit) {
             CircularIconButton(icon = Icons.Default.ArrowBack, onClick = onBackClick)
 
             Text(
-                text = recipeName,
+                text = recipe.title,
                 style = MaterialTheme.typography.titleMedium,
                 color = Color.White.copy(alpha = alpha),
                 modifier = Modifier.weight(1f),
@@ -241,7 +241,12 @@ fun RecipeTopBar(alpha: Float, recipeName: String, onBackClick: () -> Unit) {
                 overflow = TextOverflow.Ellipsis,
                 fontSize = 20.sp
             )
-            CircularIconButton(icon = Icons.Default.FavoriteBorder, onClick = {})
+            CircularIconButton(
+                icon = Icons.Default.FavoriteBorder,
+                onClick = {
+                    viewModel.addFavoriteRecipe(recipe.id)
+                }
+            )
         }
     }
 }
