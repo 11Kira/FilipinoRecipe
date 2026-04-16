@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -28,10 +29,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.kira.android.filipinorecipe.component.recipe.RecipeList
 import com.kira.android.filipinorecipe.component.recipe.RecipeSearchField
+import com.kira.android.filipinorecipe.model.Recipe
 import com.kira.android.filipinorecipe.utils.ColorUtils
 
 @Composable
@@ -40,8 +46,22 @@ fun FavoriteRecipeListScreen(
     contentPadding: PaddingValues,
     onItemClick: (String) -> Unit,
 ) {
+    val recipes = viewModel.favoritePagingFlow.collectAsLazyPagingItems()
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                recipes.refresh()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
     MainFavoriteRecipeScreen(
         viewModel = viewModel,
+        recipes = recipes,
         contentPadding = contentPadding,
         onItemClick = onItemClick,
     )
@@ -51,11 +71,11 @@ fun FavoriteRecipeListScreen(
 @Composable
 fun MainFavoriteRecipeScreen(
     viewModel: FavoriteRecipeListViewModel,
+    recipes: LazyPagingItems<Recipe>,
     contentPadding: PaddingValues,
     onItemClick: (String) -> Unit,
 ) {
     val listState = rememberLazyListState()
-    val recipes = viewModel.favoritePagingFlow.collectAsLazyPagingItems()
     val focusManager = LocalFocusManager.current
     val query by viewModel.searchQuery.collectAsState()
     var lastScrolledQuery by rememberSaveable { mutableStateOf("") }
