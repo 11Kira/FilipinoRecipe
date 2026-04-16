@@ -1,6 +1,7 @@
 package com.kira.android.filipinorecipe.di
 
 import android.content.Context
+import com.kira.android.filipinorecipe.features.account.auth.token.AuthAuthenticator
 import com.kira.android.filipinorecipe.features.account.auth.token.AuthInterceptor
 import com.kira.android.filipinorecipe.features.account.auth.token.TokenManager
 import com.kira.android.filipinorecipe.utils.Constants
@@ -59,7 +60,8 @@ class NetworkModule {
     @Provides
     fun provideOkHttpClient(
         httpLoggingInterceptor: HttpLoggingInterceptor,
-        authInterceptor: AuthInterceptor
+        authInterceptor: AuthInterceptor,
+        authenticator: AuthAuthenticator
     ): OkHttpClient {
         return OkHttpClient
             .Builder()
@@ -67,6 +69,7 @@ class NetworkModule {
             .writeTimeout(Constants.WRITE_TIMEOUT, TimeUnit.SECONDS)
             .readTimeout(Constants.READ_TIMEOUT, TimeUnit.SECONDS)
             .addInterceptor(authInterceptor)
+            .authenticator(authenticator)
             .addInterceptor(httpLoggingInterceptor)
             .build()
     }

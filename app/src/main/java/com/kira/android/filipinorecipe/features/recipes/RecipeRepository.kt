@@ -18,7 +18,14 @@ class RecipeRepository @Inject constructor(
         protein: String,
         difficulty: String,
     ): Flow<PagingData<Recipe>> =
-        Pager(PagingConfig(pageSize = 10, prefetchDistance = 10, enablePlaceholders = false)) {
+        Pager(
+            PagingConfig(
+                pageSize = 10,
+                prefetchDistance = 2,
+                enablePlaceholders = false,
+                initialLoadSize = 10
+            )
+        ) {
             RecipePagingSource(
                 remoteSource = recipeRemoteSource,
                 query = query,

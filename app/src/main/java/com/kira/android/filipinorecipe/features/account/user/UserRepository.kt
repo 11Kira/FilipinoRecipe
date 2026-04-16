@@ -16,7 +16,14 @@ class UserRepository @Inject constructor(
     fun getAllFavoriteRecipes(
         query: String,
     ): Flow<PagingData<Recipe>> =
-        Pager(PagingConfig(pageSize = 10, prefetchDistance = 10, enablePlaceholders = false)) {
+        Pager(
+            PagingConfig(
+                pageSize = 10,
+                prefetchDistance = 2,
+                enablePlaceholders = false,
+                initialLoadSize = 10
+            )
+        ) {
             FavoriteRecipePagingSource(
                 remoteSource = userRemoteSource,
                 query = query,
