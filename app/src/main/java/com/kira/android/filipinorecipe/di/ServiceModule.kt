@@ -1,6 +1,7 @@
 package com.kira.android.filipinorecipe.di
 
 import com.kira.android.filipinorecipe.features.account.auth.AuthService
+import com.kira.android.filipinorecipe.features.account.user.UserService
 import com.kira.android.filipinorecipe.features.recipes.RecipeService
 import dagger.Module
 import dagger.Provides
@@ -21,4 +22,9 @@ class ServiceModule {
     @Provides
     fun provideAuthService(retrofit: Retrofit): AuthService =
         retrofit.create(AuthService::class.java)
+
+    @Singleton
+    @Provides
+    fun provideUserService(retrofit: Retrofit): UserService =
+        retrofit.create(UserService::class.java)
 }

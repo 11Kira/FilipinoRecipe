@@ -66,12 +66,12 @@ fun RecipeListScreen(
     onItemClick: (String) -> Unit,
 ) {
     viewModel = hiltViewModel()
-    MainRecipeScreen(contentPadding, onItemClick)
+    MainRecipeListScreen(contentPadding, onItemClick)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainRecipeScreen(
+fun MainRecipeListScreen(
     contentPadding: PaddingValues,
     onItemClick: (String) -> Unit,
 ) {

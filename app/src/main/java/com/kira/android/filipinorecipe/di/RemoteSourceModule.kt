@@ -2,6 +2,8 @@ package com.kira.android.filipinorecipe.di
 
 import com.kira.android.filipinorecipe.features.account.auth.AuthRemoteSource
 import com.kira.android.filipinorecipe.features.account.auth.AuthService
+import com.kira.android.filipinorecipe.features.account.user.UserRemoteSource
+import com.kira.android.filipinorecipe.features.account.user.UserService
 import com.kira.android.filipinorecipe.features.recipes.RecipeRemoteSource
 import com.kira.android.filipinorecipe.features.recipes.RecipeService
 import dagger.Module
@@ -24,4 +26,10 @@ class RemoteSourceModule {
     fun provideAuthRemoteSource(
         authService: AuthService
     ) = AuthRemoteSource(authService = authService)
+
+    @Provides
+    @Singleton
+    fun provideUserRemoteSource(
+        userService: UserService
+    ) = UserRemoteSource(userService = userService)
 }

@@ -39,7 +39,7 @@ fun AppNavHost(
         }
         composable<RecipeListRoute> {
             RecipeListScreen(
-                contentPadding,
+                contentPadding = contentPadding,
                 onItemClick = { id ->
                     navController.navigate(DetailScreenNavigation(id))
                 }
@@ -47,7 +47,12 @@ fun AppNavHost(
         }
 
         composable<FavoritesRoute> {
-            FavoriteRecipeListScreen(navController)
+            FavoriteRecipeListScreen(
+                contentPadding = contentPadding,
+                onItemClick = { id ->
+                    navController.navigate(DetailScreenNavigation(id))
+                }
+            )
         }
 
         composable<ProfileRoute> {
