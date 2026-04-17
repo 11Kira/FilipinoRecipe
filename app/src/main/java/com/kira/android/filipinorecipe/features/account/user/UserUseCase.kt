@@ -13,7 +13,7 @@ class UserUseCase @Inject constructor(
         query: String,
     ): Flow<PagingData<Recipe>> = userRepository.getAllFavoriteRecipes(query)
 
-    suspend fun addFavoriteRecipe(recipeId: String): ApiResponse<Recipe> {
-        return userRepository.addFavoriteRecipe(recipeId)
+    suspend fun toggleFavoriteRecipe(recipeId: String): ApiResponse<Recipe> {
+        return userRepository.toggleFavoriteRecipe(recipeId)
     }
 }

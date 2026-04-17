@@ -42,7 +42,8 @@ fun AppNavHost(
                 contentPadding = contentPadding,
                 onItemClick = { id ->
                     navController.navigate(DetailScreenNavigation(id))
-                }
+                },
+                onShowSnackbar = onShowSnackbar
             )
         }
 
@@ -51,7 +52,8 @@ fun AppNavHost(
                 contentPadding = contentPadding,
                 onItemClick = { id ->
                     navController.navigate(DetailScreenNavigation(id))
-                }
+                },
+                onShowSnackbar = onShowSnackbar
             )
         }
 
@@ -61,7 +63,11 @@ fun AppNavHost(
 
         composable<DetailScreenNavigation> { backStackEntry ->
             val args = backStackEntry.toRoute<DetailScreenNavigation>()
-            RecipeDetailsScreen(navController, args.id)
+            RecipeDetailsScreen(
+                navController = navController,
+                id = args.id,
+                onShowSnackbar = onShowSnackbar
+            )
         }
     }
 }

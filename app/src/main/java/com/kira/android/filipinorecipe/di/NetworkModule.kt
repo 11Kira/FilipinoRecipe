@@ -1,7 +1,7 @@
 package com.kira.android.filipinorecipe.di
 
 import android.content.Context
-import com.kira.android.filipinorecipe.features.account.auth.token.AuthAuthenticator
+import com.kira.android.filipinorecipe.features.account.auth.AuthService
 import com.kira.android.filipinorecipe.features.account.auth.token.AuthInterceptor
 import com.kira.android.filipinorecipe.features.account.auth.token.TokenManager
 import com.kira.android.filipinorecipe.utils.Constants
@@ -17,6 +17,7 @@ import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
+import javax.inject.Provider
 import javax.inject.Singleton
 
 @Module
@@ -39,9 +40,10 @@ class NetworkModule {
     @Provides
     @Singleton
     fun provideAuthInterceptor(
-        tokenManager: TokenManager
+        tokenManager: TokenManager,
+        authServiceProvider: Provider<AuthService>
     ): AuthInterceptor {
-        return AuthInterceptor(tokenManager)
+        return AuthInterceptor(tokenManager, authServiceProvider)
     }
 
     @Singleton
@@ -61,7 +63,6 @@ class NetworkModule {
     fun provideOkHttpClient(
         httpLoggingInterceptor: HttpLoggingInterceptor,
         authInterceptor: AuthInterceptor,
-        authenticator: AuthAuthenticator
     ): OkHttpClient {
         return OkHttpClient
             .Builder()
@@ -69,7 +70,6 @@ class NetworkModule {
             .writeTimeout(Constants.WRITE_TIMEOUT, TimeUnit.SECONDS)
             .readTimeout(Constants.READ_TIMEOUT, TimeUnit.SECONDS)
             .addInterceptor(authInterceptor)
-            .authenticator(authenticator)
             .addInterceptor(httpLoggingInterceptor)
             .build()
     }

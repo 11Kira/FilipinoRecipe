@@ -39,11 +39,11 @@ fun RecipeList(
             ),
             verticalArrangement = Arrangement.spacedBy(15.dp)
         ) {
-            if (isInitialLoad || isSearchStale) {
+            /*if (isInitialLoad || isSearchStale) {
                 items(2) {
                     RecipeShimmerItem(shimmerBrush)
                 }
-            } else {
+            } else {*/
                 items(
                     count = recipes.itemCount,
                     key = { index ->
@@ -58,7 +58,7 @@ fun RecipeList(
                         RecipeCardItem(selectedRecipe, onItemClick)
                     }
                 }
-            }
+            //}
         }
     }
 }

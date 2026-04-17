@@ -58,8 +58,8 @@ import com.kira.android.filipinorecipe.utils.ColorUtils
 
 @Composable
 fun RegisterScreen(
-    navController: NavController,
     viewModel: RegisterViewModel = hiltViewModel(),
+    navController: NavController,
     onShowSnackbar: (String) -> Unit
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -83,8 +83,8 @@ fun RegisterScreen(
     val isLoading by viewModel.isLoading.collectAsState()
     PopulateRegisterScreen(
         viewModel = viewModel,
-        isLoading = isLoading,
         navController = navController,
+        isLoading = isLoading,
         onRegisterClick = { email, password, username ->
             viewModel.register(
                 email,

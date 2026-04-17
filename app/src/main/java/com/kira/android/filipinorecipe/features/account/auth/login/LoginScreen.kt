@@ -60,8 +60,8 @@ import com.kira.android.filipinorecipe.utils.ColorUtils
 
 @Composable
 fun LoginScreen(
-    navController: NavController,
     viewModel: LoginViewModel = hiltViewModel(),
+    navController: NavController,
     onShowSnackbar: (String) -> Unit
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -85,8 +85,8 @@ fun LoginScreen(
     val isLoading by viewModel.isLoading.collectAsState()
     PopulateLoginScreen(
         viewModel = viewModel,
-        isLoading = isLoading,
         navController = navController,
+        isLoading = isLoading,
         onLoginClick = { email, password -> viewModel.login(email, password) }
     )
 }

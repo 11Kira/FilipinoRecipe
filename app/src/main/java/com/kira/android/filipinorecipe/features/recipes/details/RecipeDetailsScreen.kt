@@ -59,42 +59,48 @@ import com.kira.android.filipinorecipe.component.DetailsListSection
 import com.kira.android.filipinorecipe.component.SubDetails
 import com.kira.android.filipinorecipe.model.Recipe
 import com.kira.android.filipinorecipe.utils.ColorUtils
-import kotlinx.coroutines.flow.SharedFlow
-
-lateinit var viewModel: RecipeDetailsViewModel
 
 @Composable
-fun RecipeDetailsScreen(navController: NavController, id: String) {
-    viewModel = hiltViewModel()
-    MainScreen(navController, viewModel.recipeState)
-    viewModel.getRecipeById(id)
-}
-
-@Composable
-fun MainScreen(navController: NavController, sharedFlow: SharedFlow<RecipeDetailsState>) {
+fun RecipeDetailsScreen(
+    viewModel: RecipeDetailsViewModel = hiltViewModel(),
+    navController: NavController,
+    id: String,
+    onShowSnackbar: (String) -> Unit
+) {
     val lifecycleOwner = LocalLifecycleOwner.current
     var selectedRecipe by remember { mutableStateOf<Recipe?>(null) }
     LaunchedEffect(key1 = Unit) {
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            sharedFlow.collect { state ->
+            viewModel.recipeState.collect { state ->
                 when (state) {
                     is RecipeDetailsState.SetRecipeDetails -> {
                         selectedRecipe = state.recipe
                     }
 
                     is RecipeDetailsState.ShowError -> {
-
+                        onShowSnackbar(state.error.message ?: "Registration failed")
                     }
                 }
             }
         }
     }
-    selectedRecipe?.let { recipe -> PopulateRecipeDetails(navController, recipe) }
+    selectedRecipe?.let { recipe ->
+        PopulateRecipeDetails(
+            viewModel = viewModel,
+            navController = navController,
+            recipe = recipe
+        )
+    }
+    viewModel.getRecipeById(id)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PopulateRecipeDetails(navController: NavController, recipe: Recipe) {
+fun PopulateRecipeDetails(
+    viewModel: RecipeDetailsViewModel,
+    navController: NavController,
+    recipe: Recipe
+) {
     val scrollState = rememberScrollState()
     val headerHeight = 500.dp
     val toolbarHeight = 56.dp
@@ -136,6 +142,7 @@ fun PopulateRecipeDetails(navController: NavController, recipe: Recipe) {
 
         // 3. Dynamic Top App Bar
         RecipeTopBar(
+            viewModel = viewModel,
             alpha = toolbarAlpha,
             recipe = recipe,
             onBackClick = {
@@ -146,7 +153,11 @@ fun PopulateRecipeDetails(navController: NavController, recipe: Recipe) {
 }
 
 @Composable
-fun RecipeHeaderImage(recipe: Recipe, headerHeight: Dp, scrollState: ScrollState) {
+fun RecipeHeaderImage(
+    recipe: Recipe,
+    headerHeight: Dp,
+    scrollState: ScrollState
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -207,7 +218,12 @@ fun RecipeHeaderImage(recipe: Recipe, headerHeight: Dp, scrollState: ScrollState
 }
 
 @Composable
-fun RecipeTopBar(alpha: Float, recipe: Recipe, onBackClick: () -> Unit) {
+fun RecipeTopBar(
+    viewModel: RecipeDetailsViewModel,
+    alpha: Float,
+    recipe: Recipe,
+    onBackClick: () -> Unit
+) {
     // The parent container covers the status bar + the toolbar area
     Column(
         modifier = Modifier
@@ -243,10 +259,8 @@ fun RecipeTopBar(alpha: Float, recipe: Recipe, onBackClick: () -> Unit) {
                 fontSize = 20.sp
             )
             CircularIconButton(
-                icon = ImageVector.vectorResource(id = R.drawable.ic_favorite),
-                onClick = {
-                    viewModel.addFavoriteRecipe(recipe.id)
-                },
+                icon = ImageVector.vectorResource(id = if (recipe.isFavorited) R.drawable.ic_favorite_filled else R.drawable.ic_favorite),
+                onClick = { viewModel.toggleFavoriteRecipe(recipe.id) },
                 isFlipped = true
             )
         }

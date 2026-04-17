@@ -16,7 +16,7 @@ interface UserService {
     ): ApiResponse<List<Recipe>>
 
     @POST("users/favorites/{id}")
-    suspend fun addFavoriteRecipe(
+    suspend fun toggleFavoriteRecipe(
         @Path("id") id: String = "",
     ): ApiResponse<Recipe>
 }

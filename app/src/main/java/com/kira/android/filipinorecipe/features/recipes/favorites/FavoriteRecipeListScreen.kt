@@ -45,6 +45,7 @@ fun FavoriteRecipeListScreen(
     viewModel: FavoriteRecipeListViewModel = hiltViewModel(),
     contentPadding: PaddingValues,
     onItemClick: (String) -> Unit,
+    onShowSnackbar: (String) -> Unit
 ) {
     val recipes = viewModel.favoritePagingFlow.collectAsLazyPagingItems()
     val lifecycleOwner = LocalLifecycleOwner.current

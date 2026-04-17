@@ -64,6 +64,7 @@ lateinit var viewModel: RecipeListViewModel
 fun RecipeListScreen(
     contentPadding: PaddingValues,
     onItemClick: (String) -> Unit,
+    onShowSnackbar: (String) -> Unit
 ) {
     viewModel = hiltViewModel()
     MainRecipeListScreen(contentPadding, onItemClick)

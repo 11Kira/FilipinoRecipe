@@ -30,10 +30,10 @@ class UserRepository @Inject constructor(
             )
         }.flow
 
-    suspend fun addFavoriteRecipe(
+    suspend fun toggleFavoriteRecipe(
         recipeId: String
     ) = withContext(Dispatchers.IO) {
-        userRemoteSource.addFavoriteRecipe(
+        userRemoteSource.toggleFavoriteRecipe(
             recipeId
         )
     }

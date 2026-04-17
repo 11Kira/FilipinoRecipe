@@ -6,11 +6,11 @@ import com.kira.android.filipinorecipe.features.account.user.UserUseCase
 import com.kira.android.filipinorecipe.features.recipes.RecipeUseCase
 import com.kira.android.filipinorecipe.model.enums.ResponseStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @HiltViewModel
@@ -19,50 +19,46 @@ class RecipeDetailsViewModel @Inject constructor(
     private val userUseCase: UserUseCase
 ) : ViewModel() {
 
-    private val mutableRecipeState: MutableSharedFlow<RecipeDetailsState> = MutableSharedFlow()
+    private val _recipeState: MutableSharedFlow<RecipeDetailsState> = MutableSharedFlow()
     val recipeState
-        get() = mutableRecipeState.asSharedFlow()
+        get() = _recipeState.asSharedFlow()
+
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading = _isLoading.asStateFlow()
 
     fun getRecipeById(recipeId: String) {
-        viewModelScope.launch(CoroutineExceptionHandler { _, error ->
-            runBlocking { mutableRecipeState.emit(RecipeDetailsState.ShowError(error)) }
-        }) {
-            val response = recipeUseCase.getRecipeById(recipeId)
-            if (response.status == ResponseStatus.SUCCESS) {
-                response.data?.let { data ->
-                    mutableRecipeState.emit(RecipeDetailsState.SetRecipeDetails(data))
+        viewModelScope.launch {
+            _isLoading.value = true
+            try {
+                val response = recipeUseCase.getRecipeById(recipeId)
+                if (response.status == ResponseStatus.SUCCESS) {
+                    response.data?.let { data ->
+                        _recipeState.emit(RecipeDetailsState.SetRecipeDetails(data))
+                    }
                 }
+            } catch (e: Exception) {
+                _recipeState.emit(RecipeDetailsState.ShowError(e))
+            } finally {
+                _isLoading.value = false
             }
         }
     }
 
-    fun addFavoriteRecipe(recipeId: String) {
-        viewModelScope.launch(CoroutineExceptionHandler { _, error ->
-            runBlocking { mutableRecipeState.emit(RecipeDetailsState.ShowError(error)) }
-        }) {
-            val response = userUseCase.addFavoriteRecipe(recipeId)
-            if (response.status == ResponseStatus.SUCCESS) {
-                response.data?.let { data ->
-                    //mutableRecipeState.emit(RecipeDetailsState.SetRecipeDetails(data))
+    fun toggleFavoriteRecipe(recipeId: String) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            try {
+                val response = userUseCase.toggleFavoriteRecipe(recipeId)
+                if (response.status == ResponseStatus.SUCCESS) {
+                    response.data?.let { data ->
+                        _recipeState.emit(RecipeDetailsState.SetRecipeDetails(data))
+                    }
                 }
+            } catch (e: Exception) {
+                _recipeState.emit(RecipeDetailsState.ShowError(e))
+            } finally {
+                _isLoading.value = false
             }
-        }
-    }
-
-    fun updateRecipeById(recipeId: String) {
-        viewModelScope.launch(CoroutineExceptionHandler { _, error ->
-            runBlocking { mutableRecipeState.emit(RecipeDetailsState.ShowError(error)) }
-        }) {
-            //val invoke = recipeUseCase.updateRecipeById(recipeId, )
-            //mutableRecipeState.emit(RecipeState.SetRecipeDetails(invoke))
-        }
-    }
-
-    fun deleteRecipeById(recipeId: String) {
-        viewModelScope.launch(CoroutineExceptionHandler { _, error ->
-            runBlocking { mutableRecipeState.emit(RecipeDetailsState.ShowError(error)) }
-        }) {
-            recipeUseCase.deleteRecipeById(recipeId)
         }
     }
 }

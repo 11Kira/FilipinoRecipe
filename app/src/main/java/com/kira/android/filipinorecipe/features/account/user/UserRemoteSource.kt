@@ -17,10 +17,10 @@ class UserRemoteSource @Inject constructor(
         )
     }
 
-    suspend fun addFavoriteRecipe(
+    suspend fun toggleFavoriteRecipe(
         recipeId: String
     ) = withContext(Dispatchers.IO) {
-        userService.addFavoriteRecipe(
+        userService.toggleFavoriteRecipe(
             recipeId
         )
     }

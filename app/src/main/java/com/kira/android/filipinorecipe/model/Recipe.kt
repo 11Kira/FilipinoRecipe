@@ -33,6 +33,8 @@ data class Recipe(
     val variations: List<String> = emptyList(),
     @SerializedName("servingSuggestions")
     val servingSuggestions: List<String> = emptyList(),
+    @SerializedName("isFavorited")
+    val isFavorited: Boolean,
     @SerializedName("created_at")
     val createdAt: String,
     @SerializedName("updated_at")
