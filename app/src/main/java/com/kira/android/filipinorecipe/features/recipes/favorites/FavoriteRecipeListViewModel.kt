@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import com.kira.android.filipinorecipe.features.account.user.UserUseCase
+import com.kira.android.filipinorecipe.model.enums.ResponseStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -12,6 +13,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -21,6 +24,9 @@ class FavoriteRecipeListViewModel @Inject constructor(
 
     private val _searchQuery = MutableStateFlow("")
     val searchQuery = _searchQuery.asStateFlow()
+
+    private val _favoriteRecipeListUiState = MutableStateFlow(FavoriteRecipeListState())
+    val favoriteRecipeListUiState = _favoriteRecipeListUiState.asStateFlow()
 
     @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
     val favoritePagingFlow = _searchQuery
@@ -33,5 +39,36 @@ class FavoriteRecipeListViewModel @Inject constructor(
 
     fun onSearchQueryChanged(newQuery: String) {
         _searchQuery.value = newQuery
+    }
+
+    fun toggleFavorite(recipeId: String) {
+        val currentList = _favoriteRecipeListUiState.value.recipes ?: emptyList()
+        val recipeIndex = currentList.indexOfFirst { it.id == recipeId }
+        if (recipeIndex == -1) return
+
+        val originalRecipe = currentList[recipeIndex]
+        val wasFavorited = originalRecipe.isFavorited
+
+        _favoriteRecipeListUiState.update { state ->
+            val updatedList = currentList.toMutableList().apply {
+                this[recipeIndex] = originalRecipe.copy(isFavorited = !wasFavorited)
+            }
+            state.copy(recipes = updatedList)
+        }
+
+        viewModelScope.launch {
+            try {
+                val response = userUseCase.toggleFavoriteRecipe(recipeId)
+                if (response.status != ResponseStatus.SUCCESS) {
+                    rollbackListFavorite(recipeId, wasFavorited)
+                }
+            } catch (e: Exception) {
+                rollbackListFavorite(recipeId, wasFavorited)
+            }
+        }
+    }
+
+    private fun rollbackListFavorite(recipeId: String, wasFavorited: Boolean) {
+
     }
 }

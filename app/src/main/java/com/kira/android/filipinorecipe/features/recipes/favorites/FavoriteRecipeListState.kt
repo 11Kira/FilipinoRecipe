@@ -1,5 +1,9 @@
 package com.kira.android.filipinorecipe.features.recipes.favorites
 
-sealed class FavoriteRecipeListState {
-    data class ShowError(val error: Any) : FavoriteRecipeListState()
-}
+import com.kira.android.filipinorecipe.model.Recipe
+
+data class FavoriteRecipeListState(
+    val recipes: List<Recipe>? = null,
+    val isLoading: Boolean = false,
+    val error: String? = null
+)
