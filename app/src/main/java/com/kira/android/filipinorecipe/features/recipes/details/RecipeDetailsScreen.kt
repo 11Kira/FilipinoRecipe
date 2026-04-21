@@ -221,20 +221,16 @@ fun RecipeTopBar(
     recipe: Recipe,
     onBackClick: () -> Unit
 ) {
-    // The parent container covers the status bar + the toolbar area
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.Black.copy(alpha = alpha)) // Background extends to the top edge
+            .background(Color.Black.copy(alpha = alpha))
     ) {
-        // 1. A spacer that matches the status bar height
         Spacer(
             modifier = Modifier
                 .windowInsetsTopHeight(WindowInsets.statusBars)
                 .fillMaxWidth()
         )
-
-        // 2. The actual toolbar content
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -257,6 +253,7 @@ fun RecipeTopBar(
             )
             CircularIconButton(
                 icon = ImageVector.vectorResource(id = if (recipe.isFavorited) R.drawable.ic_favorite_filled else R.drawable.ic_favorite),
+                tint = if (recipe.isFavorited) Color.Red else Color.White,
                 onClick = { viewModel.toggleFavoriteRecipe(recipe.id) },
                 isFlipped = true
             )

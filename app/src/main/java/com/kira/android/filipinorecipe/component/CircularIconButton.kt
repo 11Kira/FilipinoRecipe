@@ -17,7 +17,8 @@ import androidx.compose.ui.unit.dp
 fun CircularIconButton(
     icon: ImageVector,
     onClick: () -> Unit,
-    isFlipped: Boolean = false
+    isFlipped: Boolean = false,
+    tint: Color = Color.White
 ) {
     Surface(
         onClick = onClick,
@@ -31,7 +32,7 @@ fun CircularIconButton(
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = Color.White,
+                tint = tint,
                 modifier = Modifier.size(24.dp)
             )
         }
