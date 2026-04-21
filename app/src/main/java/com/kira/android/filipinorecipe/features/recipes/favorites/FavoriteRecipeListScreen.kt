@@ -64,7 +64,7 @@ fun FavoriteRecipeListScreen(
         viewModel = viewModel,
         recipes = recipes,
         contentPadding = contentPadding,
-        onItemClick = onItemClick,
+        onItemClick = onItemClick
     )
 }
 
@@ -74,7 +74,7 @@ fun MainFavoriteRecipeScreen(
     viewModel: FavoriteRecipeListViewModel,
     recipes: LazyPagingItems<Recipe>,
     contentPadding: PaddingValues,
-    onItemClick: (String) -> Unit,
+    onItemClick: (String) -> Unit
 ) {
     val listState = rememberLazyListState()
     val focusManager = LocalFocusManager.current
@@ -94,7 +94,16 @@ fun MainFavoriteRecipeScreen(
             .fillMaxSize()
             .background(brush = ColorUtils().recipeListBackgroundGradient)
     ) {
-        RecipeList(recipes, listState, query, contentPadding, onItemClick)
+        RecipeList(
+            recipes = recipes,
+            listState = listState,
+            searchQuery = query,
+            contentPadding = contentPadding,
+            onItemClick = onItemClick,
+            onFavoriteClick = { recipeId ->
+                viewModel.toggleFavorite(recipeId)
+            }
+        )
 
         Box(
             modifier = Modifier

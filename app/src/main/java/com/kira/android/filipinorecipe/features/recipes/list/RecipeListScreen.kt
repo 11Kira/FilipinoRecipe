@@ -103,7 +103,16 @@ fun MainRecipeListScreen(
             .fillMaxSize()
             .background(brush = ColorUtils().recipeListBackgroundGradient)
     ) {
-        RecipeList(recipes, listState, query, contentPadding, onItemClick)
+        RecipeList(
+            recipes = recipes,
+            listState = listState,
+            searchQuery = query,
+            contentPadding = contentPadding,
+            onItemClick = onItemClick,
+            onFavoriteClick = { recipeId ->
+                viewModel.toggleFavorite(recipeId)
+            }
+        )
 
         Box(
             modifier = Modifier

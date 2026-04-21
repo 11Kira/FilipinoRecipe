@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun CircularIconButton(
+    modifier: Modifier,
     icon: ImageVector,
     onClick: () -> Unit,
     isFlipped: Boolean = false,
@@ -23,17 +24,17 @@ fun CircularIconButton(
     Surface(
         onClick = onClick,
         shape = CircleShape,
-        color = Color.Black.copy(alpha = 0.3f), // Subtle dark glass effect
-        modifier = if (!isFlipped) Modifier.size(40.dp) else Modifier
-            .size(40.dp)
-            .scale(scaleX = -1f, scaleY = 1f)
+        color = Color.Black.copy(alpha = 0.3f),
+        modifier = modifier ?: Modifier.size(40.dp)
     ) {
         Box(contentAlignment = Alignment.Center) {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
                 tint = tint,
-                modifier = Modifier.size(24.dp)
+                modifier = if (!isFlipped) Modifier.size(24.dp) else Modifier
+                    .size(24.dp)
+                    .scale(scaleX = -1f, scaleY = 1f)
             )
         }
     }
