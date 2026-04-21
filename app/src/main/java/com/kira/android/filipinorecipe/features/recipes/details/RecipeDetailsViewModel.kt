@@ -63,6 +63,11 @@ class RecipeDetailsViewModel @Inject constructor(
     }
 
     private fun rollbackFavorite(originalRecipe: Recipe, originalState: Boolean) {
-        _recipeDetailsUiState.update { it.copy(recipe = originalRecipe.copy(isFavorited = originalState)) }
+        _recipeDetailsUiState.update {
+            it.copy(
+                recipe = originalRecipe.copy(isFavorited = originalState),
+                error = "Failed to update favorites. Please check your connection."
+            )
+        }
     }
 }

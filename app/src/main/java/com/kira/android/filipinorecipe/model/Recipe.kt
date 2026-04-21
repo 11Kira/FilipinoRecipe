@@ -35,10 +35,10 @@ data class Recipe(
     val servingSuggestions: List<String> = emptyList(),
     @SerializedName("isFavorited")
     val isFavorited: Boolean,
-    @SerializedName("created_at")
-    val createdAt: String,
-    @SerializedName("updated_at")
-    val updatedAt: String,
+    @SerializedName("createdAt")
+    val createdAt: String?,
+    @SerializedName("updatedAt")
+    val updatedAt: String?,
     @SerializedName("published")
     val published: Boolean,
 )
