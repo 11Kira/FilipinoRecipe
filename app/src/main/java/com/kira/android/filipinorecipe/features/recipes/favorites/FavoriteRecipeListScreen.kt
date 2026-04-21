@@ -120,6 +120,7 @@ fun MainFavoriteRecipeScreen(
         ) {
             RecipeSearchField(
                 query = query,
+                textHint = "Search favorites...",
                 onValueChange = { viewModel.onSearchQueryChanged(it) },
                 onClear = { viewModel.onSearchQueryChanged("") },
                 focusManager = focusManager,

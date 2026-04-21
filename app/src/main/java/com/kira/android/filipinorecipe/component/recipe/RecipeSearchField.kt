@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun RecipeSearchField(
     query: String,
+    textHint: String,
     onValueChange: (String) -> Unit,
     onClear: () -> Unit,
     focusManager: FocusManager,
@@ -57,7 +58,7 @@ fun RecipeSearchField(
 
                 Box(modifier = Modifier.weight(1f)) {
                     if (query.isEmpty()) {
-                        Text("Search recipes...", color = Color.Gray)
+                        Text(text = textHint, color = Color.Gray)
                     }
                     innerTextField()
                 }

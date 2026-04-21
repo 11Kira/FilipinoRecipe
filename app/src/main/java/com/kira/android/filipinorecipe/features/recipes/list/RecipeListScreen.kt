@@ -129,6 +129,7 @@ fun MainRecipeListScreen(
         ) {
             RecipeSearchField(
                 query = query,
+                textHint = "Search recipes...",
                 onValueChange = { viewModel.onSearchQueryChanged(it) },
                 onClear = { viewModel.onSearchQueryChanged("") },
                 focusManager = focusManager,
