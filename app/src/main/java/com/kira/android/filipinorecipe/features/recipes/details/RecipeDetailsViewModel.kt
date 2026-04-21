@@ -4,12 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kira.android.filipinorecipe.features.account.user.UserUseCase
 import com.kira.android.filipinorecipe.features.recipes.RecipeUseCase
+import com.kira.android.filipinorecipe.model.Recipe
 import com.kira.android.filipinorecipe.model.enums.ResponseStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,46 +19,50 @@ class RecipeDetailsViewModel @Inject constructor(
     private val userUseCase: UserUseCase
 ) : ViewModel() {
 
-    private val _recipeState: MutableSharedFlow<RecipeDetailsState> = MutableSharedFlow()
-    val recipeState
-        get() = _recipeState.asSharedFlow()
-
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading = _isLoading.asStateFlow()
+    private val _recipeDetailsUiState = MutableStateFlow(RecipeDetailsUiState())
+    val recipeDetailsUiState = _recipeDetailsUiState.asStateFlow()
 
     fun getRecipeById(recipeId: String) {
+        if (_recipeDetailsUiState.value.recipe?.id == recipeId) return
         viewModelScope.launch {
-            _isLoading.value = true
+            _recipeDetailsUiState.update { it.copy(isLoading = true) }
             try {
                 val response = recipeUseCase.getRecipeById(recipeId)
                 if (response.status == ResponseStatus.SUCCESS) {
-                    response.data?.let { data ->
-                        _recipeState.emit(RecipeDetailsState.SetRecipeDetails(data))
+                    _recipeDetailsUiState.update {
+                        it.copy(
+                            recipe = response.data,
+                            isLoading = false
+                        )
                     }
                 }
             } catch (e: Exception) {
-                _recipeState.emit(RecipeDetailsState.ShowError(e))
-            } finally {
-                _isLoading.value = false
+                _recipeDetailsUiState.update { it.copy(error = e.message, isLoading = false) }
             }
         }
     }
 
     fun toggleFavoriteRecipe(recipeId: String) {
+        val currentRecipe = _recipeDetailsUiState.value.recipe ?: return
+        val wasFavorited = currentRecipe.isFavorited
+
+        _recipeDetailsUiState.update { state ->
+            state.copy(recipe = currentRecipe.copy(isFavorited = !wasFavorited))
+        }
+
         viewModelScope.launch {
-            _isLoading.value = true
             try {
                 val response = userUseCase.toggleFavoriteRecipe(recipeId)
-                if (response.status == ResponseStatus.SUCCESS) {
-                    response.data?.let { data ->
-                        _recipeState.emit(RecipeDetailsState.SetRecipeDetails(data))
-                    }
+                if (response.status != ResponseStatus.SUCCESS) {
+                    rollbackFavorite(currentRecipe, wasFavorited)
                 }
             } catch (e: Exception) {
-                _recipeState.emit(RecipeDetailsState.ShowError(e))
-            } finally {
-                _isLoading.value = false
+                rollbackFavorite(currentRecipe, wasFavorited)
             }
         }
+    }
+
+    private fun rollbackFavorite(originalRecipe: Recipe, originalState: Boolean) {
+        _recipeDetailsUiState.update { it.copy(recipe = originalRecipe.copy(isFavorited = originalState)) }
     }
 }
