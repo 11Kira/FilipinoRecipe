@@ -84,10 +84,10 @@ fun RecipeDetailsScreen(
                 recipe = recipe
             )
         }
-    }
 
-    if (uiState.isLoading && uiState.recipe == null) {
-        CircularProgressIndicator()
+        if (uiState.isLoading && uiState.recipe == null) {
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+        }
     }
 }
 
