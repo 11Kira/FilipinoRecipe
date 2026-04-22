@@ -2,6 +2,7 @@ package com.kira.android.filipinorecipe.features.account.auth
 
 import com.kira.android.filipinorecipe.model.Token
 import com.kira.android.filipinorecipe.model.request.LoginRequest
+import com.kira.android.filipinorecipe.model.request.LogoutRequest
 import com.kira.android.filipinorecipe.model.request.RefreshRequest
 import com.kira.android.filipinorecipe.model.request.RegisterRequest
 import com.kira.android.filipinorecipe.model.response.ApiResponse
@@ -24,4 +25,9 @@ interface AuthService {
     fun refreshSync(
         @Body body: RefreshRequest
     ): Call<ApiResponse<Token>>
+
+    @POST("auth/logout")
+    fun logout(
+        @Body body: LogoutRequest
+    ): ApiResponse<Unit>
 }

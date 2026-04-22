@@ -24,4 +24,6 @@ class UserRemoteSource @Inject constructor(
             recipeId
         )
     }
+
+    suspend fun getUserProfile() = withContext(Dispatchers.IO) { userService.getUserProfile() }
 }

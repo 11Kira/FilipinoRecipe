@@ -1,6 +1,7 @@
 package com.kira.android.filipinorecipe.features.account.auth
 
 import com.kira.android.filipinorecipe.model.request.LoginRequest
+import com.kira.android.filipinorecipe.model.request.LogoutRequest
 import com.kira.android.filipinorecipe.model.request.RegisterRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -15,5 +16,9 @@ class AuthRemoteSource @Inject constructor(
 
     suspend fun login(body: LoginRequest) = withContext(Dispatchers.IO) {
         authService.login(body)
+    }
+
+    suspend fun logout(body: LogoutRequest) = withContext(Dispatchers.IO) {
+        authService.logout(body)
     }
 }
