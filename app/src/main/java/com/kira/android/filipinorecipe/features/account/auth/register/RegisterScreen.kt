@@ -58,8 +58,8 @@ import com.kira.android.filipinorecipe.utils.ColorUtils
 
 @Composable
 fun RegisterScreen(
-    navController: NavController,
     viewModel: RegisterViewModel = hiltViewModel(),
+    navController: NavController,
     onShowSnackbar: (String) -> Unit
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -83,8 +83,8 @@ fun RegisterScreen(
     val isLoading by viewModel.isLoading.collectAsState()
     PopulateRegisterScreen(
         viewModel = viewModel,
-        isLoading = isLoading,
         navController = navController,
+        isLoading = isLoading,
         onRegisterClick = { email, password, username ->
             viewModel.register(
                 email,
@@ -106,7 +106,8 @@ fun PopulateRegisterScreen(
     var email by remember { mutableStateOf("") }
     val passwordState = rememberTextFieldState()
     val confirmPasswordState = rememberTextFieldState()
-    var isVisible by remember { mutableStateOf(false) }
+    var isPasswordVisible by remember { mutableStateOf(false) }
+    var isConfirmPasswordVisible by remember { mutableStateOf(false) }
 
     val passwordsMatch =
         viewModel.password == viewModel.confirmPassword || viewModel.confirmPassword.isEmpty()
@@ -201,7 +202,7 @@ fun PopulateRegisterScreen(
 
             BasicSecureTextField(
                 state = passwordState,
-                textObfuscationMode = if (isVisible) {
+                textObfuscationMode = if (isPasswordVisible) {
                     TextObfuscationMode.Visible
                 } else {
                     TextObfuscationMode.RevealLastTyped
@@ -229,10 +230,10 @@ fun PopulateRegisterScreen(
                             innerTextField()
                         }
 
-                        IconButton(onClick = { isVisible = !isVisible }) {
+                        IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
                             Icon(
-                                imageVector = if (isVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                                contentDescription = if (isVisible) "Hide password" else "Show password",
+                                imageVector = if (isPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                                contentDescription = if (isPasswordVisible) "Hide password" else "Show password",
                                 tint = Color.LightGray
                             )
                         }
@@ -244,7 +245,7 @@ fun PopulateRegisterScreen(
 
             BasicSecureTextField(
                 state = confirmPasswordState,
-                textObfuscationMode = if (isVisible) {
+                textObfuscationMode = if (isConfirmPasswordVisible) {
                     TextObfuscationMode.Visible
                 } else {
                     TextObfuscationMode.RevealLastTyped
@@ -277,10 +278,12 @@ fun PopulateRegisterScreen(
                             innerTextField()
                         }
 
-                        IconButton(onClick = { isVisible = !isVisible }) {
+                        IconButton(onClick = {
+                            isConfirmPasswordVisible = !isConfirmPasswordVisible
+                        }) {
                             Icon(
-                                imageVector = if (isVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                                contentDescription = if (isVisible) "Hide password" else "Show password",
+                                imageVector = if (isConfirmPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                                contentDescription = if (isConfirmPasswordVisible) "Hide password" else "Show password",
                                 tint = Color.LightGray
                             )
                         }

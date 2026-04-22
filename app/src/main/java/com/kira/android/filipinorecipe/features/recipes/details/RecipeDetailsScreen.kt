@@ -19,7 +19,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -27,16 +27,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontWeight
@@ -47,9 +46,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.kira.android.filipinorecipe.R
@@ -58,42 +55,49 @@ import com.kira.android.filipinorecipe.component.DetailsListSection
 import com.kira.android.filipinorecipe.component.SubDetails
 import com.kira.android.filipinorecipe.model.Recipe
 import com.kira.android.filipinorecipe.utils.ColorUtils
-import kotlinx.coroutines.flow.SharedFlow
-
-lateinit var viewModel: RecipeDetailsViewModel
 
 @Composable
-fun RecipeDetailsScreen(navController: NavController, id: String) {
-    viewModel = hiltViewModel()
-    MainScreen(navController, viewModel.recipeState)
-    viewModel.getRecipeById(id)
-}
+fun RecipeDetailsScreen(
+    viewModel: RecipeDetailsViewModel = hiltViewModel(),
+    navController: NavController,
+    id: String,
+    onShowSnackbar: (String) -> Unit
+) {
 
-@Composable
-fun MainScreen(navController: NavController, sharedFlow: SharedFlow<RecipeDetailsState>) {
-    val lifecycleOwner = LocalLifecycleOwner.current
-    var selectedRecipe by remember { mutableStateOf<Recipe?>(null) }
-    LaunchedEffect(key1 = Unit) {
-        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            sharedFlow.collect { state ->
-                when (state) {
-                    is RecipeDetailsState.SetRecipeDetails -> {
-                        selectedRecipe = state.recipe
-                    }
+    val uiState by viewModel.recipeDetailsUiState.collectAsStateWithLifecycle()
 
-                    is RecipeDetailsState.ShowError -> {
+    LaunchedEffect(id) {
+        viewModel.getRecipeById(id)
+    }
 
-                    }
-                }
-            }
+    LaunchedEffect(uiState.error) {
+        uiState.error?.let {
+            onShowSnackbar(it)
         }
     }
-    selectedRecipe?.let { recipe -> PopulateRecipeDetails(navController, recipe) }
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        uiState.recipe?.let { recipe ->
+            PopulateRecipeDetails(
+                viewModel = viewModel,
+                navController = navController,
+                recipe = recipe
+            )
+        }
+
+        if (uiState.isLoading && uiState.recipe == null) {
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PopulateRecipeDetails(navController: NavController, recipe: Recipe) {
+fun PopulateRecipeDetails(
+    viewModel: RecipeDetailsViewModel,
+    navController: NavController,
+    recipe: Recipe
+) {
     val scrollState = rememberScrollState()
     val headerHeight = 500.dp
     val toolbarHeight = 56.dp
@@ -135,8 +139,9 @@ fun PopulateRecipeDetails(navController: NavController, recipe: Recipe) {
 
         // 3. Dynamic Top App Bar
         RecipeTopBar(
+            viewModel = viewModel,
             alpha = toolbarAlpha,
-            recipeName = recipe.title,
+            recipe = recipe,
             onBackClick = {
                 navController.navigateUp()
             }
@@ -145,7 +150,11 @@ fun PopulateRecipeDetails(navController: NavController, recipe: Recipe) {
 }
 
 @Composable
-fun RecipeHeaderImage(recipe: Recipe, headerHeight: Dp, scrollState: ScrollState) {
+fun RecipeHeaderImage(
+    recipe: Recipe,
+    headerHeight: Dp,
+    scrollState: ScrollState
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -206,21 +215,22 @@ fun RecipeHeaderImage(recipe: Recipe, headerHeight: Dp, scrollState: ScrollState
 }
 
 @Composable
-fun RecipeTopBar(alpha: Float, recipeName: String, onBackClick: () -> Unit) {
-    // The parent container covers the status bar + the toolbar area
+fun RecipeTopBar(
+    viewModel: RecipeDetailsViewModel,
+    alpha: Float,
+    recipe: Recipe,
+    onBackClick: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.Black.copy(alpha = alpha)) // Background extends to the top edge
+            .background(Color.Black.copy(alpha = alpha))
     ) {
-        // 1. A spacer that matches the status bar height
         Spacer(
             modifier = Modifier
                 .windowInsetsTopHeight(WindowInsets.statusBars)
                 .fillMaxWidth()
         )
-
-        // 2. The actual toolbar content
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -232,7 +242,7 @@ fun RecipeTopBar(alpha: Float, recipeName: String, onBackClick: () -> Unit) {
             CircularIconButton(icon = Icons.Default.ArrowBack, onClick = onBackClick)
 
             Text(
-                text = recipeName,
+                text = recipe.title,
                 style = MaterialTheme.typography.titleMedium,
                 color = Color.White.copy(alpha = alpha),
                 modifier = Modifier.weight(1f),
@@ -241,7 +251,12 @@ fun RecipeTopBar(alpha: Float, recipeName: String, onBackClick: () -> Unit) {
                 overflow = TextOverflow.Ellipsis,
                 fontSize = 20.sp
             )
-            CircularIconButton(icon = Icons.Default.FavoriteBorder, onClick = {})
+            CircularIconButton(
+                icon = ImageVector.vectorResource(id = if (recipe.isFavorited) R.drawable.ic_favorite_filled else R.drawable.ic_favorite),
+                tint = if (recipe.isFavorited) Color.Red else Color.White,
+                onClick = { viewModel.toggleFavoriteRecipe(recipe.id) },
+                isFlipped = true
+            )
         }
     }
 }

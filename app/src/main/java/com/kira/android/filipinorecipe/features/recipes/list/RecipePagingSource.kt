@@ -12,19 +12,25 @@ class RecipePagingSource(
     private val difficulty: String
 ) : PagingSource<Int, Recipe>() {
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Recipe> {
+        val position = params.key ?: 1
         return try {
-            val currentPage = params.key ?: 1
             val response = remoteSource.getAllRecipes(
                 query = query,
                 protein = protein,
                 difficulty = difficulty,
-                page = currentPage
+                page = position
             )
-            val recipes = response.data.orEmpty()
+            val recipes = response.data ?: emptyList()
+            val nextKey = if (recipes.isEmpty() || response.paging.next == null) {
+                null
+            } else {
+                position + 1
+            }
+
             LoadResult.Page(
                 data = recipes,
-                prevKey = if (currentPage == 1) null else currentPage - 1,
-                nextKey = if (currentPage < response.paging.total) currentPage + 1 else null
+                prevKey = if (position == 1) null else position - 1,
+                nextKey = nextKey
             )
         } catch (e: Exception) {
             LoadResult.Error(e)

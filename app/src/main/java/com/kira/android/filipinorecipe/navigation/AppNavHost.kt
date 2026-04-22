@@ -39,15 +39,22 @@ fun AppNavHost(
         }
         composable<RecipeListRoute> {
             RecipeListScreen(
-                contentPadding,
+                contentPadding = contentPadding,
                 onItemClick = { id ->
                     navController.navigate(DetailScreenNavigation(id))
-                }
+                },
+                onShowSnackbar = onShowSnackbar
             )
         }
 
         composable<FavoritesRoute> {
-            FavoriteRecipeListScreen(navController)
+            FavoriteRecipeListScreen(
+                contentPadding = contentPadding,
+                onItemClick = { id ->
+                    navController.navigate(DetailScreenNavigation(id))
+                },
+                onShowSnackbar = onShowSnackbar
+            )
         }
 
         composable<ProfileRoute> {
@@ -56,7 +63,11 @@ fun AppNavHost(
 
         composable<DetailScreenNavigation> { backStackEntry ->
             val args = backStackEntry.toRoute<DetailScreenNavigation>()
-            RecipeDetailsScreen(navController, args.id)
+            RecipeDetailsScreen(
+                navController = navController,
+                id = args.id,
+                onShowSnackbar = onShowSnackbar
+            )
         }
     }
 }
