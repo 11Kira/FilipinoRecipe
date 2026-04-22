@@ -100,9 +100,6 @@ fun MainFavoriteRecipeScreen(
             searchQuery = query,
             contentPadding = contentPadding,
             onItemClick = onItemClick,
-            onFavoriteClick = { recipeId ->
-                viewModel.toggleFavorite(recipeId)
-            }
         )
 
         Box(

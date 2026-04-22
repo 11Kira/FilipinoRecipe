@@ -1,7 +1,6 @@
 package com.kira.android.filipinorecipe.component.recipe
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -14,25 +13,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import com.kira.android.filipinorecipe.R
-import com.kira.android.filipinorecipe.component.CircularIconButton
 import com.kira.android.filipinorecipe.component.SubDetails
 import com.kira.android.filipinorecipe.model.Recipe
 
 @Composable
 fun RecipeCardItem(
     selectedRecipe: Recipe,
-    onItemClick: (String) -> Unit,
-    onFavoriteClick: (String) -> Unit
+    onItemClick: (String) -> Unit
 ) {
     Card(
         shape = RoundedCornerShape(12.dp),
@@ -43,24 +37,15 @@ fun RecipeCardItem(
             .clickable { onItemClick(selectedRecipe.id) },
     ) {
         Column {
-            Box {
-                AsyncImage(
-                    model = selectedRecipe.image,
-                    contentDescription = "Recipe",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(250.dp)
-                        .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)),
-                    contentScale = ContentScale.Crop,
-                )
-
-                CircularIconButton(
-                    icon = ImageVector.vectorResource(id = if (selectedRecipe.isFavorited) R.drawable.ic_favorite_filled else R.drawable.ic_favorite),
-                    tint = if (selectedRecipe.isFavorited) Color.Red else Color.White,
-                    onClick = { onFavoriteClick(selectedRecipe.id) },
-                    isFlipped = true
-                )
-            }
+            AsyncImage(
+                model = selectedRecipe.image,
+                contentDescription = "Recipe",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(250.dp)
+                    .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)),
+                contentScale = ContentScale.Crop,
+            )
 
             Text(
                 text = selectedRecipe.title,

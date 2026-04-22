@@ -20,8 +20,7 @@ fun RecipeList(
     listState: LazyListState,
     searchQuery: String,
     contentPadding: PaddingValues,
-    onItemClick: (String) -> Unit,
-    onFavoriteClick: (String) -> Unit
+    onItemClick: (String) -> Unit
 ) {
     val shimmerBrush = RecipeShimmerBrush()
     val isRefreshing = recipes.loadState.refresh is LoadState.Loading
@@ -59,9 +58,6 @@ fun RecipeList(
                         RecipeCardItem(
                             selectedRecipe = selectedRecipe,
                             onItemClick = onItemClick,
-                            onFavoriteClick = { recipeId ->
-                                onFavoriteClick(recipeId)
-                            }
                         )
                     }
                 }
