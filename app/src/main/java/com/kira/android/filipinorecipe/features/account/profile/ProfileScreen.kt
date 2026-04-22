@@ -10,33 +10,63 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.kira.android.filipinorecipe.R
+import com.kira.android.filipinorecipe.model.User
 import com.kira.android.filipinorecipe.utils.ColorUtils
 
 @Composable
 fun ProfileScreen(
+    viewModel: ProfileViewModel = hiltViewModel(),
     navController: NavController,
-    viewModel: ProfileViewModel = hiltViewModel()
+    onShowSnackbar: (String) -> Unit
 ) {
-    PopulateProfileScreen(
-        viewModel = viewModel,
-        navController = navController
-    )
+
+    val uiState by viewModel.profileUiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(key1 = null) {
+        viewModel.getUserProfile()
+    }
+
+    LaunchedEffect(uiState.error) {
+        uiState.error?.let {
+            onShowSnackbar(it)
+        }
+    }
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        uiState.profile?.let { profile ->
+            PopulateProfileScreen(
+                viewModel = viewModel,
+                navController = navController,
+                userProfile = profile
+            )
+        }
+
+        if (uiState.isLoading && uiState.profile == null) {
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+        }
+    }
 }
 
 @Composable
 fun PopulateProfileScreen(
     viewModel: ProfileViewModel,
-    navController: NavController
+    navController: NavController,
+    userProfile: User
 ) {
     Box(
         modifier = Modifier
@@ -74,7 +104,7 @@ fun PopulateProfileScreen(
 
             Button(
                 onClick = {
-                    viewModel.logout()
+                    //viewModel.logout()
                 },
                 modifier = Modifier
                     .fillMaxWidth()
