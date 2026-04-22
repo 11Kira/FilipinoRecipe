@@ -1,16 +1,26 @@
 package com.kira.android.filipinorecipe.features.account.profile
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -93,6 +103,7 @@ fun PopulateProfileScreen(
                 .fillMaxWidth()
                 .statusBarsPadding()
                 .padding(horizontal = 16.dp, vertical = 8.dp)
+                .align(Alignment.Center)
         ) {
             AsyncImage(
                 model = R.drawable.ic_account,
@@ -101,6 +112,85 @@ fun PopulateProfileScreen(
                     .fillMaxWidth()
                     .height(150.dp),
             )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            BasicTextField(
+                value = userProfile.username,
+                enabled = false,
+                onValueChange = {
+
+                },
+                modifier = Modifier
+                    .height(50.dp),
+                singleLine = true,
+                decorationBox = { innerTextField ->
+                    Row(
+                        modifier = Modifier
+                            .background(Color.White, RoundedCornerShape(24.dp))
+                            .border(
+                                1.dp,
+                                Color.LightGray.copy(alpha = 0.3f),
+                                RoundedCornerShape(24.dp)
+                            ) // Added subtle border
+                            .padding(horizontal = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Person,
+                            contentDescription = null,
+                            tint = Color.LightGray,
+                        )
+
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        Box(modifier = Modifier.weight(1f)) {
+                            innerTextField()
+                        }
+                    }
+                }
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            BasicTextField(
+                value = userProfile.email,
+                enabled = false,
+                onValueChange = {
+
+                },
+                modifier = Modifier
+                    .height(50.dp),
+                singleLine = true,
+                decorationBox = { innerTextField ->
+                    Row(
+                        modifier = Modifier
+                            .background(Color.White, RoundedCornerShape(24.dp))
+                            .border(
+                                1.dp,
+                                Color.LightGray.copy(alpha = 0.3f),
+                                RoundedCornerShape(24.dp)
+                            ) // Added subtle border
+                            .padding(horizontal = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Email,
+                            contentDescription = null,
+                            tint = Color.LightGray,
+                        )
+
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        Box(modifier = Modifier.weight(1f)) {
+                            innerTextField()
+                        }
+                    }
+                }
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
 
             Button(
                 onClick = {
