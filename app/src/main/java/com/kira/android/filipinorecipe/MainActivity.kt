@@ -10,9 +10,14 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -21,25 +26,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.kira.android.filipinorecipe.navigation.AppNavHost
 import com.kira.android.filipinorecipe.navigation.BottomMenuItem
 import com.kira.android.filipinorecipe.navigation.DetailScreenNavigation
 import com.kira.android.filipinorecipe.navigation.LoginRoute
-import com.kira.android.filipinorecipe.navigation.RecipeListRoute
 import com.kira.android.filipinorecipe.navigation.RegisterRoute
 import com.kira.android.filipinorecipe.navigation.SplashRoute
 import com.kira.android.filipinorecipe.utils.ColorUtils
@@ -110,8 +115,7 @@ fun MainScreenView() {
 
 @Composable
 fun BottomNavigation(navController: NavController) {
-    var selectedItem by remember { mutableStateOf("recipe") }
-    val selectedTab by remember { mutableStateOf(viewModel.currentlySelectedTab) }
+    val selectedTab by viewModel.currentlySelectedTab.collectAsState()
 
     val screens = listOf(
         BottomMenuItem.Recipes,
@@ -120,34 +124,50 @@ fun BottomNavigation(navController: NavController) {
     )
 
     NavigationBar(
-        containerColor = Color.Transparent, // Make it transparent to show the gradient
+        containerColor = Color.Transparent,
         modifier = Modifier.background(ColorUtils().bottomNavGradient),
+        windowInsets = WindowInsets.navigationBars
     ) {
         screens.forEach { bottomMenuItem ->
+            val isSelected = selectedTab == bottomMenuItem.label
             NavigationBarItem(
-                selected = (selectedItem == selectedTab.collectAsState().value),
+                selected = isSelected,
                 onClick = {
-                    selectedItem = bottomMenuItem.label
-                    navController.navigate(bottomMenuItem.route) {
-                        popUpTo<RecipeListRoute> {
-                            saveState = true
+                    if (!isSelected) {
+                        navController.navigate(bottomMenuItem.route) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
                         }
-                        launchSingleTop = true
-                        restoreState = true
+                        viewModel.updateSelectedTab(bottomMenuItem.label)
                     }
-                    viewModel.updateSelectedTab(bottomMenuItem.label)
                 },
                 icon = {
                     Icon(
                         imageVector = ImageVector.vectorResource(bottomMenuItem.icon),
                         contentDescription = bottomMenuItem.label,
+                        modifier = Modifier.run { size(if (isSelected) 26.dp else 24.dp) }
                     )
                 },
                 label = {
                     Text(
                         text = bottomMenuItem.label,
+                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                        style = MaterialTheme.typography.labelMedium
                     )
-                }
+                },
+                colors = NavigationBarItemDefaults.colors(
+                    // The "Pill" background color
+                    indicatorColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.7f),
+                    // Active State Colors
+                    selectedIconColor = MaterialTheme.colorScheme.primary,
+                    selectedTextColor = MaterialTheme.colorScheme.primary,
+                    // Inactive State Colors (Muted)
+                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                )
             )
         }
     }
