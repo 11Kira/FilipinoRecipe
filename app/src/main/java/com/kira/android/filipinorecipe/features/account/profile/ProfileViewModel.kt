@@ -43,12 +43,14 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    fun logout(refreshToken: String) {
+    fun logout(onLogout: () -> Unit) {
         viewModelScope.launch {
             try {
-                authUseCase.logout(LogoutRequest(refreshToken))
+                val refreshToken = tokenManager.getRefreshToken()
+                authUseCase.logout(LogoutRequest(refreshToken.toString()))
             } finally {
                 tokenManager.clearTokens()
+                onLogout.invoke()
             }
         }
     }

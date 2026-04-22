@@ -27,7 +27,7 @@ interface AuthService {
     ): Call<ApiResponse<Token>>
 
     @POST("auth/logout")
-    fun logout(
+    suspend fun logout(
         @Body body: LogoutRequest
     ): ApiResponse<Unit>
 }
