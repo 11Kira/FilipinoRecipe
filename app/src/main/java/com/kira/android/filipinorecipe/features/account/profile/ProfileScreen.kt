@@ -37,7 +37,6 @@ import coil3.compose.AsyncImage
 import com.kira.android.filipinorecipe.R
 import com.kira.android.filipinorecipe.model.User
 import com.kira.android.filipinorecipe.navigation.LoginRoute
-import com.kira.android.filipinorecipe.navigation.RegisterRoute
 import com.kira.android.filipinorecipe.utils.ColorUtils
 
 @Composable
@@ -198,10 +197,12 @@ fun PopulateProfileScreen(
                 onClick = {
                     viewModel.logout(
                         onLogout = {
-                            navController.navigate(RegisterRoute) {
-                                popUpTo<LoginRoute> { inclusive = true }
+                            navController.navigate(LoginRoute) {
+                                popUpTo(0) { inclusive = true }
+                                launchSingleTop = true
                             }
-                        })
+                        }
+                    )
                 },
                 modifier = Modifier
                     .fillMaxWidth()

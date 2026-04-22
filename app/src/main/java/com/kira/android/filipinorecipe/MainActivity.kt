@@ -24,7 +24,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -38,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -115,8 +115,8 @@ fun MainScreenView() {
 
 @Composable
 fun BottomNavigation(navController: NavController) {
-    val selectedTab by viewModel.currentlySelectedTab.collectAsState()
-
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
     val screens = listOf(
         BottomMenuItem.Recipes,
         BottomMenuItem.Favorites,
@@ -129,7 +129,9 @@ fun BottomNavigation(navController: NavController) {
         windowInsets = WindowInsets.navigationBars
     ) {
         screens.forEach { bottomMenuItem ->
-            val isSelected = selectedTab == bottomMenuItem.label
+            val isSelected = currentDestination?.hierarchy?.any {
+                it.hasRoute(bottomMenuItem.route::class)
+            } == true
             NavigationBarItem(
                 selected = isSelected,
                 onClick = {
