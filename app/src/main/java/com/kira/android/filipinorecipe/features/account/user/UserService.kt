@@ -1,6 +1,7 @@
 package com.kira.android.filipinorecipe.features.account.user
 
 import com.kira.android.filipinorecipe.model.Recipe
+import com.kira.android.filipinorecipe.model.User
 import com.kira.android.filipinorecipe.model.response.ApiResponse
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -19,4 +20,7 @@ interface UserService {
     suspend fun toggleFavoriteRecipe(
         @Path("id") id: String = "",
     ): ApiResponse<Unit>
+
+    @GET("users/profile")
+    suspend fun getUserProfile(): ApiResponse<User>
 }

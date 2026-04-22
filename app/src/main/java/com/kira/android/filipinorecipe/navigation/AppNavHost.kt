@@ -58,7 +58,10 @@ fun AppNavHost(
         }
 
         composable<ProfileRoute> {
-            ProfileScreen(navController)
+            ProfileScreen(
+                navController = navController,
+                onShowSnackbar = onShowSnackbar
+            )
         }
 
         composable<DetailScreenNavigation> { backStackEntry ->
