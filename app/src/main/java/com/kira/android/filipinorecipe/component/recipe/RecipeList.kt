@@ -23,9 +23,7 @@ fun RecipeList(
     onItemClick: (String) -> Unit
 ) {
     val shimmerBrush = RecipeShimmerBrush()
-    val isRefreshing = recipes.loadState.refresh is LoadState.Loading
-    val isSearchStale = isRefreshing && recipes.itemCount > 0
-    val isInitialLoad = isRefreshing && recipes.itemCount == 0
+    val isInitialLoad = recipes.loadState.refresh is LoadState.Loading && recipes.itemCount == 0
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
             state = listState,
@@ -39,11 +37,11 @@ fun RecipeList(
             ),
             verticalArrangement = Arrangement.spacedBy(15.dp)
         ) {
-            /*if (isInitialLoad || isSearchStale) {
-                items(2) {
+            if (isInitialLoad) {
+                items(5) {
                     RecipeShimmerItem(shimmerBrush)
                 }
-            } else {*/
+            } else {
                 items(
                     count = recipes.itemCount,
                     key = { index ->
@@ -61,7 +59,7 @@ fun RecipeList(
                         )
                     }
                 }
-            //}
+            }
         }
     }
 }
