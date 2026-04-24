@@ -1,40 +1,16 @@
 package com.kira.android.filipinorecipe.features.recipes.favorites
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.paging.LoadState
-import androidx.paging.compose.LazyPagingItems
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.kira.android.filipinorecipe.component.recipe.RecipeList
-import com.kira.android.filipinorecipe.component.recipe.RecipeSearchField
-import com.kira.android.filipinorecipe.model.Recipe
-import com.kira.android.filipinorecipe.utils.ColorUtils
+import com.kira.android.filipinorecipe.component.recipe.RecipeBaseScreen
 
 @Composable
 fun FavoriteRecipeListScreen(
@@ -44,15 +20,39 @@ fun FavoriteRecipeListScreen(
     onShowSnackbar: (String) -> Unit
 ) {
     val recipes = viewModel.favoritePagingFlow.collectAsLazyPagingItems()
+    val query by viewModel.searchQuery.collectAsState()
+    val lifecycleOwner = LocalLifecycleOwner.current
 
-    MainFavoriteRecipeScreen(
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                recipes.refresh()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
+    /*MainFavoriteRecipeScreen(
         viewModel = viewModel,
         recipes = recipes,
         contentPadding = contentPadding,
         onItemClick = onItemClick
+    )*/
+
+    RecipeBaseScreen(
+        recipes = recipes,
+        query = query,
+        onQueryChange = { viewModel.onSearchQueryChanged(it) },
+        onItemClick = onItemClick,
+        contentPadding = contentPadding,
+        searchHint = "Search favorites..."
     )
 }
 
+/*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainFavoriteRecipeScreen(
@@ -63,7 +63,6 @@ fun MainFavoriteRecipeScreen(
 ) {
     val listState = rememberLazyListState()
     val focusManager = LocalFocusManager.current
-    val query by viewModel.searchQuery.collectAsState()
     var lastScrolledQuery by rememberSaveable { mutableStateOf("") }
 
     LaunchedEffect(recipes.loadState.refresh) {
@@ -123,4 +122,4 @@ fun MainFavoriteRecipeScreen(
             )
         }
     }
-}
+}*/

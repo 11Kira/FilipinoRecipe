@@ -33,21 +33,20 @@ import com.kira.android.filipinorecipe.utils.ColorUtils
 
 @Composable
 fun RecipeBaseScreen(
+    recipes: LazyPagingItems<Recipe>,
     query: String,
     onQueryChange: (String) -> Unit,
-    searchHint: String,
-    recipes: LazyPagingItems<Recipe>,
-    contentPadding: PaddingValues,
     onItemClick: (String) -> Unit,
-    filterAction: @Composable (RowScope.() -> Unit)? = null,
-    bottomSheetSlot: @Composable (() -> Unit)? = null
+    contentPadding: PaddingValues,
+    searchHint: String,
+    actionSlot: @Composable (RowScope.() -> Unit)? = null,
 ) {
 
     val listState = rememberLazyListState()
     val focusManager = LocalFocusManager.current
     var lastScrolledQuery by rememberSaveable { mutableStateOf("") }
 
-    // Scroll to top logic
+    // Auto-scroll to top when query changes
     LaunchedEffect(recipes.loadState.refresh) {
         if (recipes.loadState.refresh is LoadState.NotLoading && recipes.itemCount > 0) {
             if (query != lastScrolledQuery) {
@@ -104,10 +103,7 @@ fun RecipeBaseScreen(
             )
 
             // Inject the Filter button here if provided
-            filterAction?.invoke(this)
+            actionSlot?.invoke(this)
         }
-
-        // Inject BottomSheet here if provided
-        bottomSheetSlot?.invoke()
     }
 }
