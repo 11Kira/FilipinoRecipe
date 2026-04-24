@@ -87,6 +87,7 @@ fun MainFavoriteRecipeScreen(
             onItemClick = onItemClick,
         )
 
+        // Status bar scrim
         Box(
             modifier = Modifier
                 .fillMaxWidth()

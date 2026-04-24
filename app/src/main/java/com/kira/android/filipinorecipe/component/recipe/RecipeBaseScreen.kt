@@ -12,11 +12,21 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
+import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import com.kira.android.filipinorecipe.model.Recipe
 import com.kira.android.filipinorecipe.utils.ColorUtils
@@ -25,19 +35,33 @@ import com.kira.android.filipinorecipe.utils.ColorUtils
 fun RecipeBaseScreen(
     query: String,
     onQueryChange: (String) -> Unit,
+    searchHint: String,
     recipes: LazyPagingItems<Recipe>,
     contentPadding: PaddingValues,
     onItemClick: (String) -> Unit,
-    searchHint: String = "Search...",
-    filterSlot: @Composable (RowScope.() -> Unit)? = null
+    filterAction: @Composable (RowScope.() -> Unit)? = null,
+    bottomSheetSlot: @Composable (() -> Unit)? = null
 ) {
 
     val listState = rememberLazyListState()
     val focusManager = LocalFocusManager.current
+    var lastScrolledQuery by rememberSaveable { mutableStateOf("") }
 
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .background(ColorUtils().recipeListBackgroundGradient)) {
+    // Scroll to top logic
+    LaunchedEffect(recipes.loadState.refresh) {
+        if (recipes.loadState.refresh is LoadState.NotLoading && recipes.itemCount > 0) {
+            if (query != lastScrolledQuery) {
+                listState.scrollToItem(0)
+                lastScrolledQuery = query
+            }
+        }
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(ColorUtils().recipeListBackgroundGradient)
+    ) {
         RecipeList(
             recipes = recipes,
             listState = listState,
@@ -46,7 +70,19 @@ fun RecipeBaseScreen(
             onItemClick = onItemClick
         )
 
-        // Floating Header (Search + Optional Filter)
+        // Status bar scrim
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp)
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(Color.Black.copy(alpha = 0.3f), Color.Transparent)
+                    )
+                )
+        )
+
+        // Top Header (Search + Optional Filter)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -64,9 +100,14 @@ fun RecipeBaseScreen(
                 modifier = Modifier
                     .weight(1f)
                     .height(50.dp)
+                    .shadow(elevation = 4.dp, shape = RoundedCornerShape(24.dp)),
             )
 
-            filterSlot?.invoke(this)
+            // Inject the Filter button here if provided
+            filterAction?.invoke(this)
         }
+
+        // Inject BottomSheet here if provided
+        bottomSheetSlot?.invoke()
     }
 }
