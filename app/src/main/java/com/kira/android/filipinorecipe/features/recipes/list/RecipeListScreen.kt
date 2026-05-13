@@ -1,27 +1,9 @@
 package com.kira.android.filipinorecipe.features.recipes.list
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.SheetValue
-import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -30,18 +12,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.kira.android.filipinorecipe.component.FilterSheetContent
 import com.kira.android.filipinorecipe.component.recipe.RecipeBaseScreen
 import com.kira.android.filipinorecipe.component.recipe.RecipeFilter
-import com.kira.android.filipinorecipe.component.recipe.RecipeFilterChip
 import com.kira.android.filipinorecipe.utils.ColorUtils
 import kotlinx.coroutines.launch
 
@@ -51,26 +27,16 @@ fun RecipeListScreen(
     viewModel: RecipeListViewModel = hiltViewModel(),
     contentPadding: PaddingValues,
     onItemClick: (String) -> Unit,
-    onShowSnackbar: (String) -> Unit
 ) {
     val scope = rememberCoroutineScope()
     val recipes = viewModel.recipePagingFlow.collectAsLazyPagingItems()
     val query by viewModel.searchQuery.collectAsState()
-    val sheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true,
-        confirmValueChange = { newValue -> newValue != SheetValue.Hidden })
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     val selectedProteins by viewModel.selectedProteins.collectAsState()
     val selectedDifficulties by viewModel.selectedDifficulties.collectAsState()
     val appliedFilterCount by viewModel.appliedFilterCount.collectAsState()
     var showFilterSheet by remember { mutableStateOf(false) }
-
-    /*MainRecipeListScreen(
-        viewModel = viewModel,
-        recipes = recipes,
-        contentPadding = contentPadding,
-        onItemClick = onItemClick
-    )*/
 
     RecipeBaseScreen(
         recipes = recipes,
@@ -98,270 +64,21 @@ fun RecipeListScreen(
             dragHandle = null,
             shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(370.dp)
-                    .padding(24.dp)
-                    .navigationBarsPadding() // Ensures buttons aren't hidden by system nav
-            ) {
-                // Header Row
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Filter Recipes",
-                        style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                    )
-                    IconButton(onClick = { showFilterSheet = false }) {
-                        Icon(Icons.Default.Close, contentDescription = "Close")
-                    }
-                }
-
-                val proteins = listOf("Pork", "Beef", "Chicken", "Seafood", "Vegetables")
-                val difficulties = listOf("Easy", "Medium", "Hard")
-
-                Text(
-                    "Protein",
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-                FlowRow(modifier = Modifier.fillMaxWidth()) {
-                    proteins.forEach { protein ->
-                        RecipeFilterChip(
-                            label = protein,
-                            isSelected = selectedProteins.contains(protein),
-                            onToggle = { viewModel.toggleProtein(protein) }
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                Text(
-                    "Difficulty",
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-                FlowRow(modifier = Modifier.fillMaxWidth()) {
-                    difficulties.forEach { level ->
-                        RecipeFilterChip(
-                            label = level,
-                            isSelected = selectedDifficulties.contains(level),
-                            onToggle = { viewModel.toggleDifficulty(level) }
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(32.dp))
-
-                // Action Buttons
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    OutlinedButton(
-                        onClick = { viewModel.resetFilters() },
-                        modifier = Modifier.weight(1f)
-                    ) { Text("Reset") }
-
-                    Button(
-                        onClick = {
-                            viewModel.applyFilters()
-                            scope.launch {
-                                sheetState.hide()
-                            }.invokeOnCompletion {
-                                showFilterSheet = false
-                            }
-                        },
-                        modifier = Modifier.weight(1f),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
-                    ) { Text("Apply") }
-                }
-            }
-        }
-    }
-
-}
-/*
-
-@Composable
-fun MainRecipeListScreen(
-    viewModel: RecipeListViewModel,
-    recipes: LazyPagingItems<Recipe>,
-    contentPadding: PaddingValues,
-    onItemClick: (String) -> Unit,
-) {
-    val listState = rememberLazyListState()
-
-    val focusManager = LocalFocusManager.current
-    var lastScrolledQuery by rememberSaveable { mutableStateOf("") }
-
-
-    LaunchedEffect(recipes.loadState.refresh) {
-        if (recipes.loadState.refresh is LoadState.NotLoading && recipes.itemCount > 0) {
-            if (query != lastScrolledQuery) {
-                listState.scrollToItem(0)
-                lastScrolledQuery = query
-            }
-        }
-    }
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(brush = ColorUtils().recipeListBackgroundGradient)
-    ) {
-        RecipeList(
-            recipes = recipes,
-            listState = listState,
-            searchQuery = query,
-            contentPadding = contentPadding,
-            onItemClick = onItemClick
-        )
-
-        // Status bar scrim
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(100.dp)
-                .background(
-                    brush = Brush.verticalGradient(
-                        colors = listOf(
-                            Color.Black.copy(alpha = 0.3f),
-                            Color.Transparent
-                        )
-                    )
-                )
-        )
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .statusBarsPadding()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(5.dp)
-        ) {
-            RecipeSearchField(
-                query = query,
-                textHint = "Search recipes...",
-                onValueChange = { viewModel.onSearchQueryChanged(it) },
-                onClear = { viewModel.onSearchQueryChanged("") },
-                focusManager = focusManager,
-                modifier = Modifier
-                    .weight(1f)
-                    .height(50.dp)
-                    .shadow(elevation = 4.dp, shape = RoundedCornerShape(24.dp)),
-            )
-
-            RecipeFilter(
-                onButtonClick = {
-                    focusManager.clearFocus()
-                    viewModel.syncSelectedWithApplied()
-                    scope.launch {
-                        delay(100)
-                        showFilterSheet = true
-                        sheetState.show()
-                    }
+            FilterSheetContent(
+                proteins = listOf("Pork", "Beef", "Chicken", "Seafood", "Vegetables"),
+                difficulties = listOf("Easy", "Medium", "Hard"),
+                selectedProteins = selectedProteins,
+                selectedDifficulties = selectedDifficulties,
+                onToggleProtein = { viewModel.toggleProtein(it) },
+                onToggleDifficulty = { viewModel.toggleDifficulty(it) },
+                onReset = { viewModel.resetFilters() },
+                onApply = {
+                    viewModel.applyFilters()
+                    scope.launch { sheetState.hide() }
+                        .invokeOnCompletion { showFilterSheet = false }
                 },
-                appliedFilterCount = appliedFilterCount
+                onClose = { showFilterSheet = false }
             )
         }
-
-        if (showFilterSheet) {
-            ModalBottomSheet(
-                onDismissRequest = { showFilterSheet = false },
-                sheetState = sheetState,
-                containerColor = ColorUtils().pastelMint,
-                dragHandle = null,
-                shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(370.dp)
-                        .padding(24.dp)
-                        .navigationBarsPadding() // Ensures buttons aren't hidden by system nav
-                ) {
-                    // Header Row
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Filter Recipes",
-                            style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                        )
-                        IconButton(onClick = { showFilterSheet = false }) {
-                            Icon(Icons.Default.Close, contentDescription = "Close")
-                        }
-                    }
-
-                    val proteins = listOf("Pork", "Beef", "Chicken", "Seafood", "Vegetables")
-                    val difficulties = listOf("Easy", "Medium", "Hard")
-
-                    Text(
-                        "Protein",
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
-                    FlowRow(modifier = Modifier.fillMaxWidth()) {
-                        proteins.forEach { protein ->
-                            RecipeFilterChip(
-                                label = protein,
-                                isSelected = selectedProteins.contains(protein),
-                                onToggle = { viewModel.toggleProtein(protein) }
-                            )
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(20.dp))
-
-                    Text(
-                        "Difficulty",
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
-                    FlowRow(modifier = Modifier.fillMaxWidth()) {
-                        difficulties.forEach { level ->
-                            RecipeFilterChip(
-                                label = level,
-                                isSelected = selectedDifficulties.contains(level),
-                                onToggle = { viewModel.toggleDifficulty(level) }
-                            )
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(32.dp))
-
-                    // Action Buttons
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        OutlinedButton(
-                            onClick = { viewModel.resetFilters() },
-                            modifier = Modifier.weight(1f)
-                        ) { Text("Reset") }
-
-                        Button(
-                            onClick = {
-                                viewModel.applyFilters()
-                                scope.launch {
-                                    sheetState.hide()
-                                }.invokeOnCompletion {
-                                    showFilterSheet = false
-                                }
-                            },
-                            modifier = Modifier.weight(1f),
-                            colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
-                        ) { Text("Apply") }
-                    }
-                }
-            }
-        }
     }
-}*/
+}
