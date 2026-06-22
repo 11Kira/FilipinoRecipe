@@ -44,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -101,6 +102,7 @@ fun PopulateLoginScreen(
     var email by remember { mutableStateOf("") }
     val passwordState = rememberTextFieldState()
     var isVisible by remember { mutableStateOf(false) }
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     LaunchedEffect(passwordState.text) {
         snapshotFlow { passwordState.text }.collect {
@@ -225,6 +227,7 @@ fun PopulateLoginScreen(
 
             Button(
                 onClick = {
+                    keyboardController?.hide()
                     onLoginClick(email, passwordState.text.toString())
                 },
                 enabled = !isLoading && viewModel.isInputValid,
