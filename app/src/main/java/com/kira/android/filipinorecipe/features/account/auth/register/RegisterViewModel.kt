@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kira.android.filipinorecipe.features.account.auth.AuthUseCase
 import com.kira.android.filipinorecipe.model.request.RegisterRequest
+import com.kira.android.filipinorecipe.utils.NetworkUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -45,7 +46,8 @@ class RegisterViewModel @Inject constructor(
                 authUseCase.register(RegisterRequest(email, password, username))
                 _registerState.emit(RegisterState.OnRegister)
             } catch (e: Exception) {
-                _registerState.emit(RegisterState.ShowError(e))
+                val errorMessage = NetworkUtils().parseNetworkError(e)
+                _registerState.emit(RegisterState.ShowError(errorMessage))
             } finally {
                 _isLoading.value = false
             }

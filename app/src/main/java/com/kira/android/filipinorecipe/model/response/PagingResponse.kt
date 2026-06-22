@@ -7,10 +7,10 @@ data class PagingResponse(
     val page: Int,
     @SerializedName("size")
     val size: Int,
-    @SerializedName("total")
-    val total: Int,
-    @SerializedName("next")
-    val next: String? = "",
-    @SerializedName("previous")
-    val previous: String? = "",
+    @SerializedName("totalPages")
+    val totalPages: Int,
+    @SerializedName("totalElements")
+    val totalElements: Long,
+    @SerializedName("hasNext")
+    val hasNext: Boolean,
 )

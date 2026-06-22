@@ -74,7 +74,7 @@ fun RegisterScreen(
                         }
                     }
                     is RegisterState.ShowError -> {
-                        onShowSnackbar(state.error.message ?: "Registration failed")
+                        onShowSnackbar(state.message)
                     }
                 }
             }

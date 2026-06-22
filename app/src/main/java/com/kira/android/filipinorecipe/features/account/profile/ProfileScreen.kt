@@ -104,17 +104,20 @@ fun PopulateProfileScreen(
                 .fillMaxWidth()
                 .statusBarsPadding()
                 .padding(horizontal = 16.dp, vertical = 8.dp)
-                .align(Alignment.Center)
         ) {
+
+            Spacer(modifier = Modifier.height(150.dp))
+
             AsyncImage(
                 model = R.drawable.ic_account,
                 contentDescription = "Profile",
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(150.dp),
+                    .width(200.dp)
+                    .height(200.dp)
+                    .align(Alignment.CenterHorizontally)
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(100.dp))
 
             BasicTextField(
                 value = userProfile.username,
