@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.kira.android.filipinorecipe.features.account.auth.AuthUseCase
 import com.kira.android.filipinorecipe.features.account.auth.token.TokenManager
 import com.kira.android.filipinorecipe.model.request.LoginRequest
+import com.kira.android.filipinorecipe.utils.NetworkUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -57,10 +58,11 @@ class LoginViewModel @Inject constructor(
                     tokenManager.saveTokens(tokens.accessToken, tokens.refreshToken)
                     _loginState.emit(LoginState.OnLogin)
                 } else {
-                    _loginState.emit(LoginState.ShowError(Exception("Invalid response from server")))
+                    _loginState.emit(LoginState.ShowError("Invalid response from server"))
                 }
             } catch (e: Exception) {
-                _loginState.emit(LoginState.ShowError(e))
+                val errorMessage = NetworkUtils().parseNetworkError(e)
+                _loginState.emit(LoginState.ShowError(errorMessage))
             } finally {
                 _isLoading.value = false
             }

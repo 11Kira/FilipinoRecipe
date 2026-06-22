@@ -76,7 +76,7 @@ fun LoginScreen(
                     }
 
                     is LoginState.ShowError -> {
-                        onShowSnackbar(state.error.message ?: "Login failed")
+                        onShowSnackbar(state.message)
                     }
                 }
             }
