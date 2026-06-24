@@ -30,6 +30,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -41,6 +42,7 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.kira.android.filipinorecipe.features.account.auth.token.TokenManager
 import com.kira.android.filipinorecipe.navigation.AppNavHost
 import com.kira.android.filipinorecipe.navigation.BottomMenuItem
 import com.kira.android.filipinorecipe.navigation.DetailScreenNavigation
@@ -85,9 +87,11 @@ fun MainScreenView() {
     val isAuthScreen = currentDestination?.hasRoute<SplashRoute>() == true ||
             currentDestination?.hasRoute<LoginRoute>() == true ||
             currentDestination?.hasRoute<RegisterRoute>() == true
-
     val shouldShowBottomBar = !isDetailScreen && !isAuthScreen
     val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
+    val tokenManager = remember { TokenManager(context) }
+    val isLoggedIn = tokenManager.getAccessToken() != null
     val scope = rememberCoroutineScope()
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
@@ -97,7 +101,10 @@ fun MainScreenView() {
                 enter = slideInVertically(initialOffsetY = { it }),
                 exit = slideOutVertically(targetOffsetY = { it })
             ) {
-                BottomNavigation(navController = navController)
+                BottomNavigation(
+                    navController = navController,
+                    isLoggedIn = isLoggedIn
+                )
             }
         },
     ) { contentPadding ->
@@ -114,7 +121,10 @@ fun MainScreenView() {
 }
 
 @Composable
-fun BottomNavigation(navController: NavController) {
+fun BottomNavigation(
+    navController: NavController,
+    isLoggedIn: Boolean
+) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
     val screens = listOf(
@@ -135,7 +145,15 @@ fun BottomNavigation(navController: NavController) {
             NavigationBarItem(
                 selected = isSelected,
                 onClick = {
-                    if (!isSelected) {
+                    val restrictedRoutes = listOf(
+                        BottomMenuItem.Favorites.route::class,
+                        BottomMenuItem.Profile.route::class
+                    )
+                    val isRestricted = restrictedRoutes.any { it == bottomMenuItem.route::class }
+                    if (isRestricted && !isLoggedIn) {
+                        // Redirect to Login if they aren't logged in
+                        navController.navigate(LoginRoute)
+                    } else if (!isSelected) {
                         navController.navigate(bottomMenuItem.route) {
                             popUpTo(navController.graph.findStartDestination().id) {
                                 saveState = true

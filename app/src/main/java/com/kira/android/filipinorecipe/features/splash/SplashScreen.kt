@@ -6,48 +6,27 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.kira.android.filipinorecipe.navigation.LoginRoute
 import com.kira.android.filipinorecipe.navigation.RecipeListRoute
 import com.kira.android.filipinorecipe.navigation.SplashRoute
 import com.kira.android.filipinorecipe.utils.ColorUtils
-
-lateinit var viewModel: SplashViewModel
+import kotlinx.coroutines.delay
 
 @Composable
 fun SplashScreen(
     navController: NavController
 ) {
-    viewModel = hiltViewModel()
-    MainScreen(navController)
-}
-
-@Composable
-fun MainScreen(navController: NavController) {
     LaunchedEffect(Unit) {
-        viewModel.checkAuthStatus()
-    }
-
-    LaunchedEffect(Unit) {
-        viewModel.startDestination.collect { state ->
-            val route = when (state) {
-                is StartDestination.Home -> RecipeListRoute
-                is StartDestination.Login -> LoginRoute
-            }
-
-            route.let {
-                navController.navigate(it) {
-                    popUpTo<SplashRoute> { inclusive = true }
-                }
-            }
+        delay(1500)
+        navController.navigate(RecipeListRoute) {
+            popUpTo<SplashRoute> { inclusive = true }
         }
     }
-    PopulateSplashScreen(navController)
+    PopulateSplashScreen()
 }
 
 @Composable
-fun PopulateSplashScreen(navController: NavController) {
+fun PopulateSplashScreen() {
     Box(
         modifier = Modifier
             .fillMaxSize()
