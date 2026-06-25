@@ -18,7 +18,7 @@ import com.kira.android.filipinorecipe.features.splash.SplashScreen
 fun AppNavHost(
     navController: NavHostController,
     contentPadding: PaddingValues,
-    onShowSnackbar: (String) -> Unit
+    onShowSnackbar: (String, String?, (() -> Unit)?) -> Unit
 ) {
     NavHost(
         navController = navController,
@@ -28,13 +28,13 @@ fun AppNavHost(
         composable<LoginRoute> {
             LoginScreen(
                 navController = navController,
-                onShowSnackbar = onShowSnackbar
+                onShowSnackbar = { msg -> onShowSnackbar(msg, null, null) }
             )
         }
         composable<RegisterRoute> {
             RegisterScreen(
                 navController = navController,
-                onShowSnackbar = onShowSnackbar
+                onShowSnackbar = { msg -> onShowSnackbar(msg, null, null) }
             )
         }
         composable<RecipeListRoute> {
@@ -58,7 +58,7 @@ fun AppNavHost(
         composable<ProfileRoute> {
             ProfileScreen(
                 navController = navController,
-                onShowSnackbar = onShowSnackbar
+                onShowSnackbar = { msg -> onShowSnackbar(msg, null, null) }
             )
         }
 

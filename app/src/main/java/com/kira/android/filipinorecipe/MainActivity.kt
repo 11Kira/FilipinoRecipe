@@ -114,9 +114,14 @@ fun MainScreenView() {
         AppNavHost(
             navController = navController,
             contentPadding = contentPadding,
-            onShowSnackbar = { message ->
+            onShowSnackbar = { message, actionLabel, action ->
                 scope.launch {
-                    snackbarHostState.showSnackbar(message)
+                    val result = snackbarHostState.showSnackbar(
+                        message = message,
+                        actionLabel = actionLabel,
+                        duration = SnackbarDuration.Short
+                    )
+                    if (result == SnackbarResult.ActionPerformed) action?.invoke()
                 }
             }
         )
