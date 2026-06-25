@@ -2,6 +2,7 @@ package com.kira.android.filipinorecipe.features.recipes.details
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kira.android.filipinorecipe.features.account.auth.token.TokenManager
 import com.kira.android.filipinorecipe.features.account.user.UserUseCase
 import com.kira.android.filipinorecipe.features.recipes.RecipeUseCase
 import com.kira.android.filipinorecipe.model.Recipe
@@ -15,13 +16,15 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RecipeDetailsViewModel @Inject constructor(
+    private val tokenManager: TokenManager, // Inject the manager, not the context
     private val recipeUseCase: RecipeUseCase,
     private val userUseCase: UserUseCase
 ) : ViewModel() {
 
     private val _recipeDetailsUiState = MutableStateFlow(RecipeDetailsUiState())
     val recipeDetailsUiState = _recipeDetailsUiState.asStateFlow()
-
+    private val _isLoggedIn = MutableStateFlow(tokenManager.getAccessToken() != null)
+    val isLoggedIn = _isLoggedIn.asStateFlow()
     fun getRecipeById(recipeId: String) {
         if (_recipeDetailsUiState.value.recipe?.id == recipeId) return
         viewModelScope.launch {

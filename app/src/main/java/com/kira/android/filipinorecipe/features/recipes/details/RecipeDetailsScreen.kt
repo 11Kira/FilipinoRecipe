@@ -26,6 +26,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,6 +55,7 @@ import com.kira.android.filipinorecipe.component.CircularIconButton
 import com.kira.android.filipinorecipe.component.DetailsListSection
 import com.kira.android.filipinorecipe.component.SubDetails
 import com.kira.android.filipinorecipe.model.Recipe
+import com.kira.android.filipinorecipe.navigation.LoginRoute
 import com.kira.android.filipinorecipe.utils.ColorUtils
 
 @Composable
@@ -61,7 +63,7 @@ fun RecipeDetailsScreen(
     viewModel: RecipeDetailsViewModel = hiltViewModel(),
     navController: NavController,
     id: String,
-    onShowSnackbar: (String) -> Unit
+    onShowSnackbar: (String, String?, (() -> Unit)?) -> Unit
 ) {
 
     val uiState by viewModel.recipeDetailsUiState.collectAsStateWithLifecycle()
@@ -72,7 +74,7 @@ fun RecipeDetailsScreen(
 
     LaunchedEffect(uiState.error) {
         uiState.error?.let {
-            onShowSnackbar(it)
+            onShowSnackbar(it, null, null)
         }
     }
 
@@ -81,7 +83,8 @@ fun RecipeDetailsScreen(
             PopulateRecipeDetails(
                 viewModel = viewModel,
                 navController = navController,
-                recipe = recipe
+                recipe = recipe,
+                onShowSnackbar = onShowSnackbar
             )
         }
 
@@ -96,7 +99,8 @@ fun RecipeDetailsScreen(
 fun PopulateRecipeDetails(
     viewModel: RecipeDetailsViewModel,
     navController: NavController,
-    recipe: Recipe
+    recipe: Recipe,
+    onShowSnackbar: (String, String?, (() -> Unit)?) -> Unit
 ) {
     val scrollState = rememberScrollState()
     val headerHeight = 500.dp
@@ -140,11 +144,13 @@ fun PopulateRecipeDetails(
         // 3. Dynamic Top App Bar
         RecipeTopBar(
             viewModel = viewModel,
+            navController = navController,
             alpha = toolbarAlpha,
             recipe = recipe,
             onBackClick = {
                 navController.navigateUp()
-            }
+            },
+            onShowSnackbar = onShowSnackbar
         )
     }
 }
@@ -217,9 +223,11 @@ fun RecipeHeaderImage(
 @Composable
 fun RecipeTopBar(
     viewModel: RecipeDetailsViewModel,
+    navController: NavController,
     alpha: Float,
     recipe: Recipe,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onShowSnackbar: (String, String?, (() -> Unit)?) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -251,10 +259,23 @@ fun RecipeTopBar(
                 overflow = TextOverflow.Ellipsis,
                 fontSize = 20.sp
             )
+
+            val isLoggedIn by viewModel.isLoggedIn.collectAsState()
             CircularIconButton(
                 icon = ImageVector.vectorResource(id = if (recipe.isFavorited) R.drawable.ic_favorite_filled else R.drawable.ic_favorite),
                 tint = if (recipe.isFavorited) Color.Red else Color.White,
-                onClick = { viewModel.toggleFavoriteRecipe(recipe.id) },
+                onClick = {
+                    if (isLoggedIn) {
+                        viewModel.toggleFavoriteRecipe(recipe.id)
+                    } else {
+                        onShowSnackbar(
+                            "Sign in to favorite this recipe",
+                            "Sign In"
+                        ) {
+                            navController.navigate(LoginRoute)
+                        }
+                    }
+                },
                 isFlipped = true
             )
         }

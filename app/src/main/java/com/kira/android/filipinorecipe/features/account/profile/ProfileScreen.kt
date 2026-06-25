@@ -36,7 +36,8 @@ import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.kira.android.filipinorecipe.R
 import com.kira.android.filipinorecipe.model.User
-import com.kira.android.filipinorecipe.navigation.LoginRoute
+import com.kira.android.filipinorecipe.navigation.RecipeListRoute
+import com.kira.android.filipinorecipe.navigation.SplashRoute
 import com.kira.android.filipinorecipe.utils.ColorUtils
 
 @Composable
@@ -195,14 +196,12 @@ fun PopulateProfileScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-
             Button(
                 onClick = {
                     viewModel.logout(
                         onLogout = {
-                            navController.navigate(LoginRoute) {
-                                popUpTo(0) { inclusive = true }
-                                launchSingleTop = true
+                            navController.navigate(RecipeListRoute) {
+                                popUpTo<SplashRoute> { inclusive = true }
                             }
                         }
                     )
