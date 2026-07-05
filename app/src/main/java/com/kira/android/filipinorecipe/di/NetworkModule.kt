@@ -6,6 +6,7 @@ import com.kira.android.filipinorecipe.features.account.auth.token.AuthIntercept
 import com.kira.android.filipinorecipe.features.account.auth.token.TokenManager
 import com.kira.android.filipinorecipe.utils.Constants
 import com.kira.android.filipinorecipe.utils.Constants.BASE_URL
+import com.kira.android.filipinorecipe.utils.NetworkUtils
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -35,6 +36,12 @@ class NetworkModule {
         @ApplicationContext context: Context
     ): TokenManager {
         return TokenManager(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideNetworkUtils(): NetworkUtils {
+        return NetworkUtils()
     }
 
     @Provides

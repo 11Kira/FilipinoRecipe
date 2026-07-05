@@ -3,25 +3,34 @@ package com.kira.android.filipinorecipe.features.account.auth.login
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsTopHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicSecureTextField
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextObfuscationMode
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Key
 import androidx.compose.material.icons.filled.Visibility
@@ -32,6 +41,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -44,9 +54,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -54,6 +66,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
+import com.kira.android.filipinorecipe.R
+import com.kira.android.filipinorecipe.component.CircularIconButton
+import com.kira.android.filipinorecipe.navigation.ForgotPasswordRoute
 import com.kira.android.filipinorecipe.navigation.LoginRoute
 import com.kira.android.filipinorecipe.navigation.RecipeListRoute
 import com.kira.android.filipinorecipe.navigation.RegisterRoute
@@ -117,157 +132,198 @@ fun PopulateLoginScreen(
     ) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(24.dp),
+                .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
         ) {
-            BasicTextField(
-                value = email,
-                onValueChange = {
-                    email = it
-                    viewModel.updateEmail(it)
-                },
+            Spacer(
                 modifier = Modifier
-                    .height(50.dp),
-                singleLine = true,
-                decorationBox = { innerTextField ->
-                    Row(
-                        modifier = Modifier
-                            .background(Color.White, RoundedCornerShape(24.dp))
-                            .border(
-                                1.dp,
-                                Color.LightGray.copy(alpha = 0.3f),
-                                RoundedCornerShape(24.dp)
-                            ) // Added subtle border
-                            .padding(horizontal = 16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Email,
-                            contentDescription = null,
-                            tint = Color.LightGray,
-                        )
-
-                        Spacer(modifier = Modifier.width(8.dp))
-
-                        Box(modifier = Modifier.weight(1f)) {
-                            if (email.isEmpty()) {
-                                Text("Email", color = Color.Gray)
-                            }
-                            innerTextField()
-                        }
-                    }
-                }
+                    .windowInsetsTopHeight(WindowInsets.statusBars)
+                    .fillMaxWidth()
             )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            BasicSecureTextField(
-                state = passwordState,
-                textObfuscationMode = if (isVisible) {
-                    TextObfuscationMode.Visible
-                } else {
-                    TextObfuscationMode.RevealLastTyped
-                },
-                modifier = Modifier.height(50.dp),
-                decorator = { innerTextField ->
-                    Row(
-                        modifier = Modifier
-                            .background(Color.White, RoundedCornerShape(24.dp))
-                            .border(
-                                1.dp,
-                                Color.LightGray.copy(alpha = 0.3f),
-                                RoundedCornerShape(24.dp)
-                            ) // Added subtle border
-                            .padding(horizontal = 16.dp)
-                            .clip(RoundedCornerShape(24.dp)),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Key,
-                            contentDescription = null,
-                            tint = Color.LightGray,
-                        )
-
-                        Spacer(modifier = Modifier.width(8.dp))
-
-                        Box(modifier = Modifier.weight(1f)) {
-                            if (passwordState.text.isEmpty()) {
-                                Text("Password", color = Color.Gray)
-                            }
-                            innerTextField()
-                        }
-
-                        IconButton(onClick = { isVisible = !isVisible }) {
-                            Icon(
-                                imageVector = if (isVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                                contentDescription = if (isVisible) "Hide password" else "Show password",
-                                tint = Color.LightGray
-                            )
-                        }
-                    }
-                }
-            )
-
             Box(
-                modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.CenterEnd
-            ) {
-                Text(
-                    text = "Forgot Password?",
-                    color = Color(0xFF7B5DB0),
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier
-                        .padding(vertical = 8.dp)
-                        .clickable { /* Navigate to a ForgotPasswordRoute later */ }
-                )
-            }
-
-            Button(
-                onClick = {
-                    keyboardController?.hide()
-                    onLoginClick(email, passwordState.text.toString())
-                },
-                enabled = !isLoading && viewModel.isInputValid,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(50.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF7B5DB0),
-                    contentColor = Color.White
-                )
+                    .wrapContentSize()
             ) {
-                Text("Login")
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = "Don't have an account? ",
-                    color = Color.Gray,
-                    style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
-                )
-                Text(
-                    text = "Register",
-                    style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Bold),
-                    color = Color(0xFF7B5DB0),
+                Row(
                     modifier = Modifier
-                        .clickable(
-                            onClick = {
-                                navController.navigate(RegisterRoute) {
-                                    popUpTo<LoginRoute> { inclusive = true }
-                                }
-                            }
-                        )
+                        .fillMaxWidth()
+                        .height(56.dp)
+                        .padding(horizontal = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    CircularIconButton(
+                        icon = Icons.AutoMirrored.Filled.ArrowBack,
+                        onClick = { navController.popBackStack() })
+                }
+                Image(
+                    painter = painterResource(id = R.drawable.logo),
+                    contentDescription = "Project logo",
+                    modifier = Modifier
+                        .size(350.dp)
+                        .align(Alignment.TopCenter),
+                    contentScale = ContentScale.Crop,
                 )
+            }
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                BasicTextField(
+                    value = email,
+                    onValueChange = {
+                        email = it
+                        viewModel.updateEmail(it)
+                    },
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                    modifier = Modifier
+                        .height(50.dp),
+                    singleLine = true,
+                    decorationBox = { innerTextField ->
+                        Row(
+                            modifier = Modifier
+                                .background(Color.White, RoundedCornerShape(24.dp))
+                                .border(
+                                    1.dp,
+                                    Color.Gray.copy(alpha = 0.5f),
+                                    RoundedCornerShape(24.dp)
+                                )
+                                .padding(horizontal = 16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Email,
+                                contentDescription = null,
+                                tint = Color.Gray,
+                            )
+
+                            Spacer(modifier = Modifier.width(8.dp))
+
+                            Box(modifier = Modifier.weight(1f)) {
+                                if (email.isEmpty()) {
+                                    Text("Email", color = Color.Gray)
+                                }
+                                innerTextField()
+                            }
+                        }
+                    }
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                BasicSecureTextField(
+                    state = passwordState,
+                    textObfuscationMode = if (isVisible) {
+                        TextObfuscationMode.Visible
+                    } else {
+                        TextObfuscationMode.RevealLastTyped
+                    },
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    onKeyboardAction = {
+                        keyboardController?.hide()
+                        onLoginClick(email, passwordState.text.toString())
+                    },
+                    modifier = Modifier.height(50.dp),
+                    decorator = { innerTextField ->
+                        Row(
+                            modifier = Modifier
+                                .background(Color.White, RoundedCornerShape(24.dp))
+                                .border(
+                                    1.dp,
+                                    Color.Gray.copy(alpha = 0.5f),
+                                    RoundedCornerShape(24.dp)
+                                )
+                                .padding(horizontal = 16.dp)
+                                .clip(RoundedCornerShape(24.dp)),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Key,
+                                contentDescription = null,
+                                tint = Color.Gray,
+                            )
+
+                            Spacer(modifier = Modifier.width(8.dp))
+
+                            Box(modifier = Modifier.weight(1f)) {
+                                if (passwordState.text.isEmpty()) {
+                                    Text("Password", color = Color.Gray)
+                                }
+                                innerTextField()
+                            }
+
+                            IconButton(
+                                onClick = { isVisible = !isVisible },
+                                modifier = Modifier.focusable(false)
+                            ) {
+                                Icon(
+                                    imageVector = if (isVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                                    contentDescription = if (isVisible) "Hide password" else "Show password",
+                                    tint = Color.Gray,
+                                )
+                            }
+                        }
+                    }
+                )
+
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.CenterEnd
+                ) {
+                    TextButton(
+                        onClick = { navController.navigate(ForgotPasswordRoute) },
+                        modifier = Modifier.padding(vertical = 8.dp),
+                        contentPadding = PaddingValues(0.dp),
+                    ) {
+                        Text("Forgot Password?")
+                    }
+                }
+
+                Button(
+                    onClick = {
+                        keyboardController?.hide()
+                        onLoginClick(email, passwordState.text.toString())
+                    },
+                    enabled = !isLoading && viewModel.isInputValid,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF7B5DB0),
+                        contentColor = Color.White
+                    )
+                ) {
+                    Text("Login")
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = "Don't have an account? ",
+                        color = Color.Gray,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 14.sp
+                    )
+                    TextButton(
+                        onClick = {
+                            navController.navigate(RegisterRoute) {
+                                popUpTo<LoginRoute> { inclusive = true }
+                            }
+                        },
+                        contentPadding = PaddingValues(0.dp)
+                    ) {
+                        Text("Register")
+                    }
+                }
             }
         }
 
