@@ -54,6 +54,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
+import com.kira.android.filipinorecipe.navigation.ForgotPasswordRoute
 import com.kira.android.filipinorecipe.navigation.LoginRoute
 import com.kira.android.filipinorecipe.navigation.RecipeListRoute
 import com.kira.android.filipinorecipe.navigation.RegisterRoute
@@ -221,7 +222,7 @@ fun PopulateLoginScreen(
                     fontWeight = FontWeight.SemiBold,
                     modifier = Modifier
                         .padding(vertical = 8.dp)
-                        .clickable { /* Navigate to a ForgotPasswordRoute later */ }
+                        .clickable { navController.navigate(ForgotPasswordRoute) }
                 )
             }
 

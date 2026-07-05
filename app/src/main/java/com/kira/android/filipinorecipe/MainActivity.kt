@@ -48,6 +48,7 @@ import com.kira.android.filipinorecipe.features.account.auth.token.TokenManager
 import com.kira.android.filipinorecipe.navigation.AppNavHost
 import com.kira.android.filipinorecipe.navigation.BottomMenuItem
 import com.kira.android.filipinorecipe.navigation.DetailScreenNavigation
+import com.kira.android.filipinorecipe.navigation.ForgotPasswordRoute
 import com.kira.android.filipinorecipe.navigation.LoginRoute
 import com.kira.android.filipinorecipe.navigation.RegisterRoute
 import com.kira.android.filipinorecipe.navigation.SplashRoute
@@ -88,7 +89,8 @@ fun MainScreenView() {
     val isDetailScreen = currentDestination?.hasRoute<DetailScreenNavigation>() == true
     val isAuthScreen = currentDestination?.hasRoute<SplashRoute>() == true ||
             currentDestination?.hasRoute<LoginRoute>() == true ||
-            currentDestination?.hasRoute<RegisterRoute>() == true
+            currentDestination?.hasRoute<RegisterRoute>() == true ||
+            currentDestination?.hasRoute<ForgotPasswordRoute>() == true
     val shouldShowBottomBar = !isDetailScreen && !isAuthScreen
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current

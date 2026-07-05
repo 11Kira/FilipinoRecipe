@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import com.kira.android.filipinorecipe.features.account.auth.forgotpassword.ForgotPasswordScreen
 import com.kira.android.filipinorecipe.features.account.auth.login.LoginScreen
 import com.kira.android.filipinorecipe.features.account.auth.register.RegisterScreen
 import com.kira.android.filipinorecipe.features.account.profile.ProfileScreen
@@ -35,6 +36,12 @@ fun AppNavHost(
             RegisterScreen(
                 navController = navController,
                 onShowSnackbar = { msg -> onShowSnackbar(msg, null, null) }
+            )
+        }
+        composable<ForgotPasswordRoute> {
+            ForgotPasswordScreen(
+                onShowSnackbar = { msg -> onShowSnackbar(msg, null, null) },
+                onNavigateBackToLogin = { navController.popBackStack() }
             )
         }
         composable<RecipeListRoute> {
