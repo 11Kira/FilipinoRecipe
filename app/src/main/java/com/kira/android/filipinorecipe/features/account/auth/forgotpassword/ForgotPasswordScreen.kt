@@ -1,5 +1,6 @@
 package com.kira.android.filipinorecipe.features.account.auth.forgotpassword
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,20 +12,24 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.kira.android.filipinorecipe.R
 import com.kira.android.filipinorecipe.component.CircularIconButton
 import com.kira.android.filipinorecipe.features.account.auth.forgotpassword.step.EmailStepContent
 import com.kira.android.filipinorecipe.features.account.auth.forgotpassword.step.NewPasswordStepContent
@@ -107,18 +112,18 @@ fun PopulateForgotPasswordScreen(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     CircularIconButton(
-                        icon = Icons.Default.ArrowBack,
+                        icon = Icons.AutoMirrored.Filled.ArrowBack,
                         onClick = onNavigateBackToLogin
                     )
                 }
-                /*Image(
+                Image(
                     painter = painterResource(id = R.drawable.logo),
                     contentDescription = "Project logo",
                     modifier = Modifier
                         .size(350.dp)
                         .align(Alignment.TopCenter),
                     contentScale = ContentScale.Crop,
-                )*/
+                )
             }
 
             when (currentStep) {

@@ -51,7 +51,6 @@ import com.kira.android.filipinorecipe.navigation.DetailScreenNavigation
 import com.kira.android.filipinorecipe.navigation.ForgotPasswordRoute
 import com.kira.android.filipinorecipe.navigation.LoginRoute
 import com.kira.android.filipinorecipe.navigation.RegisterRoute
-import com.kira.android.filipinorecipe.navigation.SplashRoute
 import com.kira.android.filipinorecipe.utils.ColorUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -87,8 +86,7 @@ fun MainScreenView() {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
     val isDetailScreen = currentDestination?.hasRoute<DetailScreenNavigation>() == true
-    val isAuthScreen = currentDestination?.hasRoute<SplashRoute>() == true ||
-            currentDestination?.hasRoute<LoginRoute>() == true ||
+    val isAuthScreen = currentDestination?.hasRoute<LoginRoute>() == true ||
             currentDestination?.hasRoute<RegisterRoute>() == true ||
             currentDestination?.hasRoute<ForgotPasswordRoute>() == true
     val shouldShowBottomBar = !isDetailScreen && !isAuthScreen

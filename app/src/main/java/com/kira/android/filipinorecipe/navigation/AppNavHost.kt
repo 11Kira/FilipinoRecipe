@@ -13,7 +13,6 @@ import com.kira.android.filipinorecipe.features.account.profile.ProfileScreen
 import com.kira.android.filipinorecipe.features.recipes.details.RecipeDetailsScreen
 import com.kira.android.filipinorecipe.features.recipes.favorites.FavoriteRecipeListScreen
 import com.kira.android.filipinorecipe.features.recipes.list.RecipeListScreen
-import com.kira.android.filipinorecipe.features.splash.SplashScreen
 
 @Composable
 fun AppNavHost(
@@ -23,9 +22,8 @@ fun AppNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = SplashRoute
+        startDestination = RecipeListRoute
     ) {
-        composable<SplashRoute> { SplashScreen(navController) }
         composable<LoginRoute> {
             LoginScreen(
                 navController = navController,
