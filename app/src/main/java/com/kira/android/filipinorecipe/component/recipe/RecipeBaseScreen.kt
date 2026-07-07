@@ -45,10 +45,11 @@ fun RecipeBaseScreen(
     val listState = rememberLazyListState()
     val focusManager = LocalFocusManager.current
     var lastScrolledQuery by rememberSaveable { mutableStateOf("") }
+    val refreshState = recipes.loadState.refresh
 
     // Auto-scroll to top when query changes
-    LaunchedEffect(recipes.loadState.refresh) {
-        if (recipes.loadState.refresh is LoadState.NotLoading && recipes.itemCount > 0) {
+    LaunchedEffect(refreshState) {
+        if (refreshState is LoadState.NotLoading && recipes.itemCount > 0) {
             if (query != lastScrolledQuery) {
                 listState.scrollToItem(0)
                 lastScrolledQuery = query
@@ -61,13 +62,20 @@ fun RecipeBaseScreen(
             .fillMaxSize()
             .background(ColorUtils().recipeListBackgroundGradient)
     ) {
-        RecipeList(
-            recipes = recipes,
-            listState = listState,
-            searchQuery = query,
-            contentPadding = contentPadding,
-            onItemClick = onItemClick
-        )
+        if (refreshState is LoadState.Error && recipes.itemCount == 0) {
+            ErrorScreen(
+                message = "Connection error... try again!",
+                onRetry = { recipes.retry() }
+            )
+        } else {
+            RecipeList(
+                recipes = recipes,
+                listState = listState,
+                searchQuery = query,
+                contentPadding = contentPadding,
+                onItemClick = onItemClick
+            )
+        }
 
         // Status bar scrim
         Box(

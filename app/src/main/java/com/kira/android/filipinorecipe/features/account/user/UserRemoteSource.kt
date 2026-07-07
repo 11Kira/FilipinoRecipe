@@ -1,8 +1,8 @@
 package com.kira.android.filipinorecipe.features.account.user
 
-import jakarta.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 class UserRemoteSource @Inject constructor(
     private val userService: UserService
