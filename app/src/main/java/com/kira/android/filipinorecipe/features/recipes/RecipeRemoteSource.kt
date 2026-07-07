@@ -12,13 +12,15 @@ class RecipeRemoteSource @Inject constructor(
         query: String,
         protein: String,
         difficulty: String,
-        page: Int
+        page: Int,
+        size: Int = 10
     ) = withContext(Dispatchers.IO) {
         recipeService.getAllRecipes(
             query,
             protein,
             difficulty,
-            page
+            page,
+            size
         )
     }
 

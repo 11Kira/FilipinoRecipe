@@ -7,6 +7,7 @@ import com.kira.android.filipinorecipe.features.account.user.UserUseCase
 import com.kira.android.filipinorecipe.features.recipes.RecipeUseCase
 import com.kira.android.filipinorecipe.model.Recipe
 import com.kira.android.filipinorecipe.model.enums.ResponseStatus
+import com.kira.android.filipinorecipe.utils.NetworkUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,15 +17,17 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RecipeDetailsViewModel @Inject constructor(
-    private val tokenManager: TokenManager, // Inject the manager, not the context
+    private val tokenManager: TokenManager,
     private val recipeUseCase: RecipeUseCase,
-    private val userUseCase: UserUseCase
+    private val userUseCase: UserUseCase,
+    private val networkUtils: NetworkUtils
 ) : ViewModel() {
 
     private val _recipeDetailsUiState = MutableStateFlow(RecipeDetailsUiState())
     val recipeDetailsUiState = _recipeDetailsUiState.asStateFlow()
     private val _isLoggedIn = MutableStateFlow(tokenManager.getAccessToken() != null)
     val isLoggedIn = _isLoggedIn.asStateFlow()
+
     fun getRecipeById(recipeId: String) {
         if (_recipeDetailsUiState.value.recipe?.id == recipeId) return
         viewModelScope.launch {
@@ -40,7 +43,8 @@ class RecipeDetailsViewModel @Inject constructor(
                     }
                 }
             } catch (e: Exception) {
-                _recipeDetailsUiState.update { it.copy(error = e.message, isLoading = false) }
+                val errorMessage = networkUtils.parseNetworkError(e)
+                _recipeDetailsUiState.update { it.copy(error = errorMessage, isLoading = false) }
             }
         }
     }
@@ -48,28 +52,39 @@ class RecipeDetailsViewModel @Inject constructor(
     fun toggleFavoriteRecipe(recipeId: String) {
         val currentRecipe = _recipeDetailsUiState.value.recipe ?: return
         val wasFavorited = currentRecipe.isFavorited
+        val newFavoriteState = !wasFavorited
 
         _recipeDetailsUiState.update { state ->
-            state.copy(recipe = currentRecipe.copy(isFavorited = !wasFavorited))
+            state.copy(recipe = currentRecipe.copy(isFavorited = newFavoriteState))
         }
 
         viewModelScope.launch {
             try {
+                recipeUseCase.updateFavoriteStatus(recipeId, newFavoriteState)
                 val response = userUseCase.toggleFavoriteRecipe(recipeId)
                 if (response.status != ResponseStatus.SUCCESS) {
-                    rollbackFavorite(currentRecipe, wasFavorited)
+                    recipeUseCase.updateFavoriteStatus(recipeId, wasFavorited)
+                    rollbackFavorite(
+                        currentRecipe,
+                        wasFavorited,
+                        "Failed to sync favorite with server."
+                    )
                 }
             } catch (e: Exception) {
-                rollbackFavorite(currentRecipe, wasFavorited)
+                println("📡 Network sync failed, favorite saved locally in Room.")
             }
         }
     }
 
-    private fun rollbackFavorite(originalRecipe: Recipe, originalState: Boolean) {
+    private fun rollbackFavorite(
+        originalRecipe: Recipe,
+        originalState: Boolean,
+        errorMessage: String
+    ) {
         _recipeDetailsUiState.update {
             it.copy(
                 recipe = originalRecipe.copy(isFavorited = originalState),
-                error = "Failed to update favorites. Please check your connection."
+                error = errorMessage
             )
         }
     }

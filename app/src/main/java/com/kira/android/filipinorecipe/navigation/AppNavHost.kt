@@ -47,7 +47,8 @@ fun AppNavHost(
                 contentPadding = contentPadding,
                 onItemClick = { id ->
                     navController.navigate(DetailScreenNavigation(id))
-                }
+                },
+                onShowSnackbar = { msg -> onShowSnackbar(msg, null, null) }
             )
         }
 

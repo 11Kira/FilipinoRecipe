@@ -6,6 +6,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -14,6 +15,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.kira.android.filipinorecipe.component.FilterSheetContent
 import com.kira.android.filipinorecipe.component.recipe.RecipeBaseScreen
@@ -27,9 +29,23 @@ fun RecipeListScreen(
     viewModel: RecipeListViewModel = hiltViewModel(),
     contentPadding: PaddingValues,
     onItemClick: (String) -> Unit,
+    onShowSnackbar: (String) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val recipes = viewModel.recipePagingFlow.collectAsLazyPagingItems()
+
+    // Handle paging errors with snackbar
+    LaunchedEffect(recipes.loadState.refresh) {
+        val refreshState = recipes.loadState.refresh
+        if (refreshState is LoadState.Error) {
+            if (recipes.itemCount > 0) {
+                println("📡 Network sync failed, but recipes exist in cache. Suppressing error snackbar.")
+            } else {
+                onShowSnackbar(refreshState.error.message ?: "An unexpected error occurred")
+            }
+        }
+    }
+
     val query by viewModel.searchQuery.collectAsState()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 

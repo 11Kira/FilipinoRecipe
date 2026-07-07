@@ -20,6 +20,10 @@ class RecipeUseCase @Inject constructor(
         return recipeRepository.getRecipeById(recipeId = recipeId)
     }
 
+    suspend fun updateFavoriteStatus(recipeId: String, isFavorited: Boolean) {
+        recipeRepository.updateFavoriteStatus(recipeId, isFavorited)
+    }
+
     suspend fun saveRecipe(body: JsonObject): ApiResponse<Recipe> {
         return recipeRepository.saveRecipe(body)
     }

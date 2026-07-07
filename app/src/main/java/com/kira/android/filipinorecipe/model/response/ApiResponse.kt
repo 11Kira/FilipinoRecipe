@@ -11,5 +11,5 @@ data class ApiResponse<T>(
     @SerializedName("data")
     val data: T? = null,
     @SerializedName("paging")
-    val paging: PagingResponse?
+    val paging: PagingResponse? = null
 )

@@ -1,5 +1,7 @@
 package com.kira.android.filipinorecipe.di
 
+import com.kira.android.filipinorecipe.data.local.recipe.RecipeDao
+import com.kira.android.filipinorecipe.data.local.user.UserDao
 import com.kira.android.filipinorecipe.features.account.auth.AuthRemoteSource
 import com.kira.android.filipinorecipe.features.account.auth.AuthRepository
 import com.kira.android.filipinorecipe.features.account.user.UserRemoteSource
@@ -18,8 +20,9 @@ class RepositoryModule {
     @Provides
     @Singleton
     fun provideRecipeRepository(
-        recipeRemoteSource: RecipeRemoteSource
-    ) = RecipeRepository(recipeRemoteSource = recipeRemoteSource)
+        recipeRemoteSource: RecipeRemoteSource,
+        recipeDao: RecipeDao
+    ) = RecipeRepository(recipeRemoteSource = recipeRemoteSource, recipeDao = recipeDao)
 
     @Provides
     @Singleton
@@ -30,6 +33,7 @@ class RepositoryModule {
     @Provides
     @Singleton
     fun provideUserRepository(
-        userRemoteSource: UserRemoteSource
-    ) = UserRepository(userRemoteSource = userRemoteSource)
+        userRemoteSource: UserRemoteSource,
+        userDao: UserDao
+    ) = UserRepository(userRemoteSource = userRemoteSource, userDao = userDao)
 }
