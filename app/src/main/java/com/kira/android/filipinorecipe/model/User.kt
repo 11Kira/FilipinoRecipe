@@ -1,12 +1,18 @@
 package com.kira.android.filipinorecipe.model
 
 import androidx.compose.runtime.Immutable
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 @Immutable
-class User(
-    @SerializedName("username")
+@Serializable
+data class User(
+    @SerialName("id")
+    val id: String,
+    @SerialName("username")
     val username: String,
-    @SerializedName("email")
+    @SerialName("email")
     val email: String,
+    @SerialName("role")
+    val role: String,
 )

@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AdminPanelSettings
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
@@ -38,6 +39,7 @@ import androidx.navigation.NavController
 import com.kira.android.filipinorecipe.R
 import com.kira.android.filipinorecipe.component.StaticBasicTextFieldWithIcon
 import com.kira.android.filipinorecipe.model.User
+import com.kira.android.filipinorecipe.model.enums.Role
 import com.kira.android.filipinorecipe.navigation.RecipeListRoute
 import com.kira.android.filipinorecipe.utils.ColorUtils
 
@@ -138,6 +140,15 @@ fun PopulateProfileScreen(
                     value = userProfile.email,
                     imageVector = Icons.Filled.Email
                 )
+
+                if (userProfile.role == Role.ADMIN.name) {
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    StaticBasicTextFieldWithIcon(
+                        value = userProfile.role,
+                        imageVector = Icons.Filled.AdminPanelSettings
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(12.dp))
 
