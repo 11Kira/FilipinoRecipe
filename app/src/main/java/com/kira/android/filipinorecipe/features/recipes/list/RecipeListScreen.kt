@@ -1,9 +1,11 @@
 package com.kira.android.filipinorecipe.features.recipes.list
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -12,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -32,27 +35,38 @@ fun RecipeListScreen(
     onShowSnackbar: (String) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
+    val listState = rememberLazyListState()
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true,
+        confirmValueChange = { newValue -> newValue != SheetValue.Hidden })
     val recipes = viewModel.recipePagingFlow.collectAsLazyPagingItems()
-
-    // Handle paging errors with snackbar
-    LaunchedEffect(recipes.loadState.refresh) {
-        val refreshState = recipes.loadState.refresh
-        if (refreshState is LoadState.Error) {
-            if (recipes.itemCount > 0) {
-                println("📡 Network sync failed, but recipes exist in cache. Suppressing error snackbar.")
-            } else {
-                onShowSnackbar(refreshState.error.message ?: "An unexpected error occurred")
-            }
+    val refreshState = recipes.loadState.refresh
+    LaunchedEffect(recipes.loadState.append) {
+        val append = recipes.loadState.append
+        if (append is LoadState.Error) {
+            onShowSnackbar("Failed to load more recipes")
         }
     }
-
     val query by viewModel.searchQuery.collectAsState()
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-
+    var lastScrolledQuery by rememberSaveable { mutableStateOf("") }
     val selectedProteins by viewModel.selectedProteins.collectAsState()
     val selectedDifficulties by viewModel.selectedDifficulties.collectAsState()
     val appliedFilterCount by viewModel.appliedFilterCount.collectAsState()
     var showFilterSheet by remember { mutableStateOf(false) }
+
+    LaunchedEffect(refreshState) {
+        if (refreshState is LoadState.NotLoading && recipes.itemCount > 0) {
+            if (query != lastScrolledQuery) {
+                listState.scrollToItem(0)
+                lastScrolledQuery = query
+            }
+        }
+    }
+    LaunchedEffect(refreshState) {
+        if (refreshState is LoadState.Error && recipes.itemCount > 0) {
+            onShowSnackbar("Offline mode: Displaying cached recipes.")
+        }
+    }
 
     RecipeBaseScreen(
         recipes = recipes,
