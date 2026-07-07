@@ -26,27 +26,37 @@ class RecipeRepository @Inject constructor(
         query: String,
         protein: String,
         difficulty: String,
-    ): Flow<PagingData<Recipe>> =
-        Pager(
-            config = PagingConfig(
+    ): Flow<PagingData<Recipe>> {
+        val proteinList = if (protein.isBlank()) emptyList() else protein.split(",")
+        val difficultyList = if (difficulty.isBlank()) emptyList() else difficulty.split(",")
+
+        return Pager(
+            PagingConfig(
                 pageSize = 10,
                 prefetchDistance = 2,
                 enablePlaceholders = false,
                 initialLoadSize = 10
             ),
             remoteMediator = RecipeRemoteMediator(
-                remoteSource = recipeRemoteSource,
-                recipeDao = recipeDao,
                 query = query,
                 protein = protein,
-                difficulty = difficulty
+                difficulty = difficulty,
+                remoteSource = recipeRemoteSource,
+                recipeDao = recipeDao
             ),
             pagingSourceFactory = {
-                recipeDao.getAllRecipesPaging(query = "%$query%")
+                recipeDao.getAllRecipesPaging(
+                    query = "%$query%",
+                    hasProteinFilter = proteinList.isNotEmpty(),
+                    proteins = proteinList,
+                    hasDifficultyFilter = difficultyList.isNotEmpty(),
+                    difficulties = difficultyList
+                )
             }
         ).flow.map { pagingData ->
             pagingData.map { it.toDomain() }
         }
+    }
 
     suspend fun getRecipeById(recipeId: String): ApiResponse<Recipe> {
         return try {
