@@ -1,30 +1,22 @@
-# FilipinoRecipe (Native Android Client)
-A production-grade, native Android application built with modern engineering practices to browse, discover, and manage authentic Filipino recipes. This application serves as the production-native baseline for the platform ecosystem, communicating with a self-hosted cloud API and featuring a robust, resilient offline-first architecture.
+<h1>FilipinoRecipe (Native Android Client)</h1>
+<p>A production-grade, native Android application built with modern engineering practices to browse, discover, and manage authentic Filipino recipes. This application serves as the production-native baseline for the platform ecosystem, communicating seamlessly with a dedicated cloud-hosted API infrastructure.</p>
 
-🛠️ Tech Stack & Architecture
-Language: 100% Kotlin
+<h2>🛠️ Tech Stack &amp; Architecture</h2>
+<ul>
+  <li><strong>Language:</strong> 100% Kotlin</li>
+  <li><strong>UI Framework:</strong> Jetpack Compose (Declarative UI)</li>
+  <li><strong>Architecture:</strong> Clean Architecture + MVVM (Model-View-ViewModel)</li>
+  <li><strong>Local Storage (Offline-First):</strong> Room Persistence Library (Single Source of Truth paradigm via reactive Flow streams)</li>
+  <li><strong>Media Asset Pipeline:</strong> Firebase Cloud Storage (Remote hosting and optimized resource serving)</li>
+  <li><strong>Asynchronous Flow:</strong> Kotlin Coroutines &amp; StateFlow for reactive, lifecycle-aware state management</li>
+  <li><strong>Networking:</strong> Retrofit / OkHttp with reactive error interceptors and network interceptor layers</li>
+  <li><strong>Dependency Injection:</strong> Hilt (Compile-time safe Dependency Injection framework built on top of Dagger)</li>
+</ul>
 
-UI Framework: Jetpack Compose (Declarative UI)
-
-Architecture: Clean Architecture + MVVM (Model-View-ViewModel)
-
-Local Persistence: Room Database (Offline-first architecture with Single Source of Truth pattern)
-
-Asynchronous Flow: Kotlin Coroutines & StateFlow for reactive, lifecycle-aware state management
-
-Networking: Retrofit / OkHttp with reactive error interceptors
-
-Cloud Infrastructure & Media: Firebase Cloud Storage (Optimized asset delivery)
-
-Dependency Injection: Hilt (Compile-time safe dependency injection framework built on Dagger)
-
-💎 Senior Engineering Highlights
-Offline-First Single Source of Truth (SSOT): Engineered a robust local caching engine using the Room database. The presentation layer strictly observes local database streams rather than raw network responses, ensuring a completely seamless, zero-latency user experience even during network drops or complete offline status.
-
-Optimized Cloud Media Pipeline: Integrated Firebase Cloud Storage to serve high-resolution food photography assets. The app handles remote image tokens efficiently, utilizing a centralized media pipeline designed to minimize bandwidth consumption and leverage intelligent image caching configurations.
-
-Decoupled Architecture: Enforces a strict separation of concerns across Data, Domain, and Presentation layers, ensuring highly testable, decoupled, and maintainable codebases that scale smoothly.
-
-Production Cloud Integration: Configured to interface seamlessly with a dedicated cloud infrastructure layer, eliminating the performance penalties and cold-start limitations of traditional free-tier hosting solutions.
-
-Reactive State Engine: Employs stateful UI wrapper paradigms to eliminate composition leaks and handle asynchronous state mutations predictably across configuration changes.
+<h2>💎 Senior Engineering Highlights</h2>
+<ul>
+  <li><strong>Offline-First Single Source of Truth (SSOT):</strong> Implements a robust local caching ecosystem using Room. The presentation layer streams data exclusively from local reactive database instances, while the network infrastructure asynchronously fetches and updates data in the background, guaranteeing a zero-latency UI experience even during complete network drops.</li>
+  <li><strong>Decoupled Architecture:</strong> Enforces a strict separation of concerns across Data, Domain, and Presentation layers, ensuring highly testable, modular, and maintainable enterprise code.</li>
+  <li><strong>Cloud Media Optimization:</strong> Integrates Firebase Cloud Storage to dynamically fetch remote image pointers, reducing backend processing overhead and leveraging client-side caching optimizations to keep network payloads lightweight.</li>
+  <li><strong>Reactive State Engine:</strong> Employs stateful UI wrapper paradigms to eliminate composition leaks and handle complex asynchronous state mutations predictably across lifecycle changes.</li>
+</ul>
