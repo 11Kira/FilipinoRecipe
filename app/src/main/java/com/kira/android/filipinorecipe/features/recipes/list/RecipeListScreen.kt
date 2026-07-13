@@ -44,7 +44,8 @@ fun RecipeListScreen(
         confirmValueChange = { newValue -> newValue != SheetValue.Hidden })
     val recipes = viewModel.recipePagingFlow.collectAsLazyPagingItems()
     val refreshState = recipes.loadState.refresh
-    val isRefreshing = refreshState is LoadState.Loading
+    var isManualRefresh by remember { mutableStateOf(false) }
+    val isRefreshing = refreshState is LoadState.Loading && isManualRefresh
 
     LaunchedEffect(recipes.loadState.append) {
         val append = recipes.loadState.append
@@ -64,7 +65,8 @@ fun RecipeListScreen(
     LaunchedEffect(refreshState) {
         when (refreshState) {
             is LoadState.NotLoading -> {
-                hasShownOfflineSnackbar = false // Clean up error tracking flags
+                hasShownOfflineSnackbar = false
+                isManualRefresh = false
                 if (recipes.itemCount > 0 && query != lastScrolledQuery) {
                     listState.scrollToItem(0)
                     lastScrolledQuery = query
@@ -72,6 +74,7 @@ fun RecipeListScreen(
             }
 
             is LoadState.Error -> {
+                isManualRefresh = false
                 if (recipes.itemCount > 0 && !hasShownOfflineSnackbar) {
                     onShowSnackbar("Offline mode: Displaying cached recipes.")
                     hasShownOfflineSnackbar = true
@@ -86,7 +89,10 @@ fun RecipeListScreen(
 
     PullToRefreshBox(
         isRefreshing = isRefreshing,
-        onRefresh = { recipes.refresh() }
+        onRefresh = {
+            isManualRefresh = true
+            recipes.refresh()
+        }
     ) {
         RecipeBaseScreen(
             recipes = recipes,
