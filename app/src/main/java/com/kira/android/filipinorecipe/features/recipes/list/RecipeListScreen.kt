@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.kira.android.filipinorecipe.MainViewModel
 import com.kira.android.filipinorecipe.component.FilterSheetContent
 import com.kira.android.filipinorecipe.component.recipe.RecipeBaseScreen
 import com.kira.android.filipinorecipe.component.recipe.RecipeFilter
@@ -31,6 +32,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun RecipeListScreen(
     viewModel: RecipeListViewModel = hiltViewModel(),
+    mainViewModel: MainViewModel,
     contentPadding: PaddingValues,
     onItemClick: (String) -> Unit,
     onShowSnackbar: (String) -> Unit,
@@ -50,6 +52,7 @@ fun RecipeListScreen(
             onShowSnackbar("Failed to load more recipes")
         }
     }
+
     val query by viewModel.searchQuery.collectAsState()
     var lastScrolledQuery by rememberSaveable { mutableStateOf("") }
     var hasShownOfflineSnackbar by rememberSaveable { mutableStateOf(false) }
@@ -88,6 +91,9 @@ fun RecipeListScreen(
         RecipeBaseScreen(
             recipes = recipes,
             query = query,
+            listState = listState,
+            mainViewModel = mainViewModel,
+            screenLabel = "Recipes",
             onQueryChange = { viewModel.onSearchQueryChanged(it) },
             onItemClick = onItemClick,
             contentPadding = contentPadding,

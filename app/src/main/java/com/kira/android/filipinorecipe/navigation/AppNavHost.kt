@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import com.kira.android.filipinorecipe.MainViewModel
 import com.kira.android.filipinorecipe.features.account.auth.forgotpassword.ForgotPasswordScreen
 import com.kira.android.filipinorecipe.features.account.auth.login.LoginScreen
 import com.kira.android.filipinorecipe.features.account.auth.register.RegisterScreen
@@ -16,6 +17,7 @@ import com.kira.android.filipinorecipe.features.recipes.list.RecipeListScreen
 
 @Composable
 fun AppNavHost(
+    mainViewModel: MainViewModel,
     navController: NavHostController,
     contentPadding: PaddingValues,
     onShowSnackbar: (String, String?, (() -> Unit)?) -> Unit
@@ -44,6 +46,7 @@ fun AppNavHost(
         }
         composable<RecipeListRoute> {
             RecipeListScreen(
+                mainViewModel = mainViewModel,
                 contentPadding = contentPadding,
                 onItemClick = { id ->
                     navController.navigate(DetailScreenNavigation(id))
@@ -54,6 +57,7 @@ fun AppNavHost(
 
         composable<FavoritesRoute> {
             FavoriteRecipeListScreen(
+                mainViewModel = mainViewModel,
                 contentPadding = contentPadding,
                 onItemClick = { id ->
                     navController.navigate(DetailScreenNavigation(id))
