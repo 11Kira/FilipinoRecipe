@@ -29,6 +29,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -104,7 +105,8 @@ fun MainScreenView() {
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
     val tokenManager = remember { TokenManager(context) }
-    val isLoggedIn = tokenManager.getAccessToken() != null
+    val accessToken by tokenManager.accessTokenFlow.collectAsState(initial = null)
+    val isLoggedIn = accessToken != null
     val scope = rememberCoroutineScope()
     var isBottomBarVisibleByScroll by remember { mutableStateOf(true) }
 

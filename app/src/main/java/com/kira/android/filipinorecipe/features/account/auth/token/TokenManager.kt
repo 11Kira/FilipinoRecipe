@@ -1,76 +1,109 @@
 package com.kira.android.filipinorecipe.features.account.auth.token
 
 import android.content.Context
-import android.content.SharedPreferences
-import android.util.Log
-import androidx.core.content.edit
-import androidx.security.crypto.EncryptedSharedPreferences
-import androidx.security.crypto.MasterKey
+import android.util.Base64
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
+import com.google.crypto.tink.Aead
+import com.google.crypto.tink.KeyTemplates
+import com.google.crypto.tink.aead.AeadConfig
+import com.google.crypto.tink.integration.android.AndroidKeysetManager
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.runBlocking
 
-class TokenManager(context: Context) {
-    private val sharedPreferences: SharedPreferences
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "secure_tokens")
+
+class TokenManager(private val context: Context) {
+
+    private val aead: Aead
 
     companion object {
-        private const val PREF_NAME = "secure_prefs"
-        private const val KEY_ACCESS_TOKEN = "access_token"
-        private const val KEY_REFRESH_TOKEN = "refresh_token"
+        private val KEY_ACCESS_TOKEN = stringPreferencesKey("enc_access_token")
+        private val KEY_REFRESH_TOKEN = stringPreferencesKey("enc_refresh_token")
+
+        private const val KEYSET_NAME = "master_keyset"
+        private const val PREFERENCE_FILE = "tink_keyset_prefs"
+        private const val MASTER_KEY_URI = "android-keystore://recipe_master_key"
     }
 
     init {
-        sharedPreferences = try {
-            createEncryptedSharedPreferences(context)
-        } catch (e: Exception) {
-            Log.e(
-                "TokenManager",
-                "Critical error initializing EncryptedSharedPreferences, resetting...",
-                e
-            )
+        AeadConfig.register()
+        val keysetHandle = AndroidKeysetManager.Builder()
+            .withSharedPref(context, KEYSET_NAME, PREFERENCE_FILE)
+            .withKeyTemplate(KeyTemplates.get("AES256_GCM"))
+            .withMasterKeyUri(MASTER_KEY_URI)
+            .build()
+            .keysetHandle
 
-            // 1. Delete the physical file
-            context.deleteSharedPreferences(PREF_NAME)
+        aead = keysetHandle.getPrimitive(Aead::class.java)
+    }
 
-            // 2. Try one more time
+    // --- Helper Encryption Methods ---
+    private fun encrypt(value: String): String {
+        val encryptedBytes = aead.encrypt(value.toByteArray(Charsets.UTF_8), null)
+        return Base64.encodeToString(encryptedBytes, Base64.DEFAULT)
+    }
+
+    private fun decrypt(encryptedValue: String): String {
+        val decodedBytes = Base64.decode(encryptedValue, Base64.DEFAULT)
+        val decryptedBytes = aead.decrypt(decodedBytes, null)
+        return String(decryptedBytes, Charsets.UTF_8)
+    }
+
+    // --- Asynchronous API (For UI/ViewModels) ---
+    val accessTokenFlow: Flow<String?> = context.dataStore.data.map { prefs ->
+        prefs[KEY_ACCESS_TOKEN]?.let {
             try {
-                createEncryptedSharedPreferences(context)
-            } catch (e2: Exception) {
-                // 3. Last resort: If it STILL fails, log it and provide a dummy SharedPreferences
-                // so the app doesn't crash. The user will simply be "logged out".
-                Log.e("TokenManager", "Final attempt failed, returning unencrypted fallback", e2)
-                context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+                decrypt(it)
+            } catch (e: Exception) {
+                null
             }
         }
     }
 
-    private fun createEncryptedSharedPreferences(context: Context): SharedPreferences {
-        val masterKey = MasterKey.Builder(context)
-            .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-            .build()
-
-        return EncryptedSharedPreferences.create(
-            context,
-            PREF_NAME,
-            masterKey,
-            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-        )
-    }
-
-    fun saveTokens(accessToken: String, refreshToken: String) {
-        sharedPreferences.edit {
-            putString(KEY_ACCESS_TOKEN, accessToken)
-                .putString(KEY_REFRESH_TOKEN, refreshToken)
+    val refreshTokenFlow: Flow<String?> = context.dataStore.data.map { prefs ->
+        prefs[KEY_REFRESH_TOKEN]?.let {
+            try {
+                decrypt(it)
+            } catch (e: Exception) {
+                null
+            }
         }
     }
 
-    fun getAccessToken(): String? {
-        return sharedPreferences.getString(KEY_ACCESS_TOKEN, null)
+    suspend fun saveTokens(accessToken: String, refreshToken: String) {
+        context.dataStore.edit { prefs ->
+            prefs[KEY_ACCESS_TOKEN] = encrypt(accessToken)
+            prefs[KEY_REFRESH_TOKEN] = encrypt(refreshToken)
+        }
     }
 
-    fun getRefreshToken(): String? {
-        return sharedPreferences.getString(KEY_REFRESH_TOKEN, null)
+    suspend fun clearTokens() {
+        context.dataStore.edit { prefs ->
+            prefs.remove(KEY_ACCESS_TOKEN)
+            prefs.remove(KEY_REFRESH_TOKEN)
+        }
     }
 
-    fun clearTokens() {
-        sharedPreferences.edit { clear() }
+    // --- Synchronous Blocking API (Strictly for OkHttp Interceptor/Authenticator) ---
+    fun getAccessTokenSync(): String? = runBlocking {
+        accessTokenFlow.firstOrNull()
+    }
+
+    fun getRefreshTokenSync(): String? = runBlocking {
+        refreshTokenFlow.firstOrNull()
+    }
+
+    fun saveTokensSync(accessToken: String, refreshToken: String) = runBlocking {
+        saveTokens(accessToken, refreshToken)
+    }
+
+    fun clearTokensSync() = runBlocking {
+        clearTokens()
     }
 }

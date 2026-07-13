@@ -46,8 +46,6 @@ class LoginViewModel @Inject constructor(
     val isInputValid: Boolean
         get() = android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() && password.length >= 6
 
-
-
     fun login(email: String, password: String) {
         viewModelScope.launch {
             _isLoading.value = true
