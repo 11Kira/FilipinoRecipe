@@ -2,21 +2,24 @@ package com.kira.android.filipinorecipe
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
     @ApplicationContext val context: Context
 ) : ViewModel() {
-    private var _currentlySelectedTab = MutableStateFlow("Recipes")
-    val currentlySelectedTab: StateFlow<String> = _currentlySelectedTab.asStateFlow()
+    private val _scrollToTopEvent = MutableSharedFlow<String>(extraBufferCapacity = 1)
+    val scrollToTopEvent = _scrollToTopEvent.asSharedFlow()
 
-    fun updateSelectedTab(selectedTab: String) {
-        _currentlySelectedTab.value = selectedTab
+    fun triggerScrollToTop(targetTab: String) {
+        viewModelScope.launch {
+            _scrollToTopEvent.emit(targetTab)
+        }
     }
 }

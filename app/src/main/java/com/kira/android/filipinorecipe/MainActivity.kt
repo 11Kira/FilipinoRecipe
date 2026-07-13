@@ -7,6 +7,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
@@ -25,14 +27,23 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -95,7 +106,39 @@ fun MainScreenView() {
     val tokenManager = remember { TokenManager(context) }
     val isLoggedIn = tokenManager.getAccessToken() != null
     val scope = rememberCoroutineScope()
+    var isBottomBarVisibleByScroll by remember { mutableStateOf(true) }
+
+    LaunchedEffect(currentDestination) {
+        isBottomBarVisibleByScroll = true
+    }
+
+    val nestedScrollConnection = remember {
+        object : NestedScrollConnection {
+            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                val delta = available.y
+                if (delta < -15f) {
+                    isBottomBarVisibleByScroll = false
+                } else if (delta > 15f) {
+                    isBottomBarVisibleByScroll = true
+                }
+                return Offset.Zero
+            }
+
+            override fun onPostScroll(
+                consumed: Offset,
+                available: Offset,
+                source: NestedScrollSource
+            ): Offset {
+                if (available.y < 0 && consumed.y == 0f) {
+                    isBottomBarVisibleByScroll = true
+                }
+                return super.onPostScroll(consumed, available, source)
+            }
+        }
+    }
+
     Scaffold(
+        modifier = Modifier.nestedScroll(nestedScrollConnection),
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         bottomBar = {
             AnimatedVisibility(
@@ -103,15 +146,27 @@ fun MainScreenView() {
                 enter = slideInVertically(initialOffsetY = { it }),
                 exit = slideOutVertically(targetOffsetY = { it })
             ) {
+                val density = LocalDensity.current
+                val translationY by animateFloatAsState(
+                    targetValue = if (isBottomBarVisibleByScroll) 0f else with(density) { 100.dp.toPx() },
+                    animationSpec = tween(durationMillis = 250),
+                    label = "BottomNavTransition"
+                )
+
                 BottomNavigation(
+                    modifier = Modifier.graphicsLayer { this.translationY = translationY },
                     navController = navController,
                     isLoggedIn = isLoggedIn,
-                    snackbarHostState = snackbarHostState
+                    snackbarHostState = snackbarHostState,
+                    onReselectActiveTab = {
+                        isBottomBarVisibleByScroll = true
+                    }
                 )
             }
         },
     ) { contentPadding ->
         AppNavHost(
+            mainViewModel = viewModel,
             navController = navController,
             contentPadding = contentPadding,
             onShowSnackbar = { message, actionLabel, action ->
@@ -130,9 +185,11 @@ fun MainScreenView() {
 
 @Composable
 fun BottomNavigation(
+    modifier: Modifier = Modifier,
     navController: NavController,
     isLoggedIn: Boolean,
-    snackbarHostState: SnackbarHostState
+    snackbarHostState: SnackbarHostState,
+    onReselectActiveTab: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -145,7 +202,7 @@ fun BottomNavigation(
 
     NavigationBar(
         containerColor = Color.Transparent,
-        modifier = Modifier.background(ColorUtils().bottomNavGradient),
+        modifier = modifier.background(ColorUtils().bottomNavGradient),
         windowInsets = WindowInsets.navigationBars
     ) {
         screens.forEach { bottomMenuItem ->
@@ -180,7 +237,9 @@ fun BottomNavigation(
                             launchSingleTop = true
                             restoreState = true
                         }
-                        viewModel.updateSelectedTab(bottomMenuItem.label)
+                    } else {
+                        onReselectActiveTab()
+                        viewModel.triggerScrollToTop(bottomMenuItem.label)
                     }
                 },
                 icon = {
