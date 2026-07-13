@@ -12,6 +12,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -64,8 +65,12 @@ class ProfileViewModel @Inject constructor(
     fun logout(onLogout: () -> Unit) {
         viewModelScope.launch {
             try {
-                val refreshToken = tokenManager.getRefreshToken() ?: ""
-                authUseCase.logout(LogoutRequest(refreshToken.toString()))
+                val refreshToken = tokenManager.refreshTokenFlow.firstOrNull() ?: ""
+                if (refreshToken.isNotBlank()) {
+                    authUseCase.logout(LogoutRequest(refreshToken))
+                }
+            } catch (e: Exception) {
+                println("📡 Logout request failed on backend server, wiping local profile regardless.")
             } finally {
                 userUseCase.clearLocalProfile()
                 tokenManager.clearTokens()

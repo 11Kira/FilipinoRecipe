@@ -21,7 +21,7 @@ class AuthInterceptor @Inject constructor(
             )
         }
 
-        val accessToken = tokenManager.getAccessToken()
+        val accessToken = tokenManager.getAccessTokenSync()
         val authenticatedRequest = originalRequest.newBuilder()
             .apply {
                 if (!accessToken.isNullOrBlank()) {
@@ -36,7 +36,7 @@ class AuthInterceptor @Inject constructor(
             }
 
             synchronized(this) {
-                val currentToken = tokenManager.getAccessToken()
+                val currentToken = tokenManager.getAccessTokenSync()
                 if (currentToken != accessToken) {
                     response.close()
                     return chain.proceed(
@@ -47,7 +47,7 @@ class AuthInterceptor @Inject constructor(
                     )
                 }
 
-                val refreshToken = tokenManager.getRefreshToken()
+                val refreshToken = tokenManager.getRefreshTokenSync()
                 if (!refreshToken.isNullOrBlank()) {
                     val refreshRes = authService.get()
                         .refreshSync(RefreshRequest(refreshToken))
@@ -56,7 +56,7 @@ class AuthInterceptor @Inject constructor(
                     if (refreshRes.isSuccessful) {
                         val body = refreshRes.body()?.data
                         if (body != null) {
-                            tokenManager.saveTokens(body.accessToken, body.refreshToken)
+                            tokenManager.saveTokensSync(body.accessToken, body.refreshToken)
                             response.close()
 
                             return chain.proceed(
@@ -67,7 +67,7 @@ class AuthInterceptor @Inject constructor(
                             )
                         }
                     } else {
-                        tokenManager.clearTokens()
+                        tokenManager.clearTokensSync()
                     }
                 }
             }

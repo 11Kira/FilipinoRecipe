@@ -16,12 +16,12 @@ class AuthAuthenticator @Inject constructor(
 
     override fun authenticate(route: Route?, response: Response): Request? {
         if (response.code != 401) return null
-        val refreshToken = tokenManager.getRefreshToken() ?: return null
+        val refreshToken = tokenManager.getRefreshTokenSync() ?: return null
         val res = authService.get().refreshSync(RefreshRequest(refreshToken)).execute()
         return if (res.isSuccessful) {
             val newTokens = res.body()?.data
             if (newTokens != null) {
-                tokenManager.saveTokens(newTokens.accessToken, newTokens.refreshToken)
+                tokenManager.saveTokensSync(newTokens.accessToken, newTokens.refreshToken)
                 response.request.newBuilder()
                     .header("Authorization", "Bearer ${newTokens.accessToken}")
                     .build()
@@ -29,7 +29,7 @@ class AuthAuthenticator @Inject constructor(
                 null
             }
         } else {
-            tokenManager.clearTokens()
+            tokenManager.clearTokensSync()
             null
         }
     }

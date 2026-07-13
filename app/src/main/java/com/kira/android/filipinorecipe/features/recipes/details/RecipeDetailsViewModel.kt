@@ -10,7 +10,11 @@ import com.kira.android.filipinorecipe.model.enums.ResponseStatus
 import com.kira.android.filipinorecipe.utils.NetworkUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -25,8 +29,13 @@ class RecipeDetailsViewModel @Inject constructor(
 
     private val _recipeDetailsUiState = MutableStateFlow(RecipeDetailsUiState())
     val recipeDetailsUiState = _recipeDetailsUiState.asStateFlow()
-    private val _isLoggedIn = MutableStateFlow(tokenManager.getAccessToken() != null)
-    val isLoggedIn = _isLoggedIn.asStateFlow()
+    val isLoggedIn: StateFlow<Boolean> = tokenManager.accessTokenFlow
+        .map { token -> token != null }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = false
+        )
 
     fun getRecipeById(recipeId: String) {
         if (_recipeDetailsUiState.value.recipe?.id == recipeId) return
