@@ -2,14 +2,20 @@ package com.kira.android.filipinorecipe.features.recipes.favorites
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.kira.android.filipinorecipe.MainViewModel
 import com.kira.android.filipinorecipe.component.recipe.RecipeBaseScreen
@@ -21,10 +27,19 @@ fun FavoriteRecipeListScreen(
     contentPadding: PaddingValues,
     onItemClick: (String) -> Unit,
 ) {
+    val listState = rememberLazyListState()
     val recipes = viewModel.favoritePagingFlow.collectAsLazyPagingItems()
+    val refreshState = recipes.loadState.refresh
+    var isManualRefresh by remember { mutableStateOf(false) }
+    val isRefreshing = refreshState is LoadState.Loading && isManualRefresh
     val query by viewModel.searchQuery.collectAsState()
     val lifecycleOwner = LocalLifecycleOwner.current
-    val listState = rememberLazyListState()
+
+    LaunchedEffect(refreshState) {
+        if (refreshState is LoadState.NotLoading || refreshState is LoadState.Error) {
+            isManualRefresh = false
+        }
+    }
 
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
@@ -38,15 +53,23 @@ fun FavoriteRecipeListScreen(
         }
     }
 
-    RecipeBaseScreen(
-        recipes = recipes,
-        query = query,
-        listState = listState,
-        mainViewModel = mainViewModel,
-        screenLabel = "Favorites",
-        onQueryChange = { viewModel.onSearchQueryChanged(it) },
-        onItemClick = onItemClick,
-        contentPadding = contentPadding,
-        searchHint = "Search favorites..."
-    )
+    PullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = {
+            isManualRefresh = true
+            recipes.refresh()
+        }
+    ) {
+        RecipeBaseScreen(
+            recipes = recipes,
+            query = query,
+            listState = listState,
+            mainViewModel = mainViewModel,
+            screenLabel = "Favorites",
+            onQueryChange = { viewModel.onSearchQueryChanged(it) },
+            onItemClick = onItemClick,
+            contentPadding = contentPadding,
+            searchHint = "Search favorites..."
+        )
+    }
 }
